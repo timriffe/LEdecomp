@@ -281,6 +281,59 @@ sen_arriaga_instantaneous2 <- function(mx,
 }
 
 #' @title Estimate sensitivity of life expectancy using a symmetrical Arriaga approach.
+#' @description This approach conducts a classic Arriaga decomposition in both directions, averaging the (sign-adjusted) result, i.e. `a_avg = (arriaga(mx1,mx2, ...) - arriaga(mx2, mx1, ...)) / 2`. 
+#' @export
+#' @inheritParams arriaga
+#' @seealso \code{\link{arriaga}}
+#' @examples
+#' a <- .001
+#' b <- .07
+#' x <- 0:100
+#' mx1 <- a * exp(x * b)
+#' mx2 <- a/2 * exp(x * b)
+#' d <- arriaga_sym(mx1, mx2, age = x) 
+#' 
+#' e01 <- mx_to_e0(mx1,age=x)
+#' e02 <- mx_to_e0(mx2,age=x)
+#' (Delta <- e02 - e01)
+#' sum(d)
+#' 
+#' d12 <- arriaga(mx1, mx2, age = x)
+#' d21 <- arriaga(mx2, mx1, age = x) # direction opposite
+#' \dontrun{
+#' plot(x, d, type= 'l')
+#'   lines(x, d12, col = "red")
+#'   lines(x, -d21, col = "blue")
+#' }
+arriaga_sym <- function(mx1, 
+                        mx2, 
+                        age = 0:(length(mx1) - 1), 
+                        sex1 = 't', 
+                        sex2 = sex1, 
+                        closeout = TRUE){
+  a1 <- arriaga(mx1, 
+                mx2, 
+                age = age, 
+                sex1 = sex1, 
+                sex2 = sex2, 
+                closeout = closeout)
+  a2 <- arriaga(mx2, 
+                mx1, 
+                age = age, 
+                sex1 = sex2, 
+                sex2 = sex1, 
+                closeout = closeout)
+  
+  # This closeout adjustment is necessary, but I can't
+  # say I fully understand why this works out.
+  a2[length(a2)] <- a2[length(a2)] /2
+  a_avg <- (a1 - a2) / 2
+  a_avg
+}
+
+
+
+#' @title Estimate sensitivity of life expectancy using a symmetrical Arriaga approach.
 #' @description This approach conducts a classic Arriaga decomposition in both directions, averaging the (sign-adjusted) result, i.e. `a_avg = (arriaga(mx1,mx2, ...) - arriaga(mx2, mx1, ...)) / 2`, then approximates the sensitivity by dividing out the rate differences, i.e. `s = a_avg / (mx2 - mx1)`. A resulting decomposition will be exact because the two arriaga directions are exact, but this method might be vulnerable to 0s in the denominator.
 #' @export
 #' @inheritParams arriaga
@@ -312,24 +365,14 @@ sen_arriaga_sym <- function(mx1,
                             sex2 = sex1, 
                             closeout = TRUE){
  delta <- mx2 - mx1
- a1 <- arriaga(mx1, 
-               mx2, 
-               age = age, 
-               sex1 = sex1, 
-               sex2 = sex2, 
-               closeout = closeout)
- a2 <- arriaga(mx2, 
-               mx1, 
-               age = age, 
-               sex1 = sex2, 
-               sex2 = sex1, 
-               closeout = closeout)
- 
- # This closeout adjustment is necessary, but I can't
- # say I fully understand why this works out.
- a2[length(a2)] <- a2[length(a2)] /2
- a_avg <- (a1 - a2) / 2
+ a_avg <- arriaga_sym(mx1 = mx1,
+                      mx2 = mx2,
+                      age = age,
+                      sex1 = sex1,
+                      sex2 = sex2,
+                      closeout = closeout)
  a_avg / delta
 }
+
 
 

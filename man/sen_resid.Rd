@@ -29,7 +29,7 @@ sen_resid(
 
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 
-\item{sen_fun}{function name, current options include \code{sen_arriaga_instantaneous}, \code{sen_arriaga_instantaneous1}, \code{sen_e0_mx_lt}, \code{sen_num}}
+\item{sen_fun}{function name, current options include \code{sen_arriaga_instantaneous}, \code{sen_arriaga_instantaneous2}, \code{sen_arriaga_sym}, \code{sen_e0_mx_lt}, \code{sen_num}}
 
 \item{tol}{double. tolerance level for residual, passed to \code{optimise()}}
 }

@@ -4,7 +4,7 @@
 #' \deqn{m_{x} = m_{x}^{1} * w + m_{x}^{2} * (1-w)}
 #' @inheritParams arriaga
 #' @param tol double. tolerance level for residual, passed to `optimise()`
-#' @param sen_fun function name, current options include `sen_arriaga_instantaneous`, `sen_arriaga_instantaneous1`, `sen_e0_mx_lt`, `sen_num`
+#' @param sen_fun function name, current options include `sen_arriaga_instantaneous`, `sen_arriaga_instantaneous2`, `sen_arriaga_sym`, `sen_e0_mx_lt`, `sen_num`
 #' @return age-specific sensitivity of life expectancy to changes in mortality rates.
 #' @export
 #' @examples
@@ -51,7 +51,7 @@ sen_resid <- function(w=.5,
 #' @details We expect the value `w` to be close to .5, and only search the interval `[.4,.6]`. This may need to be revisited in case that proves too narrow.
 #' @inheritParams arriaga
 #' @param tol double. tolerance level for residual, passed to `optimise()`
-#' @param sen_fun function name, current options include `sen_arriaga_instantaneous`, `sen_arriaga_instantaneous1`, `sen_e0_mx_lt`, `sen_num`
+#' @param sen_fun function name, current options include `sen_arriaga_instantaneous`, `sen_arriaga_instantaneous1`, `sen_arriaga_sym`, `sen_e0_mx_lt`,  `sen_num`
 #' @return age-specific sensitivity of life expectancy to changes in mortality rates.
 #' @export
 #' @examples
