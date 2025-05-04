@@ -17,3 +17,18 @@
 # plot(age, sen_horiuchi(mx, age) - sen_arriaga_instantaneous(mx))
 # plot(age, sen_horiuchi(mx, age) - numDeriv::grad(mx_to_e0,mx,age = age, sex = sex))
 # plot(age[-1], sen_horiuchi(mx, age)[-1] - sen_e0_mx_lt(mx,age,sex)[-1])
+
+a <-.001
+b <-0.07
+x<-0:100
+mx1 <- a* exp(x*b)
+mx2 <- a/2 * exp(x*b)
+mx_to_e0 <- function(mx){
+  sum(exp(cumsum(-mx)))
+}
+mx_to_e0(mx2) - mx_to_e0(mx1)
+cc1 <- DemoDecomp::horiuchi(mx_to_e0,mx1,mx2,N=100)
+cc2 <- DemoDecomp::horiuchi(mx_to_e0,mx2,mx1,N=100)
+sum(cc1)
+sum(cc2)
+all(abs(cc1 + cc2) < 1e-12)
