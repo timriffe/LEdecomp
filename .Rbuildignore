@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 test.R
 build.R
+test_all.R
