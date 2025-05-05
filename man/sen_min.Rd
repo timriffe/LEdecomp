@@ -52,11 +52,11 @@ mx2 <- a/2 * exp(x * b)
 mx  <- (mx1 + mx2) / 2
 s1 <- sen_min(mx1, mx2,
               age = x, sex1 = 't',
-              closeout = TRUE, 
+              closeout = TRUE,
               sen_fun = sen_arriaga_instantaneous)
 s2 <- sen_min(mx1, mx2,
               age = x, sex1 = 't',
-              closeout = TRUE, 
+              closeout = TRUE,
               sen_fun = sen_e0_mx_lt,
               tol = 1e-12)
 

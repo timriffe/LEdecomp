@@ -17,7 +17,7 @@
 #' \insertREf{Ponnapalli2005}{LEdecomp}
 #'
 #' @importFrom ggplot2 ggplot aes geom_bar labs theme_classic
-#'
+#' @importFrom graphics barplot
 #' @examples
 #'
 #' \donttest{

@@ -53,7 +53,7 @@ w <- optimize(sen_resid,
               sen_fun = sen_arriaga_instantaneous,
               sex1 = 't',
               sex2 = 't',
-              closeout = TRUE, 
+              closeout = TRUE,
               interval = c(.4,.6),
               tol = 1e-10)$minimum
 w
