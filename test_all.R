@@ -18,7 +18,7 @@ mx2_c[,3] <- mx2/4
 rowSums(mx1_c) - mx1
 rowSums(mx2_c) - mx2
 
-devtools::load_all()
+#devtools::load_all()
 library(DemoTools)
 library(dplyr)
 library(data.table)
