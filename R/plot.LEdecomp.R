@@ -16,7 +16,7 @@
 #' \insertRef{preston2000demography}{coddecomp}
 #' \insertREf{Ponnapalli2005}{coddecomp}
 #'
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot aes geom_bar labs theme_classic
 #'
 #' @examples
 #'
@@ -123,10 +123,10 @@ plot.LEdecomp <- function(x, ...){
                          cause = rep(colnames(x$LEdecomp), each = length(x$age)))
       title <- paste(dicc, "cause-of-death sensitivity Life-Expectancy decomposition method.")
 
-      ggplot(data, aes(fill = cause, y = LEdecomp, x = age)) +
-        geom_bar(position = "stack", stat = "identity") +
-        labs(title = title) +
-        theme_classic()
+      ggplot2::ggplot(data, ggplot2::aes(fill = cause, y = LEdecomp, x = age)) +
+        ggplot2::geom_bar(position = "stack", stat = "identity") +
+        ggplot2::labs(title = title) +
+        ggplot2::theme_classic()
 
     }
 

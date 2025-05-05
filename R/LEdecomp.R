@@ -56,9 +56,6 @@
 #' \insertRef{preston2000demography}{coddecomp}
 #' \insertREf{Ponnapalli2005}{coddecomp}
 #'
-#' @import DemoTools
-#' @import data.table
-#' @import dplyr
 #' @importFrom DemoDecomp horiuchi
 #' @importFrom DemoDecomp horiuchi
 #' @importFrom DemoDecomp stepwise_replacement
