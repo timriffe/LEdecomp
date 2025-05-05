@@ -35,7 +35,7 @@ b <- .07
 x <- 0:100
 mx1 <- a * exp(x * b)
 mx2 <- a/2 * exp(x * b)
-d <- arriaga_sym(mx1, mx2, age = x) 
+d <- arriaga_sym(mx1, mx2, age = x)
 
 e01 <- mx_to_e0(mx1,age=x)
 e02 <- mx_to_e0(mx2,age=x)

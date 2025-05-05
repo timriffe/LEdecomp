@@ -16,7 +16,7 @@
 #' \insertRef{preston2000demography}{coddecomp}
 #' \insertREf{Ponnapalli2005}{coddecomp}
 #'
-#' @importFrom ggplot ggplot
+#' @importFrom ggplot2 ggplot
 #'
 #' @examples
 #'
@@ -34,11 +34,11 @@ plot.LEdecomp <- function(x, ...){
   }
 
   if(!is.matrix(x$LEdecomp)){
-    if(x$method == "arriaga" | x$method == "arriaga_sym" |
-       x$method == "chandrasekaran_ii" | x$method == "chandrasekaran_iii" |
-       x$method == "lopez_ruzicka" | x$method == "lopez_ruzicka_sym" |
-       x$method == "horiuchi" | x$method == "stepwise" | x$method == "numerical"){
-
+    # if(x$method == "arriaga" | x$method == "arriaga_sym" |
+    #    x$method == "chandrasekaran_ii" | x$method == "chandrasekaran_iii" |
+    #    x$method == "lopez_ruzicka" | x$method == "lopez_ruzicka_sym" |
+    #    x$method == "horiuchi" | x$method == "stepwise" | x$method == "numerical"){
+  if (!grepl(x$method, pattern = "sen_")){
       data <- data.frame(age = x$age,
                          LEdecomp = x$LEdecomp)
       title <- paste(x$method, " LE decomposition method")
@@ -46,23 +46,29 @@ plot.LEdecomp <- function(x, ...){
       barplot(names = data$age, height = data$LEdecomp, col = "lightgreen",
               xlab = "ages", ylab = "", main = title)
 
-    } else if(x$method == "sen_arriaga" | x$method == "sen_arriaga_sym" |
-              x$method == "sen_arriaga_inst" | x$method == "sen_arriaga_inst2" |
-              x$method == "sen_chandrasekaran_ii" | x$method == "sen_chandrasekaran_ii_inst" | x$method == "sen_chandrasekaran_ii_inst2" |
-              x$method == "sen_chandrasekaran_iii" | x$method == "sen_chandrasekaran_iii_inst" | x$method == "sen_chandrasekaran_iii_inst2" |
-              x$method == "sen_lopez_ruzicka" | x$method == "sen_lopez_ruzicka_sym" |
-              x$method == "sen_lopez_ruzicka_inst" | x$method == "sen_lopez_ruzicka_sym__inst2"){
+    } else if(
+      # TR: shorter?
+      grepl(cc1_2$method, pattern = "sen_")
+      # x$method == "sen_arriaga" | x$method == "sen_arriaga_sym" |
+      #         x$method == "sen_arriaga_inst" | x$method == "sen_arriaga_inst2" |
+      #         x$method == "sen_chandrasekaran_ii" | x$method == "sen_chandrasekaran_ii_inst" | x$method == "sen_chandrasekaran_ii_inst2" |
+      #         x$method == "sen_chandrasekaran_iii" | x$method == "sen_chandrasekaran_iii_inst" | x$method == "sen_chandrasekaran_iii_inst2" |
+      #         x$method == "sen_lopez_ruzicka" | x$method == "sen_lopez_ruzicka_sym" |
+      #         x$method == "sen_lopez_ruzicka_inst" | x$method == "sen_lopez_ruzicka_sym__inst2"
+      ){
 
-      values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst", "sen_arriaga_inst2",
-                  "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2",
-                  "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_iii_inst2",
-                  "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_sym__inst2")
+      # values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst", "sen_arriaga_inst2",
+      #             "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2",
+      #             "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_iii_inst2",
+      #             "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_sym__inst2")
+      #
+      # names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2",
+      #            "chandrasekaran_ii", "chandrasekaran_ii_inst", "chandrasekaran_ii_inst2",
+      #            "chandrasekaran_iii", "chandrasekaran_iii_inst", "chandrasekaran_iii_inst2",
+      #            "lopez_ruzicka", "lopez_ruzicka_sym", "lopez_ruzicka_inst", "lopez_ruzicka_sym__inst2")
+      # dicc <- names[which(x$method == values)[1]]
 
-      names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2",
-                 "chandrasekaran_ii", "chandrasekaran_ii_inst", "chandrasekaran_ii_inst2",
-                 "chandrasekaran_iii", "chandrasekaran_iii_inst", "chandrasekaran_iii_inst2",
-                 "lopez_ruzicka", "lopez_ruzicka_sym", "lopez_ruzicka_inst", "lopez_ruzicka_sym__inst2")
-      dicc <- names[which(x$method == values)[1]]
+      dicc <- gsub(method, pattern = "sen_", replacement = "")
 
       data <- data.frame(age = x$age,
                          LEdecomp = x$LEdecomp)

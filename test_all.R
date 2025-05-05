@@ -25,15 +25,16 @@ library(data.table)
 
 #Discrete Life Expectancy -- ALL CAUSES
 dle <- sen_e0_mx_lt((mx2+mx1)/2,age=x,sex='t',closeout=TRUE)
-dle_2 <- LEdecomp(mx1, mx2, age = age, sex1 = sex, closeout = TRUE, method = "lifetable")
+dle_2 <- LEdecomp(mx1, mx2, age = x, sex1 = 't', closeout = TRUE, method = "lifetable")
 
 dle_2$sens - dle
+
 dle_2$LEdecomp - dle*(mx2 - mx1)
 sum(dle*(mx2 - mx1)); sum(dle_2$LEdecomp)
 
 #Discrete Life Expectancy -- BY CAUSES
-dle_2cau <- LEdecomp(mx1_c, mx2_c, age = age,
-                     sex1 = sex, closeout = TRUE, method = "lifetable")
+dle_2cau <- LEdecomp(mx1_c, mx2_c, age = x,
+                     sex1 = 't', closeout = TRUE, method = "lifetable")
 sum(dle_2$LEdecomp)
 sum(dle_2cau$LEdecomp)
 
@@ -41,8 +42,8 @@ sum(dle_2cau$LEdecomp)
 cc1 <- arriaga(mx1, mx2, age = x)
 cc1_2 <- LEdecomp(mx1, mx2, age = x, method = "arriaga")
 cc1_2
-plot(cc1_2)
-
+plot.LEdecomp(cc1_2)
+grepl(cc1_2$method,pattern="sen")
 cc1 - cc1_2$LEdecomp
 sum(cc1); sum(cc1_2$LEdecomp)
 

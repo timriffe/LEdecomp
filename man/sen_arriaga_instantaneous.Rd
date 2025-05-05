@@ -46,7 +46,7 @@ s1_d  <- sen_arriaga(mx1, mx2, age = x)
 s2_d  <- sen_arriaga(mx2, mx1, age = x)
 delta <- mx2 - mx1
 # dots give our point estimate of sensitivity at the average of the rates,
-# which is different from the 
+# which is different from the
 
 plot(x,s*delta, ylim = c(0,.3))
 lines(x,s1*delta,col = "red")

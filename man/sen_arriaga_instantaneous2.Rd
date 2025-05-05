@@ -36,9 +36,9 @@ mx <- a * exp(x * b)
 # the multiplicative perturbation:
 s1 <- sen_arriaga_instantaneous(mx)
 s2 <- sen_arriaga_instantaneous2(mx)
-plot(x, 
-     s1 - s2, 
-     pch = 16, 
+plot(x,
+     s1 - s2,
+     pch = 16,
      cex=.5,
      main = "very similar.\nMaybe one is more stable than the other?")
 }

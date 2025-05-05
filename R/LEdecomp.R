@@ -71,13 +71,7 @@
 #' mx1 <- a * exp(x * b)
 #' mx2 <- a/2 * exp(x * b)
 #'
-#
-# R <- seq(.1,.7,length=101)
-# mx1 <- cbind(mx1 * R, mx1 * (1-R))
-# mx2 <- cbind(mx2 * R, mx2 * (1-R))
-#LEdecomp(mx1,mx2,age=x,sex1='t',method = "arriaga_instantaneous")
-
-#'
+#' LEdecomp(mx1,mx2,age=x,sex1='t',method = "arriaga_instantaneous")
 #' @export
 LEdecomp <- function(mx1, mx2,
                      age,
