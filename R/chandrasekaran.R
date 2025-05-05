@@ -21,9 +21,9 @@
 #' @export
 #'
 #' @references
-#' \insertRef{arriaga1984measuring}{coddecomp}
-#' \insertRef{preston2000demography}{coddecomp}
-#' \insertRef{Ponnapalli2005}{coddecomp}
+#' \insertRef{arriaga1984measuring}{LEdecomp}
+#' \insertRef{preston2000demography}{LEdecomp}
+#' \insertRef{Ponnapalli2005}{LEdecomp}
 #'
 #' @examples
 #' a <- .001

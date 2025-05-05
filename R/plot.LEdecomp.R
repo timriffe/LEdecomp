@@ -11,10 +11,10 @@
 #'
 #' @references
 #'
-#' \insertRef{arriaga1984measuring}{coddecomp}
-#' \insertREf{Chandrasekaran1986}{coddecomp}
-#' \insertRef{preston2000demography}{coddecomp}
-#' \insertREf{Ponnapalli2005}{coddecomp}
+#' \insertRef{arriaga1984measuring}{LEdecomp}
+#' \insertREf{Chandrasekaran1986}{LEdecomp}
+#' \insertRef{preston2000demography}{LEdecomp}
+#' \insertREf{Ponnapalli2005}{LEdecomp}
 #'
 #' @importFrom ggplot2 ggplot aes geom_bar labs theme_classic
 #'

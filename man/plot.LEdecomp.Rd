@@ -24,10 +24,10 @@ R function to plot the age-specific life-expectancy decomposition value using on
 }
 }
 \references{
-\insertRef{arriaga1984measuring}{coddecomp}
-\insertREf{Chandrasekaran1986}{coddecomp}
-\insertRef{preston2000demography}{coddecomp}
-\insertREf{Ponnapalli2005}{coddecomp}
+\insertRef{arriaga1984measuring}{LEdecomp}
+\insertREf{Chandrasekaran1986}{LEdecomp}
+\insertRef{preston2000demography}{LEdecomp}
+\insertREf{Ponnapalli2005}{LEdecomp}
 }
 \seealso{
 \code{\link{LEdecomp}}

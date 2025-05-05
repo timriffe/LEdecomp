@@ -42,7 +42,7 @@ sum(dle_2cau$LEdecomp)
 cc1 <- arriaga(mx1, mx2, age = x)
 cc1_2 <- LEdecomp(mx1, mx2, age = x, method = "arriaga")
 cc1_2
-plot.LEdecomp(cc1_2)
+plot(cc1_2)
 grepl(cc1_2$method,pattern="sen")
 cc1 - cc1_2$LEdecomp
 sum(cc1); sum(cc1_2$LEdecomp)

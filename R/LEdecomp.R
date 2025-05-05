@@ -51,10 +51,10 @@
 #' \code{\link{horiuchi}}, \code{\link{stepwise}}, \code{\link{numerical}}
 #'
 #' @references
-#' \insertRef{arriaga1984measuring}{coddecomp}
-#' \insertREf{Chandrasekaran1986}{coddecomp}
-#' \insertRef{preston2000demography}{coddecomp}
-#' \insertREf{Ponnapalli2005}{coddecomp}
+#' \insertRef{arriaga1984measuring}{LEdecomp}
+#' \insertREf{Chandrasekaran1986}{LEdecomp}
+#' \insertRef{preston2000demography}{LEdecomp}
+#' \insertREf{Ponnapalli2005}{LEdecomp}
 #'
 #' @importFrom DemoDecomp horiuchi
 #' @importFrom DemoDecomp horiuchi

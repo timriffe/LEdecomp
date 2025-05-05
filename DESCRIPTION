@@ -25,8 +25,8 @@ Imports:
 Depends:
     R (>= 4.3)
 RdMacros: Rdpack
-BugReports: https://github.com/timriffe/coddecomp/issues
+BugReports: https://github.com/timriffe/LEdecomp/issues
 Encoding: UTF-8
 Remotes: 
     github::timriffe/DemoTools
-URL: https://github.com/timriffe/coddecomp
+URL: https://github.com/timriffe/LEdecomp

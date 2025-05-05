@@ -10,13 +10,13 @@ rcumsum <- function(x){
 
 #' @title produce single-age `ax` values
 #' @description We assume mid-interval `ax` except for age 0 and potentially the open age group. `ax` is defined as the average years lived in each age interval by those that die within the interval, and it is used to increase the precision of lifetable estimates. We allow ourselves the midpoint rule for single ages because it has little leverage. If we were working with abridged ages then we would need to use a more sophisticated method.
-#' @details For the case of Total sex, we estimate the male and female \eqn{a(0)} using the Andreev-Kingkade rule of thumb, and then average them. We assume a value of 1/2 for all other ages, unless `closeout = TRUE`, in which case we close with `1/mx` for the final value. 
+#' @details For the case of Total sex, we estimate the male and female \eqn{a(0)} using the Andreev-Kingkade rule of thumb, and then average them. We assume a value of 1/2 for all other ages, unless `closeout = TRUE`, in which case we close with `1/mx` for the final value.
 #' @param mx numeric vector of the mortality rates (central death rates)
 #' @param age integer vector of the lower bound of each age group (currently only single ages supported)
 #' @param sex character: Male (`"m"`), Female (`"f"`), or Total (`"t"`)
-#' @param closeout logical. Default `TRUE`. 
+#' @param closeout logical. Default `TRUE`.
 #' @importFrom DemoTools lt_rule_ak_m0_a0
-#' @export 
+#' @export
 #' @seealso \link[DemoTools]{lt_rule_ak_m0_a0}
 mx_to_ax <- function(mx, age = 0:(length(mx)-1), sex = "t", closeout = TRUE){
   stopifnot(all(diff(age) == 1))
@@ -44,15 +44,15 @@ mx_to_ax <- function(mx, age = 0:(length(mx)-1), sex = "t", closeout = TRUE){
 #' @description `qx` gives conditional death probabilities, in this case forced to be consistent with a set of `mx` and `ax` values per HMD Method Protocol eq 71.
 #' @inheritParams mx_to_ax
 #' @param ax numeric vector of `ax` values
-#' @export 
+#' @export
 #' @seealso \link[DemoTools]{lt_id_ma_q}
 #' @importFrom DemoTools lt_id_ma_q
 #' @references
-#' \insertRef{wilmoth2021methods}{coddecomp}
+#' \insertRef{wilmoth2021methods}{LEdecomp}
 mx_to_qx <- function(mx, ax, closeout = TRUE){
-  lt_id_ma_q(nMx = mx, 
-             nax = ax, 
-             AgeInt = rep(1, length(mx)), 
+  lt_id_ma_q(nMx = mx,
+             nax = ax,
+             AgeInt = rep(1, length(mx)),
              closeout = closeout)
 }
 
@@ -89,7 +89,7 @@ lx_to_dx <- function(lx){
 #' @seealso \link[DemoTools]{lt_id_lda_L}
 #' @export
 #' @references
-#' \insertRef{wilmoth2021methods}{coddecomp}
+#' \insertRef{wilmoth2021methods}{LEdecomp}
 ald_to_Lx <- function(ax,lx,dx){
   lt_id_lda_L(nax = ax,
               lx = lx,
@@ -104,9 +104,9 @@ ald_to_Lx <- function(ax,lx,dx){
 #' @return numeric vector of remaining life expectancy `ex`
 #' @export
 #' @references
-#' \insertRef{wilmoth2021methods}{coddecomp}
+#' \insertRef{wilmoth2021methods}{LEdecomp}
 lL_to_ex <- function(lx, Lx){
-  Tx <- rcumsum(Lx) 
+  Tx <- rcumsum(Lx)
   ex <- Tx / lx
   ex
 }
@@ -119,11 +119,11 @@ lL_to_ex <- function(lx, Lx){
 #' @export
 
 mx_to_ex <- function(mx, age, sex = 't', closeout = TRUE){
-  ax <- mx_to_ax(mx = mx, 
-                 age = age, 
+  ax <- mx_to_ax(mx = mx,
+                 age = age,
                  sex = sex,
                  closeout = closeout)
-  qx <- mx_to_qx(mx = mx, 
+  qx <- mx_to_qx(mx = mx,
                  ax = ax,
                  closeout = closeout)
   lx <- qx_to_lx(qx)
@@ -141,13 +141,13 @@ mx_to_ex <- function(mx, age, sex = 't', closeout = TRUE){
 #' @return numeric scalar of `e0`
 #' @export
 
-mx_to_e0 <- function(mx, 
-                     age, 
+mx_to_e0 <- function(mx,
+                     age,
                      sex = 't',
                      closeout = TRUE){
-  ex <- mx_to_ex(mx = mx, 
-                 age = age, 
+  ex <- mx_to_ex(mx = mx,
+                 age = age,
                  sex = sex,
-                 closeout = closeout) 
+                 closeout = closeout)
   ex[1]
 }

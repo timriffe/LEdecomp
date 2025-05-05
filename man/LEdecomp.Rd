@@ -95,10 +95,10 @@ mx2 <- a/2 * exp(x * b)
 LEdecomp(mx1,mx2,age=x,sex1='t',method = "arriaga_instantaneous")
 }
 \references{
-\insertRef{arriaga1984measuring}{coddecomp}
-\insertREf{Chandrasekaran1986}{coddecomp}
-\insertRef{preston2000demography}{coddecomp}
-\insertREf{Ponnapalli2005}{coddecomp}
+\insertRef{arriaga1984measuring}{LEdecomp}
+\insertREf{Chandrasekaran1986}{LEdecomp}
+\insertRef{preston2000demography}{LEdecomp}
+\insertREf{Ponnapalli2005}{LEdecomp}
 }
 \seealso{
 \\code{\link{lifetable}}, \code{\link{arriaga}},

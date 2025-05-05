@@ -20,7 +20,7 @@ numeric vector of \code{Lx} values
 \code{Lx} is defined as the integration of \code{lx} in the interval \verb{[x,x+n)}, where \code{n} is the width of the interval. There are many approximations for this. Here we use HMD Method Protocol equation 78. You can think of \code{Lx} as lifetable exposure, or person-years lived in each age interval.
 }
 \references{
-\insertRef{wilmoth2021methods}{coddecomp}
+\insertRef{wilmoth2021methods}{LEdecomp}
 }
 \seealso{
 \link[DemoTools]{lt_id_lda_L}

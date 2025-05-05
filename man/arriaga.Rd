@@ -68,6 +68,6 @@ delta-sum(cc2); cc2[length(cc2)] / 2
 arriaga(mx1 = mx1, mx2 = mx2, age = x,closeout=FALSE) |> sum()
 }
 \references{
-\insertRef{arriaga1984measuring}{coddecomp}
-\insertRef{preston2000demography}{coddecomp}
+\insertRef{arriaga1984measuring}{LEdecomp}
+\insertRef{preston2000demography}{LEdecomp}
 }

@@ -18,8 +18,8 @@
 #' @importFrom data.table shift
 #' @export
 #' @references
-#' \insertRef{arriaga1984measuring}{coddecomp}
-#' \insertRef{preston2000demography}{coddecomp}
+#' \insertRef{arriaga1984measuring}{LEdecomp}
+#' \insertRef{preston2000demography}{LEdecomp}
 #' @examples
 #' a <- .001
 #' b <- .07
@@ -100,8 +100,8 @@ arriaga <- function(mx1,
 #' @importFrom data.table shift
 #' @export
 #' @references
-#' \insertRef{arriaga1984measuring}{coddecomp}
-#' \insertRef{preston2000demography}{coddecomp}
+#' \insertRef{arriaga1984measuring}{LEdecomp}
+#' \insertRef{preston2000demography}{LEdecomp}
 #' @examples
 #' a <- .001
 #' b <- .07
