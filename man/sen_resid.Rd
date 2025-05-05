@@ -17,6 +17,8 @@ sen_resid(
 )
 }
 \arguments{
+\item{w}{the parameter weight to optimize, default 0.5}
+
 \item{mx1}{numeric vector of the mortality rates (central death rates) for population 1}
 
 \item{mx2}{numeric vector of the mortality rates (central death rates) for population 2}
@@ -54,8 +56,7 @@ w <- optimize(sen_resid,
               sex1 = 't',
               sex2 = 't',
               closeout = TRUE,
-              interval = c(.4,.6),
-              tol = 1e-10)$minimum
+              interval = c(.4,.6))$minimum
 w
 
 }

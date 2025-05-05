@@ -63,6 +63,7 @@ sen_e0_mx_lt <- function(mx,
 #' @title A numerical approximation of the sensitivity of life expectancy at birth to changes in mortality.
 #' @description Here we produce a numerical derivative based on the methods implemented in the `numDeriv::grad()` function. Tweaking the optional arguments of `numDeriv::grad()`, passed in via `...` might lead to greater precision, but this method actually performs usably well with its defaults.
 #' @inheritParams mx_to_e0
+#' @param ... optional args to pass to `mx_to_e0()`
 #' @importFrom numDeriv grad
 #' @importFrom Rdpack reprompt
 #' @export

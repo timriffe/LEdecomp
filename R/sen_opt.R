@@ -3,6 +3,7 @@
 #' @description Most sensitivity methods in this packages (`sen_arriaga_sym()` excepted) are approximations; when used in decompositions they will tend to imply residuals. To acheive near-exact additivity for a decomposition using these sensitivity approaches, one can try to find a different weighting of rates from populations 1 and 2, rather than simply taking their arithmetic average. Here we turn this into an optimization problem, where we find the weighting `w` that implies an exactly additive decomposition to an arbitrary degree of tolerance. This function gives said residual, for purposes of optimizing using `sen_min()`. We export this auxiliary function because one might wish to know the value w that balances rates such that the decomposition is exact.
 #' \deqn{m_{x} = m_{x}^{1} * w + m_{x}^{2} * (1-w)}
 #' @inheritParams arriaga
+#' @param w the parameter weight to optimize, default 0.5
 #' @param tol double. tolerance level for residual, passed to `optimise()`
 #' @param sen_fun function name, current options include `sen_arriaga_instantaneous`, `sen_arriaga_instantaneous2`, `sen_arriaga_sym`, `sen_e0_mx_lt`, `sen_num`
 #' @return age-specific sensitivity of life expectancy to changes in mortality rates.
@@ -21,8 +22,7 @@
 #'               sex1 = 't',
 #'               sex2 = 't',
 #'               closeout = TRUE,
-#'               interval = c(.4,.6),
-#'               tol = 1e-10)$minimum
+#'               interval = c(.4,.6))$minimum
 #' w
 #'
 sen_resid <- function(w=.5,
@@ -52,6 +52,7 @@ sen_resid <- function(w=.5,
 #' @inheritParams arriaga
 #' @param tol double. tolerance level for residual, passed to `optimise()`
 #' @param sen_fun function name, current options include `sen_arriaga_instantaneous`, `sen_arriaga_instantaneous1`, `sen_arriaga_sym`, `sen_e0_mx_lt`,  `sen_num`
+#' @param ... optional arguments to pass to `sen_fun()`
 #' @return age-specific sensitivity of life expectancy to changes in mortality rates.
 #' @importFrom stats optimize
 #' @export

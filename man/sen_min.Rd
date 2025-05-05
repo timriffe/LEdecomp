@@ -32,6 +32,8 @@ sen_min(
 \item{sen_fun}{function name, current options include \code{sen_arriaga_instantaneous}, \code{sen_arriaga_instantaneous1}, \code{sen_arriaga_sym}, \code{sen_e0_mx_lt},  \code{sen_num}}
 
 \item{tol}{double. tolerance level for residual, passed to \code{optimise()}}
+
+\item{...}{optional arguments to pass to \code{sen_fun()}}
 }
 \value{
 age-specific sensitivity of life expectancy to changes in mortality rates.

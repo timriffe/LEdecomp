@@ -14,6 +14,8 @@ sen_num(mx, age, sex = "t", closeout = TRUE, ...)
 \item{sex}{character: Male (\code{"m"}), Female (\code{"f"}), or Total (\code{"t"})}
 
 \item{closeout}{logical. Default \code{TRUE}.}
+
+\item{...}{optional args to pass to \code{mx_to_e0()}}
 }
 \description{
 Here we produce a numerical derivative based on the methods implemented in the \code{numDeriv::grad()} function. Tweaking the optional arguments of \code{numDeriv::grad()}, passed in via \code{...} might lead to greater precision, but this method actually performs usably well with its defaults.

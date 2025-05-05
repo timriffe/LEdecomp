@@ -92,7 +92,7 @@ x <- 0:100
 mx1 <- a * exp(x * b)
 mx2 <- a/2 * exp(x * b)
 
-LEdecomp(mx1,mx2,age=x,sex1='t',method = "arriaga_instantaneous")
+LEdecomp(mx1,mx2,age=x,sex1='t',method = "arriaga_inst")
 }
 \references{
 \insertRef{arriaga1984measuring}{LEdecomp}
