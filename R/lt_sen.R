@@ -31,9 +31,9 @@
 #' plot(x, sl - sn, main = "still uncertain what accounts for the age 0 discrepancy")
 #' }
 sen_e0_mx_lt <- function(mx,
-                      age = 0:(length(mx)-1),
-                      sex = 't',
-                      closeout = TRUE){
+                         age = 0:(length(mx)-1),
+                         sex = 't',
+                         closeout = TRUE){
   ax <- mx_to_ax(mx = mx,
                  age = age,
                  sex = sex,

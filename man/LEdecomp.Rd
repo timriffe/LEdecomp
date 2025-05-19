@@ -12,18 +12,20 @@ LEdecomp(
   sex2 = sex1,
   method = c("lifetable", "arriaga", "arriaga_sym", "sen_arriaga", "sen_arriaga_sym",
     "sen_arriaga_inst", "sen_arriaga_inst2", "chandrasekaran_ii",
-    "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2",
-    "chandrasekaran_iii", "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
-    "sen_chandrasekaran_iii_inst2", "lopez_ruzicka", "lopez_ruzicka_sym",
-    "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst",
-    "sen_lopez_ruzicka_inst2", "horiuchi", "stepwise", "numerical"),
+    "chandrasekaran_iii_sym", "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
+    "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_ii_sym", "chandrasekaran_iii",
+    "chandrasekaran_iii_sym", "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
+    "sen_chandrasekaran_iii_inst2", "sen_chandrasekaran_iii_sym", "lopez_ruzicka",
+    "lopez_ruzicka_sym", "sen_lopez_ruzicka", 
+     "sen_lopez_ruzicka_sym",
+    "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_inst2", "horiuchi", "stepwise",
+    "numerical"),
   closeout = TRUE,
   opt = TRUE,
-  func = FALSE,
   tol = 1e-10,
-  Num_Intervals = FALSE,
+  Num_Intervals = 20,
   symmetrical = TRUE,
-  direction = "up",
+  direction = "both",
   perturb = 1e-06,
   ...
 )
@@ -43,9 +45,7 @@ LEdecomp(
 
 \item{closeout}{logical. Do we handle closeout, or truncate at top age.}
 
-\item{opt}{logical, default \code{TRUE}. For sensitivity-based decomposition, shall we optimize the rate averaging to eliminate the decomposition residual?}
-
-\item{func}{A function specified by the user. This must be able to take the vectors \code{mx1} or \code{mx2} as its argument, and to return the value of the function. This \code{func} is only applied for \code{method} = c(\code{"stepwise"}, \code{"horiuchi"}).}
+\item{opt}{logical, default \code{TRUE}. For lifetable, numerical, and instantaneous sensitivity-based decomposition, shall we optimize the rate averaging to eliminate the decomposition residual?}
 
 \item{tol}{numeric, default \code{1e-10}. Tolerance parameter for rate averaging optimization.}
 
@@ -70,7 +70,6 @@ A list with class \code{"LEdecomp"} including different component in the Life Ex
 \item \code{method} method selected by the user to apply the life-expectancy decomposition or sensitivity analysis.
 \item \code{closeout} how the user have decide to handle closeout or truncate at top age.
 \item \code{opt} for sensitivity process how to optimize
-\item \code{func} function selected for estimate the life-expectancy decomposition and the sensitivity value.
 \item \code{tol} level of tolerance.
 \item \code{Num_Intervals} the number of intervals to integrate over.
 \item \code{symmetrical} shall the user wants to average the results of replacing 1 with 2 and 2 with 1.
@@ -92,7 +91,7 @@ x <- 0:100
 mx1 <- a * exp(x * b)
 mx2 <- a/2 * exp(x * b)
 
-LEdecomp(mx1,mx2,age=x,sex1='t',method = "arriaga_inst")
+LEdecomp(mx1,mx2,age=x,sex1='t',method = "sen_arriaga_inst")
 }
 \references{
 \insertRef{arriaga1984measuring}{LEdecomp}

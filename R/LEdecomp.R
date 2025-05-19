@@ -11,8 +11,7 @@
 #' @param sex2 character. `"m"`,`"f"`, or `"t"`, affects a0 treatment.
 #' @param method character. `"lifetable"`, `"arriaga"'`, `"arriaga_sym"'`, `"sen_arriaga"'`, `"sen_arriaga_sym"'`, `"sen_arriaga_inst"'`, `"sen_arriaga_inst2"'`, `"chandrasekaran_ii"'`, `"sen_chandrasekaran_ii"'`, `"sen_chandrasekaran_ii_inst"'`, `"sen_chandrasekaran_ii_inst2"'`, `"chandrasekaran_iii"'`, `"sen_chandrasekaran_iii"'`, `"sen_chandrasekaran_iii_inst"'`, `"sen_chandrasekaran_iii_inst2"'`, `"lopez_ruzicka"'`, `"lopez_ruzicka_sym"'`, `"sen_lopez_ruzicka"'`, `"sen_lopez_ruzicka_sym"'`, `"sen_lopez_ruzicka_inst"'`, `"sen_lopez_ruzicka_inst2"'`, `"horiuchi"'`, `"stepwise"'`, `"numerical"`
 #' @param closeout logical. Do we handle closeout, or truncate at top age.
-#' @param opt logical, default `TRUE`. For sensitivity-based decomposition, shall we optimize the rate averaging to eliminate the decomposition residual?
-#' @param func A function specified by the user. This must be able to take the vectors \code{mx1} or \code{mx2} as its argument, and to return the value of the function. This `func` is only applied for `method` = c(`"stepwise"`, `"horiuchi"`).
+#' @param opt logical, default `TRUE`. For lifetable, numerical, and instantaneous sensitivity-based decomposition, shall we optimize the rate averaging to eliminate the decomposition residual?
 #' @param tol numeric, default `1e-10`. Tolerance parameter for rate averaging optimization.
 #' @param Num_Intervals numeric, default `FALSE`. The number of intervals to integrate over, which is used only for `method` = `"arriaga"` or the sensitvity methods of Arriaga.
 #' @param symmetrical logical value, default `FALSE`. This parameter is used for `method` = `"stepwise"` and shall we want to average the results of replacing 1 with 2 and 2 with 1?
@@ -29,7 +28,6 @@
 #' * `method` method selected by the user to apply the life-expectancy decomposition or sensitivity analysis.
 #' * `closeout` how the user have decide to handle closeout or truncate at top age.
 #' * `opt` for sensitivity process how to optimize
-#' * `func` function selected for estimate the life-expectancy decomposition and the sensitivity value.
 #' * `tol` level of tolerance.
 #' * `Num_Intervals` the number of intervals to integrate over.
 #' * `symmetrical` shall the user wants to average the results of replacing 1 with 2 and 2 with 1.
@@ -68,29 +66,33 @@
 #' mx1 <- a * exp(x * b)
 #' mx2 <- a/2 * exp(x * b)
 #'
-#' LEdecomp(mx1,mx2,age=x,sex1='t',method = "arriaga_inst")
+#' LEdecomp(mx1,mx2,age=x,sex1='t',method = "sen_arriaga_inst")
 #' @export
-LEdecomp <- function(mx1, mx2,
+LEdecomp <- function(mx1,
+                     mx2,
                      age,
-                     sex1 = 't', sex2 = sex1,
+                     sex1 = 't',
+                     sex2 = sex1,
                      method = c("lifetable",
                                 "arriaga", "arriaga_sym",
                                 "sen_arriaga", "sen_arriaga_sym",
                                 "sen_arriaga_inst", "sen_arriaga_inst2",
-                                "chandrasekaran_ii",
+                                "chandrasekaran_ii","chandrasekaran_iii_sym",
                                 "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
-                                "sen_chandrasekaran_ii_inst2",
-                                "chandrasekaran_iii",
+                                "sen_chandrasekaran_ii_inst2","sen_chandrasekaran_ii_sym",
+                                "chandrasekaran_iii","chandrasekaran_iii_sym",
                                 "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
-                                "sen_chandrasekaran_iii_inst2",
+                                "sen_chandrasekaran_iii_inst2","sen_chandrasekaran_iii_sym",
                                 "lopez_ruzicka", "lopez_ruzicka_sym",
                                 "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym",
                                 "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_inst2",
-                                "horiuchi",
-                                "stepwise", "numerical"),
-                     closeout = TRUE, opt = TRUE, func = FALSE,
-                     tol = 1e-10, Num_Intervals = FALSE,
-                     symmetrical = TRUE, direction = "up",
+                                "horiuchi", "stepwise", "numerical"),
+                     closeout = TRUE,
+                     opt = TRUE,
+                     tol = 1e-10,
+                     Num_Intervals = 20,
+                     symmetrical = TRUE,
+                     direction = "both",
                      perturb = 1e-6, ...){
 
   stopifnot(is.vector(mx1) | is.matrix(mx1))
@@ -101,485 +103,310 @@ LEdecomp <- function(mx1, mx2,
     warning("Arguments mx1, mx2, age, and sex1, need to be provided.")
   }
 
-  names_causes <- colnames(mx1)
+  # TR: we need a way to handle case where sex1 != sex2 i.e. a sex decomp,
+  # wherein a0 is handled differently for each sex. This will be a mini-
+  # recursion solution, i.e. once with male vs male, again with female vs female,
+  # then take the average. This is not optimal. What we'd really want is a way to
+  # include the Andreev-Kingkade parameters that are used, get their contributions,
+  # then add these into the m0 component. But that change would be knarly. An idea
+  # to simplify: let le function take a0 arg. Before calling le function, create a0,
+  # then decompose including this as parameter, and sum its contribution to m0.
+  if (sex1 != sex2){
+          # temporary solution for sex1 != sex2
+          d1 <- LEdecomp(mx1 = mx1,
+                         mx2 = mx2,
+                         age = age,
+                         sex1 = sex1,
+                         sex2 = sex1,
+                         method = method,
+                         closeout = closeout,
+                         opt = opt,
+                         tol = tol,
+                         Num_Intervals = Num_Intervals,
+                         symmetrical = symmetrical,
+                         direction = direction,
+                         perturb = perturb,
+                         ...)
+          d2 <- LEdecomp(mx1 = mx1,
+                         mx2 = mx2,
+                         age = age,
+                         sex1 = sex2,
+                         sex2 = sex2,
+                         method = method,
+                         closeout = closeout,
+                         opt = opt,
+                         tol = tol,
+                         Num_Intervals = Num_Intervals,
+                         symmetrical = symmetrical,
+                         direction = direction,
+                         perturb = perturb,
+                         ...)$LEdecomp
+          decomp <- (d1$LEdecomp + d2$LEdecomp) / 2
+          sen    <- (d1$sens + d2$sens) / 2
+          # TODO: how to handle output gathering for case of sex decomposition;
+          # possibly save the structure of d1 or d2, swapping in some means
+          # for some pars
+          out <- list("mx1" = mx1,
+                         "mx2" = mx2,
+                         "age" = age,
+                         "sex1" = sex1,
+                         "sex2" = sex2,
+                         "method" = method,
+                         "closeout" = closeout,
+                         "opt" = opt,
+                         "func" = func,
+                         "tol" = tol,
+                         "Num_Intervals" = Num_Intervals,
+                         "symmetrical" = symmetrical,
+                         "direction" = direction,
+                         "perturb" = perturb,
+                         "sens" = sen,
+                         "LEdecomp" = decomp)
+          class(out) <- "LEdecomp"
+          return(out)
+
+
+  } else {
+
+        }
 
   # handle dimensions
   deez_dims <- dim(mx1)
-  nages <- length(age)
-  nmx <- length(mx1)
+  nages     <- length(age)
+  # recall if mx1 is matrix length() still works as if dimensionless vector
+  nmx       <- length(mx1)
   if (nages < nmx){
     ncauses <- nmx / nages
     ncauses <- round(ncauses)
     stopifnot((ncauses * nages) == nmx)
     dim(mx1) <- c(nages,ncauses)
     dim(mx2) <- c(nages,ncauses)
+  } else {
+    ncauses <- NULL
   }
+  n_causes <- ifelse(exists(ncauses),ncauses,NULL)
+  deez_dims <- dim(mx1)
 
-  #if the user donot provide method, automatically,
-  #the standard version of arriage method will be executed
-  if(exists("method") == "FALSE"){
-    method = "arriaga"
-  }
-
+  # sort out method; defaults to first option: lifetable sensitivity method.
   # add optimization option.
   method <- tolower(method)
   method <- match.arg(method,
                       choices =
-                        c("lifetable",
-                          "arriaga", "arriaga_sym",
+                        c("lifetable", "arriaga", "arriaga_sym",
                           "sen_arriaga", "sen_arriaga_sym",
                           "sen_arriaga_inst", "sen_arriaga_inst2",
-                          "chandrasekaran_ii",
+                          "chandrasekaran_ii","chandrasekaran_ii_sym",
                           "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
-                          "sen_chandrasekaran_ii_inst2",
-                          "chandrasekaran_iii",
+                          "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_ii_sym",
+                          "chandrasekaran_iii","chandrasekaran_iii_sym",
                           "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
-                          "sen_chandrasekaran_iii_inst2",
+                          "sen_chandrasekaran_iii_inst2", "sen_chandrasekaran_iii_sym",
                           "lopez_ruzicka", "lopez_ruzicka_sym",
                           "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym",
                           "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_inst2",
-                          "horiuchi",
-                          "stepwise", "numerical"))
-  if(is.vector(mx1) & length(mx1) == length(age)){
-    if(method == "lifetable"){
-      mx <- (mx2+mx1)/2
-      sen <- sen_e0_mx_lt(mx = mx, age = x,
-                          sex = sex1, closeout = closeout)
+                          "horiuchi", "stepwise", "numerical"),
+                      several.ok = FALSE)
+  # assign generic decomp function name
+  dec_fun <- switch(method,
+                    "lifetable" = sen_e0_mx_lt,
+                    "arriaga" = arriaga,
+                    "arriaga_sym" = arriaga_sym,
+                    "sen_arriaga" = sen_arriaga,
+                    "sen_arriaga_sym" = sen_arriaga_sym,
+                    "sen_arriaga_inst" = sen_arriaga_instantaneous,
+                    "sen_arriaga_inst2" = sen_arriaga_instantaneous2,
+                    "chandrasekaran_ii" = chandrasekaran_II,
+                    "chandrasekaran_ii_sym" = chandrasekaran_II_sym,
+                    "sen_chandrasekaran_ii" = sen_chandrasekaran_II,
+                    "sen_chandrasekaran_ii_sym" = sen_chandrasekaran_II_sym,
+                    "sen_chandrasekaran_ii_inst" = sen_chandrasekaran_II_instantaneous,
+                    "sen_chandrasekaran_ii_inst2" = sen_chandrasekaran_II_instantaneous2,
+                    "chandrasekaran_iii"= chandrasekaran_III,
+                    "chandrasekaran_iii_sym" = chandrasekaran_III_sym,
+                    "sen_chandrasekaran_iii" = sen_chandrasekaran_III,
+                    "sen_chandrasekaran_iii_sym" = sen_chandrasekaran_III_sym,
+                    "sen_chandrasekaran_iii_inst" = sen_chandrasekaran_III_instantaneous,
+                    "sen_chandrasekaran_iii_inst2" = sen_chandrasekaran_III_instantaneous2,
+                    "lopez_ruzicka" = lopez_ruzicka,
+                    "lopez_ruzicka_sym" = lopez_ruzicka_sym,
+                    "sen_lopez_ruzicka" = sen_lopez_ruzicka,
+                    "sen_lopez_ruzicka_sym" = sen_lopez_ruzicka_sym,
+                    "sen_lopez_ruzicka_inst" = sen_lopez_ruzicka_instantaneous,
+                    "sen_lopez_ruzicka_inst2" = sen_lopez_ruzicka_instantaneous2,
+                    "numerical" = sen_num)
+  # ----------------------------------------------------------------- #
+  # method block for stepwise, numerical, horiuchi                    #
+  # should handle vector and matrix cases                             #
+  # ----------------------------------------------------------------- #
+  if (method %in% c("stepwise","horiuchi")){
 
-      decomp <- sen*(mx2 - mx1)
-
-    }else if(method == "arriaga"){
-      decomp <- arriaga(mx1 = mx1, mx2 = mx2,
-                        age = age,
-                        sex1 = sex1, sex2 = sex2,
-                        closeout = closeout)
-      sen <- NULL
-
-    }else if(method == "arriaga_sym"){
-      decomp <- arriaga_sym(mx1 = mx1, mx2 = mx2,
-                            age = age,
-                            sex1 = sex1, sex2 = sex2,
-                            closeout = closeout)
-      sen <- NULL
-
-    }else if(method == "sen_arriaga"){
-      prev <- sen_arriaga(mx1 = mx1, mx2 = mx2,
-                          age = age,
-                          sex1 = sex1, sex2 = sex2,
-                          closeout = closeout)
-
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "sen_arriaga_sym"){
-      prev <- sen_arriaga_sym(mx1 = mx1, mx2 = mx2,
-                              age = age,
-                              sex1 = sex1, sex2 = sex2,
-                              closeout = closeout)
-
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "sen_arriaga_inst"){
-      mx <- (mx1 + mx2)/2
-      sen <- sen_arriaga_instantaneous(mx, age = x,
-                                       perturb = perturb,
-                                       closeout = closeout)
-
-      decomp <- sen*(mx2 - mx1)
-
-    }else if(method == "sen_arriaga_inst2"){
-      mx <- (mx1 + mx2)/2
-      sen <- sen_arriaga_instantaneous2(mx, age = x,
-                                        perturb = perturb,
-                                        closeout = closeout)
-
-      decomp <- sen*(mx2 - mx1)
-
-
-    }else if(method == "chandrasekaran_ii"){
-      sen <- NULL
-      decomp <- chandrasekaran_II(mx1 = mx1, mx2 = mx2,
-                                  age = x,
-                                  sex1 = sex1, sex2 = sex2,
-                                  closeout = closeout)
-    }else if(method == "sen_chandrasekaran_ii"){
-      prev <- sen_chandrasekaran_II(mx1 = mx1, mx2 = mx2,
-                                    age = age,
-                                    sex1 = sex1, sex2 = sex2,
-                                    closeout = closeout)
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "sen_chandrasekaran_ii_inst"){
-      mx <- (mx1 + mx2)/2
-      prev <- sen_chandrasekaran_II_instantaneous(mx = mx, age = age,
-                                                  sex = sex1, closeout = closeout)
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "sen_chandrasekaran_ii_inst2"){
-      mx <- (mx1 + mx2)/2
-      prev <- sen_chandrasekaran_II_instantaneous2(mx = mx, age = age,
-                                                   sex = sex1, closeout = closeout)
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "chandrasekaran_iii"){
-      sen <- NULL
-      decomp <- chandrasekaran_III(mx1 = mx1, mx2 = mx2,
-                                   age = x,
-                                   sex1 = sex1, sex2 = sex2,
-                                   closeout = closeout)
-
-    }else if(method == "sen_chandrasekaran_iii"){
-      prev <- sen_chandrasekaran_III(mx1 = mx1, mx2 = mx2,
-                                     age = age,
-                                     sex1 = sex1, sex2 = sex2,
-                                     closeout = closeout)
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "sen_chandrasekaran_iii_inst"){
-      mx <- (mx1 + mx2)/2
-      prev <- sen_chandrasekaran_III_instantaneous(mx = mx, age = age,
-                                                   sex = sex1, closeout = closeout)
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "sen_chandrasekaran_iii_inst2"){
-      mx <- (mx1 + mx2)/2
-      prev <- sen_chandrasekaran_III_instantaneous2(mx = mx, age = age,
-                                                    sex = sex1, closeout = closeout)
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "lopez_ruzicka"){
-      sen <- NULL
-      decomp <- lopez_ruzicka(mx1 = mx1, mx2 = mx2,
-                              age = x,
-                              sex1 = sex1, sex2 = sex2,
-                              closeout = closeout)
-    }else if(method == "lopez_ruzicka_sym"){
-      sen <- NULL
-      decomp <- lopez_ruzicka_sym(mx1 = mx1, mx2 = mx2,
-                                  age = x,
-                                  sex1 = sex1, sex2 = sex2,
-                                  closeout = closeout)
-
-    }else if(method == "sen_lopez_ruzicka"){
-      prev <- sen_lopez_ruzicka(mx1 = mx1, mx2 = mx2,
-                                age = age,
-                                sex1 = sex1, sex2 = sex2,
-                                closeout = closeout)
-
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "sen_lopez_ruzicka_sym"){
-      prev <- sen_lopez_ruzicka_sym(mx1 = mx1, mx2 = mx2,
-                                    age = age,
-                                    sex1 = sex1, sex2 = sex2,
-                                    closeout = closeout)
-
-      sen <- prev
-      decomp <- prev*(mx2 - mx1)
-
-    }else if(method == "sen_lopez_ruzicka_inst"){
-      mx <- (mx1 + mx2)/2
-      sen <- sen_lopez_ruzicka_instantaneous(mx, age = x,
-                                             perturb = perturb,
-                                             closeout = closeout)
-
-      decomp <- sen*(mx2 - mx1)
-
-    }else if(method == "sen_lopez_ruzicka_inst2"){
-      mx <- (mx1 + mx2)/2
-      sen <- sen_lopez_ruzicka_instantaneous2(mx, age = x,
-                                              perturb = perturb,
-                                              closeout = closeout)
-
-      decomp <- sen*(mx2 - mx1)
-
-    }else if(method == "horiuchi"){
-
-      if(Num_Intervals == "FALSE"){
-        stop("The object 'Num_Intervals' must be provided and have to be a number.")
-      } else if(!is.numeric(Num_Intervals)){
-        stop("'Num_Intervals' has to be a numeric variable.")
+    mx_to_e0_vec <- function(mx,n_causes, age, sex, closeout,...){
+      if (!is.null(n_causes)){
+        dim(mx) <- c(length(mx) / n_causes, n_causes)
+        mx <- rowSums(mx)
       }
-      if(is.function(func) == "FALSE"){
-        stop("The object 'func' must be provided and have to be a function")
-      }
-      sen <- NULL
-      decomp <- DemoDecomp::horiuchi(func = func,
-                                     pars1 = mx1, pars2 = mx2,
-                                     age = age,
-                                     N = Num_Intervals)
-
-    }else if(method == "stepwise"){
-      if(symmetrical == "FALSE"){
-        stop("The object 'symmetrical' must be 'TRUE'.")
-      }
-      if(!(direction %in% c("up", "both", "down"))){
-        stop("The object 'direction' must be 'up', 'both' or 'down', please modify it." )
-      }
-      if(is.function(func) == "FALSE"){
-        stop("The object 'func' must be provided and have to be a function")
-      }
-      if(is.vector(mx1) == TRUE){
-        dims <- c(1, length(mx1))
-      }else if(is.matrix(mx1) == TRUE | is.data.frame(mx1) == TRUE){
-        dims <- dim(mx1)
-      }
-
-      sen <- NULL
-      decomp <- DemoDecomp::stepwise_replacement(func = func,
-                                                 pars1 = mx1, pars2 = mx2,
-                                                 symmetrical = symmetrical,
-                                                 direction = direction,
-                                                 age = age, ...)
-
-    }else if(method == "numerical"){
-      #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      #don't work
-      mx <- (mx1 + mx2)/2
-      sen <- sen_num(mx, age=age, sex=sex1, closeout=TRUE, ...)
-      decomp <- sen*(mx2 - mx1)
-
+      mx_to_e0(mx, age = age, sex = sex, closeout = closeout)
     }
-  }else if(is.matrix(mx1) & all(dim(mx1) == dim(mx2))){
-    colnames(mx1) <- names_causes
-    rownames(mx1) <- age
-
-    mx1_all <- rowSums(mx1)
-    mx2_all <- rowSums(mx2)
-    mx1_causes <- mx1
-    mx2_causes <- mx2
-    colnames(mx1_causes) <- colnames(mx1)
-    delta_causes <- (mx2_causes - mx1_causes)
-    delta_all <- (mx2_all - mx1_all)
-
-    if(method == "lifetable"){
-      #REVISAR!!!!!!!!!!!
-      mx <- (mx2_all + mx1_all)/2
-      sen <- sen_e0_mx_lt(mx = mx, age = x,
-                          sex = sex1, closeout = closeout)
-
-      decomp <- sen*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "arriaga" | method == "sen_arriaga"){
-      sen <- sen_arriaga(mx1 = mx1_all, mx2 = mx2_all,
-                         age = age,
-                         sex1 = sex1, sex2 = sex2,
-                         closeout = closeout)
-
-      decomp <- sen*delta_causes
-      if(sum(abs(delta_all) < tol) > 1){
-        warning("There is at least one age with no differences in the cause-of-death between two considered populations.")
+    if (method == "stepwise"){
+      if (!is.null(n_causes)){
+        cat("\nFor the case of multiple causes of death and the stepwise replacement algorithm, please note we don't arrange all possible cause-orderings for the decomposition. This method may therefore give results inconsistent with other methods.\n")
       }
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "arriaga_sym" | method == "sen_arriaga_sym"){
-      sen <- sen_arriaga_sym(mx1 = mx1_all, mx2 = mx2_all,
-                             age = age,
-                             sex1 = sex1, sex2 = sex2,
-                             closeout = closeout)
-      decomp <- sen*delta_causes
-      if(sum(abs(delta_all) < tol) > 1){
-        warning("There is at least one age with no differences in the cause-of-death between two considered populations.")
-      }
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "sen_arriaga_inst"){
-      mx <- (mx1_all + mx2_all)/2
-      sen <- sen_arriaga_instantaneous(mx, age = x,
-                                       perturb = perturb,
-                                       closeout = closeout)
-
-      decomp <- sen*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "sen_arriaga_inst2"){
-      mx <- (mx1_all + mx2_all)/2
-      sen <- sen_arriaga_instantaneous2(mx, age = x,
-                                        perturb = perturb,
-                                        closeout = closeout)
-
-      decomp <- sen*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "chandrasekaran_ii" | method == "sen_chandrasekaran_ii"){
-      sen <- sen_chandrasekaran_II(mx1 = mx1_all, mx2 = mx2_all,
-                                   age = x,
-                                   sex1 = sex1, sex2 = sex2,
-                                   closeout = closeout)
-      decomp <- sen*delta_causes
-      if(sum(abs(delta_all) < tol) > 1){
-        warning("There is at least one age with no differences in the cause-of-death between two considered populations.")
-      }
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "sen_chandrasekaran_ii_inst"){
-      mx <- (mx1_all + mx2_all)/2
-      prev <- sen_chandrasekaran_II_instantaneous(mx = mx, age = age,
-                                                  sex = sex1, closeout = closeout)
-      sen <- prev
-      decomp <- prev*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "sen_chandrasekaran_ii_inst2"){
-      mx <- (mx1_all + mx2_all)/2
-      prev <- sen_chandrasekaran_II_instantaneous2(mx = mx, age = age,
-                                                   sex = sex1, closeout = closeout)
-      sen <- prev
-      decomp <- prev*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "chandrasekaran_iii" | method == "sen_chandrasekaran_iii"){
-      sen <- sen_chandrasekaran_III(mx1 = mx1_all, mx2 = mx2_all,
-                                    age = x,
-                                    sex1 = sex1, sex2 = sex2,
-                                    closeout = closeout)
-      decomp <- sen*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-      if(sum(abs(delta_all) < tol) > 1){
-        warning("There is at least one age with no differences in the cause-of-death between two considered populations.")
-      }
-
-    }else if(method == "sen_chandrasekaran_iii_inst"){
-      mx <- (mx1_all + mx2_all)/2
-      prev <- sen_chandrasekaran_III_instantaneous(mx = mx, age = age,
-                                                   sex = sex1, closeout = closeout)
-      sen <- prev
-      decomp <- prev*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "sen_chandrasekaran_iii_inst2"){
-      mx <- (mx1_all + mx2_all)/2
-      prev <- sen_chandrasekaran_III_instantaneous2(mx = mx, age = age,
-                                                    sex = sex1, closeout = closeout)
-      sen <- prev
-      decomp <- prev*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "lopez_ruzicka" | method == "sen_lopez_ruzicka"){
-      prev <- sen_lopez_ruzicka(mx1 = mx1_all, mx2 = mx2_all,
-                                age = age,
-                                sex1 = sex1, sex2 = sex2,
-                                closeout = closeout)
-
-      sen <- prev
-      decomp <- prev*delta_causes
-      if(sum(abs(delta_all) < tol) > 1){
-        warning("There is at least one age with no differences in the cause-of-death between two considered populations.")
-      }
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "lopez_ruzicka_sym" | method == "sen_lopez_ruzicka_sym"){
-      prev <- sen_lopez_ruzicka_sym(mx1 = mx1_all, mx2 = mx2_all,
-                                    age = age,
-                                    sex1 = sex1, sex2 = sex2,
-                                    closeout = closeout)
-
-      sen <- prev
-      decomp <- prev*delta_causes
-      if(sum(abs(delta_all) < tol) > 1){
-        warning("There is at least one age with no differences in the cause-of-death between two considered populations.")
-      }
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "sen_lopez_ruzicka_inst"){
-      mx <- (mx1_all + mx2_all)/2
-      sen <- sen_lopez_ruzicka_instantaneous(mx, age = x,
-                                             perturb = perturb,
-                                             closeout = closeout)
-
-      decomp <- sen*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "sen_lopez_ruzicka_inst2"){
-      mx <- (mx1_all + mx2_all)/2
-      sen <- sen_lopez_ruzicka_instantaneous2(mx, age = x,
-                                              perturb = perturb,
-                                              closeout = closeout)
-
-      decomp <- sen*delta_causes
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "horiuchi"){
-    #!!!!!!!!!!!!!!!!!!! REPASAR
-      if(Num_Intervals == "FALSE"){
-        stop("The object 'Num_Intervals' must be provided and have to be a number.")
-      } else if(!is.numeric(Num_Intervals)){
-        stop("'Num_Intervals' has to be a numeric variable.")
-      }
-      if(is.function(func) == "FALSE"){
-        stop("The object 'func' must be provided and have to be a function")
-      }
-      sen <- NULL
-      decomp <- DemoDecomp::horiuchi(func = func,
-                                     pars1 = mx1_all, pars2 = mx2_all,
-                                     age = age,
-                                     N = Num_Intervals)
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "stepwise"){
-      #!!!!!!!!!!!!!!!!!!! REPASAR
-      if(symmetrical == "FALSE"){
-        stop("The object 'symmetrical' must be 'TRUE'.")
-      }
-      if(!(direction %in% c("up", "both", "down"))){
-        stop("The object 'direction' must be 'up', 'both' or 'down', please modify it." )
-      }
-      if(is.function(func) == "FALSE"){
-        stop("The object 'func' must be provided and have to be a function")
-      }
-      if(is.vector(mx1) == TRUE){
-        dims <- c(1, length(mx1))
-      }else if(is.matrix(mx1) == TRUE | is.data.frame(mx1) == TRUE){
-        dims <- dim(mx1)
-      }
-
-      sen <- NULL
-      decomp <- DemoDecomp::stepwise_replacement(func = func,
-                                                 pars1 = mx1, pars2 = mx2,
-                                                 symmetrical = symmetrical,
-                                                 direction = direction,
-                                                 age = age, ...)
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
-    }else if(method == "numerical"){
-      #!!!!!!!!!!!!!!!!!!! REPASAR
-      #don't work
-      mx <- (mx1_all + mx2_all)/2
-      sen <- sen_num(mx, age=age, sex=sex1, closeout=TRUE, ...)
-      decomp <- sen*delta_causes
-
-      colnames(decomp) <- colnames(mx1_causes)
-      rownames(decomp) <- age
-
+      decomp <- DemoDecomp::stepwise_replacement(
+                                       func = mx_to_e0_vec,
+                                       pars1 = c(mx1),
+                                       pars2 = c(mx2),
+                                       symmetrical = symmetrical,
+                                       direction = direction,
+                                       n_causes = n_causes,
+                                       age = age,
+                                       sex = sex1, # see current sex solution above
+                                       ...)
     }
+    if (method == "horiuchi"){
+      decomp <- DemoDecomp::horiuchi(func = mx_to_e0_vec,
+                                     pars1 = c(mx1), pars2 = c(mx2),
+                                     age = age,
+                                     n_causes = n_causes,
+                                     sex = sex1, # see current sex solution above
+                                     N = Num_Intervals,
+                                     ...)
+    }
+    dim(decomp) <- deez_dims
+    delta <- rowSums(as.matrix(mx2)) - rowSums(as.matrix(mx1))
+    sen   <- rowSums(as.matrix(decomp)) / delta
   }
+  # ----------------------------------------------------------------- #
+  # handle all "direct" methods together                              #
+  # ----------------------------------------------------------------- #
+  if (method %in% c("arriaga",
+                    "arriaga_sym",
+                    "chandrasekaran_ii",
+                    "chandrasekaran_ii_sym",
+                    "chandrasekaran_iii",
+                    "chandrasekaran_iii_sym",
+                    "lopez_ruzicka",
+                    "lopez_ruzicka_sym")){
+    # handle causes per Preston Box 4.3 in this case
+    if (!is.null(n_causes)){
+      mx1_all     <- rowSums(mx1)
+      mx2_all     <- rowSums(mx2)
+      delta_all   <- mx2_all - mx1_all
+      delta_split <- (mx2 - mx1) / delta
+      decomp_all  <- dec_fun(mx1 = mx1_all,
+                             mx2 = mx2_all,
+                             age = age,
+                             sex1 = sex1,
+                             sex2 = sex1, # see diff sex solution at start
+                             closeout = closeout)
+      decomp      <- delta_split * decomp_all
+      sen         <- decomp_all / delta_all
+    } else {
+      decomp  <- dec_fun(mx1 = mx1,
+                         mx2 = mx2,
+                         age = age,
+                         sex1 = sex1,
+                         sex2 = sex1, # see diff sex solution at start
+                         closeout = closeout)
+      delta <- mx2 - mx1
+      sen   <- decomp / delta
+    }
+
+  }
+  # ----------------------------------------------------------------- #
+  # sensitivity methods requiring an avg mx; these are instantaneous  #
+  # ones plus the lifetable method;                                   #
+  # TR: really all of these could use DemoDecomp::ltre(), thereby     #
+  # using Num_intervals argument                                      #
+  # ----------------------------------------------------------------- #
+  if (method %in% c("lifetable", "sen_arriaga_inst", "sen_arriaga_inst2",
+                    "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
+                    "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_iii",
+                    "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_iii_inst2",
+                    "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_inst2","numerical")){
+    # First, either we optimize or we insist on the midpoint between mx1 and mx2
+    # (1) yes, we optimize the averaging
+    if (opt){
+      # second case: we have causes of death
+      if (!is.null(n_causes)){
+        mx1_all <- rowSums(mx1)
+        mx2_all <- rowSums(mx2)
+        sen     <- sen_min(mx1 = mx1_all,
+                           mx2 = mx2_all,
+                           age = age,
+                           sex1 = sex1,
+                           sex2 = sex1, # see diff sex solution at start
+                           closeout = closeout,
+                           sen_fun = dec_fun,
+                           tol = tol)
+        delta   <- mx2 - mx1
+      } else {
+        # all-cause mortality only
+        sen     <- sen_min(mx1 = mx1,
+                           mx2 = mx2,
+                           age = age,
+                           sex1 = sex1,
+                           sex2 = sex1, # see diff sex solution at start
+                           closeout = closeout,
+                           sen_fun = dec_fun,
+                           tol = tol)
+        delta   <- mx2 - mx1
+      }
+    } else {
+      # (2) we don't optimize, i.e. we take average mx
+      if (!is.null(n_causes)){
+        mx_avg <- (rowSums(mx2) + rowSums(mx1)) / 2
+      } else {
+        mx_avg <- (mx1 + mx2) / 2
+      }
+        delta  <- mx2 - mx1
+        sen <- dec_fun(mx = mx_avg,
+                       age = age,
+                       sex = sex1,
+                       closeout = closeout)
+
+
+    }
+    # all four of these cases back out the decomp in the same way;
+    decomp <- sen * delta
+  }
+  # ----------------------------------------------------------------- #
+  # sensitivity methods using both mx1 and mx2,                       #
+  # basically all are conversions of direct methods                   #
+  # ----------------------------------------------------------------- #
+  if (method %in% c("sen_arriaga","sen_arriaga_sym",
+                    "sen_chandrasekaran_ii","sen_chandrasekaran_iii",
+                    "sen_chandrasekaran_ii_sym","sen_chandrasekaran_iii_sym",
+                    "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym")){
+    # this might have dims
+    delta  <- mx2 - mx1
+    # first block, causes of death
+    if (!is.null(n_causes)){
+      mx1_all     <- rowSums(mx1)
+      mx2_all     <- rowSums(mx2)
+      # For these ones, we don't have a choice to optimize; that only works
+      # for sensitivity functions where we specify a single rate schedule
+      # based on pre-averaging. Perhaps there is a way to imagine these
+      # functions with averaging in mind, but not currently set up that way
+      sen         <- dec_fun(mx1 = mx1_all,
+                             mx2 = mx2_all,
+                             age = age,
+                             sex1 = sex1,
+                             sex2 = sex1, # see diff sex solution at start
+                             closeout = closeout)
+    } else {
+      # second block, all cause mort was given
+      sen         <- dec_fun(mx1 = mx1,
+                             mx2 = mx2,
+                             age = age,
+                             sex1 = sex1,
+                             sex2 = sex1, # see diff sex solution at start
+                             closeout = closeout)
+    }
+    # this is either a vector or a matrix
+    decomp <- sen * delta
+  }
+
+  # presumably we've used all options by now
 
   return <- list("mx1" = mx1,
                  "mx2" = mx2,
@@ -589,7 +416,7 @@ LEdecomp <- function(mx1, mx2,
                  "method" = method,
                  "closeout" = closeout,
                  "opt" = opt,
-                 "func" = func,
+                 "func" = dec_fun,
                  "tol" = tol,
                  "Num_Intervals" = Num_Intervals,
                  "symmetrical" = symmetrical,
@@ -600,10 +427,6 @@ LEdecomp <- function(mx1, mx2,
   class(return) <- "LEdecomp"
   return
 
-}
-
-sen_num <- function(mx,age,sex='t',closeout=TRUE,...){
-  numDeriv::grad(mx_to_e0,mx,age=age,sex=sex,closeout=closeout,...)
 }
 
 #' @export
