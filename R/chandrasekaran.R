@@ -118,7 +118,7 @@ chandrasekaran_II <- function(mx1, mx2,
 
   approachII
 }
-
+# Narrator "this method should already be symmetrical" realized later.
 sen_chandrasekaran_II_sym <- function(mx1,
                                       mx2,
                                       age = 0:(length(mx1) - 1),
@@ -261,6 +261,7 @@ chandrasekaran_III <- function(mx1, mx2,
   total_effect
 }
 
+# Narrator "this method should already be symmetrical" realized later.
 chandrasekaran_III_sym <- function(mx1,
                                   mx2,
                                   age,
