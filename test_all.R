@@ -22,7 +22,7 @@ rowSums(mx2_c) - mx2
 library(DemoTools)
 library(dplyr)
 library(data.table)
-
+devtools::load_all()
 #Discrete Life Expectancy -- ALL CAUSES
 mx_to_e0(mx2,age=x,sex="t") - mx_to_e0(mx1,age=x,sex="t")  # 9.501863
 
@@ -43,7 +43,12 @@ methods <- c(
 
 # default settings:
 D_defaults <- rep(0,length(methods))
-      names(D_defaults) <-   methods
+names(D_defaults) <-   methods
 for (m in methods){
-  D_defaults[[m]] <- LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method=m,opt=FALSE)
+  D_defaults[[m]] <- LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method=m,opt=T)$LEdecomp |> sum()
 }
+barplot(sort(D_defaults),horiz=TRUE,las=1)
+
+# are arriaga and lopez ruzicka equivalent?
+LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="arriaga",opt=F)$LEdecomp -
+  LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="lopez_ruzicka",opt=F)$LEdecomp
