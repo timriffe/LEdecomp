@@ -166,9 +166,7 @@ LEdecomp <- function(mx1,
           return(out)
 
 
-  } else {
-
-        }
+  }
 
   # handle dimensions
   deez_dims <- dim(mx1)
@@ -176,15 +174,15 @@ LEdecomp <- function(mx1,
   # recall if mx1 is matrix length() still works as if dimensionless vector
   nmx       <- length(mx1)
   if (nages < nmx){
-    ncauses <- nmx / nages
-    ncauses <- round(ncauses)
-    stopifnot((ncauses * nages) == nmx)
-    dim(mx1) <- c(nages,ncauses)
-    dim(mx2) <- c(nages,ncauses)
+    n_causes <- nmx / nages
+    n_causes <- round(n_causes)
+    stopifnot((n_causes * nages) == nmx)
+    dim(mx1) <- c(nages,n_causes)
+    dim(mx2) <- c(nages,n_causes)
   } else {
-    ncauses <- NULL
+    n_causes <- NULL
   }
-  n_causes <- ifelse(exists(ncauses),ncauses,NULL)
+
   deez_dims <- dim(mx1)
 
   # sort out method; defaults to first option: lifetable sensitivity method.
@@ -260,6 +258,7 @@ LEdecomp <- function(mx1,
                                        n_causes = n_causes,
                                        age = age,
                                        sex = sex1, # see current sex solution above
+                                       closeout = closeout,
                                        ...)
     }
     if (method == "horiuchi"){
@@ -269,6 +268,7 @@ LEdecomp <- function(mx1,
                                      n_causes = n_causes,
                                      sex = sex1, # see current sex solution above
                                      N = Num_Intervals,
+                                     closeout = closeout,
                                      ...)
     }
     dim(decomp) <- deez_dims
@@ -319,8 +319,8 @@ LEdecomp <- function(mx1,
   # using Num_intervals argument                                      #
   # ----------------------------------------------------------------- #
   if (method %in% c("lifetable", "sen_arriaga_inst", "sen_arriaga_inst2",
-                    "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
-                    "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_iii",
+                    "sen_chandrasekaran_ii_inst",
+                    "sen_chandrasekaran_ii_inst2",
                     "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_iii_inst2",
                     "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_inst2","numerical")){
     # First, either we optimize or we insist on the midpoint between mx1 and mx2
@@ -376,7 +376,8 @@ LEdecomp <- function(mx1,
   if (method %in% c("sen_arriaga","sen_arriaga_sym",
                     "sen_chandrasekaran_ii","sen_chandrasekaran_iii",
                     "sen_chandrasekaran_ii_sym","sen_chandrasekaran_iii_sym",
-                    "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym")){
+                    "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym",
+                    "sen_chandrasekaran_ii","sen_chandrasekaran_iii")){
     # this might have dims
     delta  <- mx2 - mx1
     # first block, causes of death

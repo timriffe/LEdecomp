@@ -113,7 +113,8 @@ chandrasekaran_II <- function(mx1, mx2,
   # *_next values close with 0s)
   approachII <- (interaction_effect_deferred + interaction_effect_forwarded)/2
 
-  approachII[length(ax1)] <- ((ex2[length(ax1)] - ex1[length(ax1)]) * (lx2[length(ax1)] + lx1[length(ax1)])) / 2
+  # TR: this line was redundant
+  # approachII[length(ax1)] <- ((ex2[length(ax1)] - ex1[length(ax1)]) * (lx2[length(ax1)] + lx1[length(ax1)])) / 2
 
   approachII
 }
@@ -252,8 +253,12 @@ chandrasekaran_III <- function(mx1, mx2,
   # It must be equal to (main_effect + operative_effect)/2
   exclusive_effect <- (main_effect + operative_effect)/2
 
-  exclusive_effect
+  # eq 1.8
+  interaction_effect <- (ex2_next - ex1_next) * (((lx1*lx2_next)/lx2 + (lx2*lx1_next)/lx1) -
+                                                   (lx2_next + lx1_next))/2
 
+  total_effect <- exclusive_effect + interaction_effect
+  total_effect
 }
 
 chandrasekaran_III_sym <- function(mx1,
