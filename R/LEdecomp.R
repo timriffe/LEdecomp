@@ -290,7 +290,7 @@ LEdecomp <- function(mx1,
     if (!is.null(n_causes)){
       mx1_all     <- rowSums(mx1)
       mx2_all     <- rowSums(mx2)
-      delta_all   <- mx2_all - mx1_all
+      delta   <- mx2_all - mx1_all
       delta_split <- (mx2 - mx1) / delta
       decomp_all  <- dec_fun(mx1 = mx1_all,
                              mx2 = mx2_all,
@@ -299,7 +299,16 @@ LEdecomp <- function(mx1,
                              sex2 = sex1, # see diff sex solution at start
                              closeout = closeout)
       decomp      <- delta_split * decomp_all
-      sen         <- decomp_all / delta_all
+      sen         <- decomp_all / delta
+      # Warn if we note unstable ratio (denom close to 0)
+      if (any(abs(delta)<1e6)){
+        cat("\nPlease check results: You have at least one all-cause rate difference < 1e-6, which can make cause partitioning of results unstable. You should compare using a sensitivity-based method or similar (lifetable, sen_*, horiuchi, stepwise\n")
+      }
+      # Warn if causes appear to be explaining > 3x the total age effect
+      if (any(rowSums(abs(decomp))/abs(decomp) > 3)){
+        cat("\nPlease check results: You have at least one age where the absolute contributions from causes are > 3x the total age contribution. You should compare using a sensitivity-based method or similar (lifetable, sen_*, horiuchi, stepwise\n")
+      }
+
     } else {
       decomp  <- dec_fun(mx1 = mx1,
                          mx2 = mx2,
@@ -368,6 +377,20 @@ LEdecomp <- function(mx1,
     }
     # all four of these cases back out the decomp in the same way;
     decomp <- sen * delta
+
+    Delta <-
+      mx_to_e0(mx2,
+               age = age,
+               sex = sex1,
+               closeout = closeout) -
+      mx_to_e0(mx1, age = age,
+               sex = sex1,
+               closeout = closeout)
+    if (abs(sum(decomp) - Delta) > .1){
+      if (opt){
+        cat("\nYou used a sensitivity-based method (",method,") but still have a decomposition residual of",round(sum(decomp) - Delta,3),". Consider comparing with other methods\n")
+      }
+    }
   }
   # ----------------------------------------------------------------- #
   # sensitivity methods using both mx1 and mx2,                       #
