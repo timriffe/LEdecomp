@@ -62,21 +62,23 @@ LEdecomp(
 \value{
 A list with class \code{"LEdecomp"} including different component in the Life Expectancy decomposition method:
 \itemize{
-\item \code{mx1} age-structured mortality rates for population 1, provided by the user.
-\item \code{mx2} age-structured mortality rates for population 2, provided by the user.
-\item \code{age} age, integer. lower bound of each age group,  provided by the user.
-\item \code{sex1} gender selected for first population, provided by the user.
-\item \code{sex2} gender selected for second population, provided by the user.
-\item \code{method} method selected by the user to apply the life-expectancy decomposition or sensitivity analysis.
-\item \code{closeout} how the user have decide to handle closeout or truncate at top age.
-\item \code{opt} for sensitivity process how to optimize
-\item \code{tol} level of tolerance.
-\item \code{Num_Intervals} the number of intervals to integrate over.
-\item \code{symmetrical} shall the user wants to average the results of replacing 1 with 2 and 2 with 1.
-\item \code{direction} ----
-\item \code{perturb} perturbation value that is a numeric constant, and a very small number.
+\item \code{mx1} numerical. Age-structured mortality rates for population 1.
+\item \code{mx2} numerical. Age-structured mortality rates for population 2.
+\item \code{age} integer. Lower bound of each age group, provided by the user. Single ages only.
+\item \code{sex1} character. One of \code{"m"} (male) , \code{"f"} (female),\code{"t"} (total). Sex of first population. This affects only infant mortality.
+\item \code{sex2} character. One of \code{"m"}, \code{"f"},\code{"t"}. Sex of second population. This affects only infant mortality.
+\item \code{method} character. Method selected by the user to apply the life-expectancy decomposition or sensitivity analysis.
+\item \code{closeout} logical. Shall we close out ax at the last age using inverse of mx (default TRUE), or assume a closed final age group?
+\item \code{opt} logical. For certain sensitivity methods, shall we optimize the weighting of mortality rates at which to evaluate the sensitivity? Default TRUE
+\item \code{tol} numerical. level of tolerance when optimizing sensitivity methods. Default \code{1e-10}.
+\item \code{Num_Intervals} integer. For horiuchi method only. The number of intervals to discretize the method over.
+\item \code{symmetrical} logical. for stepwise replacement algorithm only, do we average results of decomposing 1 vs 2 and 2 vs 1?
+\item \code{direction} character. For stepwise replacement algorithm only, up age, down age, or the average of both?
+\item \code{perturb} numerical. Perturbation value that is a numeric constant, and a very small number.
 \item \code{sens} a vector/matrix of the sensitivity life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
-\item \code{LEdecomp} a vector/matrix of the life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
+\item \code{LE1} numerical. LE calculated from \code{mx1}.
+\item \code{LE1} numerical. LE calculated from \code{mx2}.
+\item \code{LEdecomp} numerical. a vector/matrix of the life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
 }
 }
 \description{

@@ -20,21 +20,23 @@
 #' @param \dots optional arguments passed to `numDeriv::grad()`
 #'
 #' @return A list with class \code{"LEdecomp"} including different component in the Life Expectancy decomposition method:
-#' * `mx1` age-structured mortality rates for population 1, provided by the user.
-#' * `mx2` age-structured mortality rates for population 2, provided by the user.
-#' * `age` age, integer. lower bound of each age group,  provided by the user.
-#' * `sex1` gender selected for first population, provided by the user.
-#' * `sex2` gender selected for second population, provided by the user.
-#' * `method` method selected by the user to apply the life-expectancy decomposition or sensitivity analysis.
-#' * `closeout` how the user have decide to handle closeout or truncate at top age.
-#' * `opt` for sensitivity process how to optimize
-#' * `tol` level of tolerance.
-#' * `Num_Intervals` the number of intervals to integrate over.
-#' * `symmetrical` shall the user wants to average the results of replacing 1 with 2 and 2 with 1.
-#' * `direction` ----
-#' * `perturb` perturbation value that is a numeric constant, and a very small number.
+#' * `mx1` numerical. Age-structured mortality rates for population 1.
+#' * `mx2` numerical. Age-structured mortality rates for population 2.
+#' * `age` integer. Lower bound of each age group, provided by the user. Single ages only.
+#' * `sex1` character. One of `"m"` (male) , `"f"` (female),`"t"` (total). Sex of first population. This affects only infant mortality.
+#' * `sex2` character. One of `"m"`, `"f"`,`"t"`. Sex of second population. This affects only infant mortality.
+#' * `method` character. Method selected by the user to apply the life-expectancy decomposition or sensitivity analysis.
+#' * `closeout` logical. Shall we close out ax at the last age using inverse of mx (default TRUE), or assume a closed final age group?
+#' * `opt` logical. For certain sensitivity methods, shall we optimize the weighting of mortality rates at which to evaluate the sensitivity? Default TRUE
+#' * `tol` numerical. level of tolerance when optimizing sensitivity methods. Default `1e-10`.
+#' * `Num_Intervals` integer. For horiuchi method only. The number of intervals to discretize the method over.
+#' * `symmetrical` logical. for stepwise replacement algorithm only, do we average results of decomposing 1 vs 2 and 2 vs 1?
+#' * `direction` character. For stepwise replacement algorithm only, up age, down age, or the average of both?
+#' * `perturb` numerical. Perturbation value that is a numeric constant, and a very small number.
 #' * `sens` a vector/matrix of the sensitivity life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
-#' * `LEdecomp` a vector/matrix of the life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
+#' * `LE1` numerical. LE calculated from `mx1`.
+#' * `LE1` numerical. LE calculated from `mx2`.
+#' * `LEdecomp` numerical. a vector/matrix of the life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
 #'
 #' @seealso [LEdecomp::sen_e0_mx_lt()],[LEdecomp::arriaga()],[LEdecomp::arriaga_sym()],
 #' [LEdecomp::sen_arriaga()], [LEdecomp::sen_arriaga_sym()]
@@ -134,25 +136,33 @@ LEdecomp <- function(mx1,
                          ...)$LEdecomp
           decomp <- (d1$LEdecomp + d2$LEdecomp) / 2
           sen    <- (d1$sens + d2$sens) / 2
-          # TODO: how to handle output gathering for case of sex decomposition;
-          # possibly save the structure of d1 or d2, swapping in some means
-          # for some pars
+          #
+          LE2 <- mx_to_e0(rowSums(as.matrix(mx2)),
+                          age = age,
+                          sex = sex1,
+                          closeout = closeout)
+          LE1 <- mx_to_e0(rowSums(as.matrix(mx1)),
+                          age = age,
+                          sex = sex1,
+                          closeout = closeout)
           out <- list("mx1" = mx1,
-                         "mx2" = mx2,
-                         "age" = age,
-                         "sex1" = sex1,
-                         "sex2" = sex2,
-                         "method" = method,
-                         "func" = dec_fun,
-                         "closeout" = closeout,
-                         "opt" = opt,
-                         "tol" = tol,
-                         "Num_Intervals" = Num_Intervals,
-                         "symmetrical" = symmetrical,
-                         "direction" = direction,
-                         "perturb" = perturb,
-                         "sens" = sen,
-                         "LEdecomp" = decomp)
+                      "mx2" = mx2,
+                      "age" = age,
+                      "sex1" = sex1,
+                      "sex2" = sex2,
+                      "method" = method,
+                      "func" = dec_fun,
+                      "closeout" = closeout,
+                      "opt" = opt,
+                      "tol" = tol,
+                      "Num_Intervals" = Num_Intervals,
+                      "symmetrical" = symmetrical,
+                      "direction" = direction,
+                      "perturb" = perturb,
+                      "sens" = sen,
+                      "LE1" = LE1,
+                      "LE2" = LE2,
+                      "LEdecomp" = decomp)
           class(out) <- "LEdecomp"
           return(out)
 
@@ -425,25 +435,35 @@ LEdecomp <- function(mx1,
   }
 
   # presumably we've used all options by now
+  LE2 <- mx_to_e0(rowSums(as.matrix(mx2)),
+                  age = age,
+                  sex = sex1,
+                  closeout = closeout)
+  LE1 <- mx_to_e0(rowSums(as.matrix(mx1)),
+                  age = age,
+                  sex = sex1,
+                  closeout = closeout)
 
-  return <- list("mx1" = mx1,
-                 "mx2" = mx2,
-                 "age" = age,
-                 "sex1" = sex1,
-                 "sex2" = sex2,
-                 "method" = method,
-                 "func" = dec_fun,
-                 "closeout" = closeout,
-                 "opt" = opt,
-                 "tol" = tol,
-                 "Num_Intervals" = Num_Intervals,
-                 "symmetrical" = symmetrical,
-                 "direction" = direction,
-                 "perturb" = perturb,
-                 "sens" = sen,
-                 "LEdecomp" = decomp)
-  class(return) <- "LEdecomp"
-  return
+  out <- list("mx1" = mx1,
+              "mx2" = mx2,
+              "age" = age,
+              "sex1" = sex1,
+              "sex2" = sex2,
+              "method" = method,
+              "func" = dec_fun,
+              "closeout" = closeout,
+              "opt" = opt,
+              "tol" = tol,
+              "Num_Intervals" = Num_Intervals,
+              "symmetrical" = symmetrical,
+              "direction" = direction,
+              "perturb" = perturb,
+              "sens" = sen,
+              "LE1" = LE1,
+              "LE2" = LE2,
+              "LEdecomp" = decomp)
+  class(out) <- "LEdecomp"
+  out
 
 }
 
@@ -458,24 +478,22 @@ print.LEdecomp <- function(x, ...) {
   }
 
   if(!is.matrix(x$LEdecomp)){
-    if(x$method == "arriaga" | x$method == "arriaga_sym" |
-       x$method == "chandrasekaran_ii" | x$method == "chandrasekaran_iii" |
-       x$method == "lopez_ruzicka" | x$method == "lopez_ruzicka_sym" |
-       x$method == "horiuchi" | x$method == "stepwise" | x$method == "numerical"){
+    if(x$method %in% c("arriaga", "arriaga_sym", "chandrasekaran_ii",
+                       "chandrasekaran_iii", "lopez_ruzicka",
+                       "lopez_ruzicka_sym", "horiuchi", "stepwise",
+                       "numerical")){
 
       cat(paste("Estimated the", x$method, "Life-Expectancy decomposition method."))
 
-    } else if(x$method == "sen_arriaga" | x$method == "sen_arriaga_sym" |
-              x$method == "sen_arriaga_inst" | x$method == "sen_arriaga_inst2" |
-              x$method == "sen_chandrasekaran_ii" | x$method == "sen_chandrasekaran_ii_inst" | x$method == "sen_chandrasekaran_ii_inst2" |
-              x$method == "sen_chandrasekaran_iii" | x$method == "sen_chandrasekaran_iii_inst" | x$method == "sen_chandrasekaran_iii_inst2" |
-              x$method == "sen_lopez_ruzicka" | x$method == "sen_lopez_ruzicka_sym" |
-              x$method == "sen_lopez_ruzicka_inst" | x$method == "sen_lopez_ruzicka_sym__inst2"){
+    } else if(x$method %in% c( "sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2" , "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym__inst2")){
 
-      values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst", "sen_arriaga_inst2",
-        "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2",
-        "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_iii_inst2",
-        "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_sym__inst2")
+      values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst",
+                  "sen_arriaga_inst2", "sen_chandrasekaran_ii",
+                  "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2",
+                  "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
+                  "sen_chandrasekaran_iii_inst2", "sen_lopez_ruzicka",
+                  "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst",
+                  "sen_lopez_ruzicka_inst2")
 
       names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2",
                  "chandrasekaran_ii", "chandrasekaran_ii_inst", "chandrasekaran_ii_inst2",
@@ -487,38 +505,34 @@ print.LEdecomp <- function(x, ...) {
 
   }
     } else if(is.matrix(x$LEdecomp)){
-      if(x$method == "arriaga" | x$method == "arriaga_sym" |
-         x$method == "chandrasekaran_ii" | x$method == "chandrasekaran_iii" |
-         x$method == "lopez_ruzicka" | x$method == "lopez_ruzicka_sym" |
-         x$method == "horiuchi" | x$method == "stepwise" | x$method == "numerical"){
+      if(x$method %in%c("arriaga", "arriaga_sym",  "chandrasekaran_ii","chandrasekaran_ii_sym", "chandrasekaran_iii_sym" , "lopez_ruzicka","lopez_ruzicka_sym", "horiuchi","stepwise")){
 
         cat(paste("Estimated the", x$method, "cause-of-death Life-Expectancy decomposition method."))
 
-      } else if(x$method == "sen_arriaga" | x$method == "sen_arriaga_sym" |
-                x$method == "sen_arriaga_inst" | x$method == "sen_arriaga_inst2" |
-                x$method == "sen_chandrasekaran_ii" | x$method == "sen_chandrasekaran_ii_inst" | x$method == "sen_chandrasekaran_ii_inst2" |
-                x$method == "sen_chandrasekaran_iii" | x$method == "sen_chandrasekaran_iii_inst" | x$method == "sen_chandrasekaran_iii_inst2" |
-                x$method == "sen_lopez_ruzicka" | x$method == "sen_lopez_ruzicka_sym" |
-                x$method == "sen_lopez_ruzicka_inst" | x$method == "sen_lopez_ruzicka_sym__inst2"){
+      } else if(x$method %in%c( "lifetable","sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym_inst2","numerical")){
 
-        values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst", "sen_arriaga_inst2",
-                    "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2",
-                    "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_iii_inst2",
-                    "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_sym__inst2")
+        values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst",
+                    "sen_arriaga_inst2", "sen_chandrasekaran_ii",
+                    "sen_chandrasekaran_ii_inst","sen_chandrasekaran_ii_inst2",
+                    "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
+                    "sen_chandrasekaran_iii_inst2", "sen_lopez_ruzicka",
+                    "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst",
+                    "sen_lopez_ruzicka_sym__inst2")
 
         names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2",
-                   "chandrasekaran_ii", "chandrasekaran_ii_inst", "chandrasekaran_ii_inst2",
-                   "chandrasekaran_iii", "chandrasekaran_iii_inst", "chandrasekaran_iii_inst2",
-                   "lopez_ruzicka", "lopez_ruzicka_sym", "lopez_ruzicka_inst", "lopez_ruzicka_sym__inst2")
+                   "chandrasekaran_ii", "chandrasekaran_ii_inst",
+                   "chandrasekaran_ii_inst2", "chandrasekaran_iii",
+                   "chandrasekaran_iii_inst", "chandrasekaran_iii_inst2",
+                   "lopez_ruzicka", "lopez_ruzicka_sym", "lopez_ruzicka_inst",
+                   "lopez_ruzicka_sym_inst2")
         dicc <- names[which(x$method == values)[1]]
 
         cat(paste("Estimated the", dicc, "cause-of-death sensitivity Life-Expectancy decomposition method.\n"))
 
       }
-
   }
 
-  cat(paste("\nThe total age-different effect is:", round(sum(x$LEdecomp), 4)))
+  cat(paste("\nThe total difference explained is:", round(sum(x$LEdecomp), 4)))
 }
 
 
