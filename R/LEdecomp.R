@@ -247,7 +247,7 @@ LEdecomp <- function(mx1,
     }
     if (method == "stepwise"){
       if (!is.null(n_causes)){
-        cat("\nFor the case of multiple causes of death and the stepwise replacement algorithm, please note we don't arrange all possible cause-orderings for the decomposition. This method may therefore give results inconsistent with other methods.\n")
+        message("\nFor the case of multiple causes of death and the stepwise replacement algorithm, please note we don't arrange all possible cause-orderings for the decomposition. This method may therefore give results inconsistent with other methods.\n")
       }
       decomp <- DemoDecomp::stepwise_replacement(
                                        func = mx_to_e0_vec,
@@ -302,11 +302,11 @@ LEdecomp <- function(mx1,
       sen         <- decomp_all / delta
       # Warn if we note unstable ratio (denom close to 0)
       if (any(abs(delta)<1e6)){
-        cat("\nPlease check results: You have at least one all-cause rate difference < 1e-6, which can make cause partitioning of results unstable. You should compare using a sensitivity-based method or similar (lifetable, sen_*, horiuchi, stepwise\n")
+        warning("\nPlease check results: You have at least one all-cause rate difference < 1e-6, which can make cause partitioning of results unstable. You should compare using a sensitivity-based method or similar (lifetable, sen_*, horiuchi, stepwise\n")
       }
       # Warn if causes appear to be explaining > 3x the total age effect
       if (any(rowSums(abs(decomp))/abs(decomp) > 3)){
-        cat("\nPlease check results: You have at least one age where the absolute contributions from causes are > 3x the total age contribution. You should compare using a sensitivity-based method or similar (lifetable, sen_*, horiuchi, stepwise\n")
+        warning("\nPlease check results: You have at least one age where the absolute contributions from causes are > 3x the total age contribution. You should compare using a sensitivity-based method or similar (lifetable, sen_*, horiuchi, stepwise\n")
       }
 
     } else {
@@ -388,7 +388,10 @@ LEdecomp <- function(mx1,
                closeout = closeout)
     if (abs(sum(decomp) - Delta) > .1){
       if (opt){
-        cat("\nYou used a sensitivity-based method (",method,") but still have a decomposition residual of",round(sum(decomp) - Delta,3),". Consider comparing with other methods\n")
+        warning("\nYou used a sensitivity-based method (",method,") but still have a decomposition residual of",round(sum(decomp) - Delta,3),". Consider comparing with other methods\n")
+      }
+      if (!opt){
+        warning("\nYou used a sensitivity-based method (",method,") evaluated at the midpoint between mx1 and mx1, giving a decomposition residual of",round(sum(decomp) - Delta,3),". Consider comparing with other methods or setting opt=TRUE\n")
       }
     }
   }
