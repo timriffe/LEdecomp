@@ -74,5 +74,6 @@ gap2-gap
 plot(x, s1, type= 'l')
 lines(x, s2, col = 'red', lty = 2, lwd = 2)
 
-plot(x, s2-s1, main = "age 0 difference is due to imprecision\nin lifetable approach #' for this age")
+plot(x, s2-s1, main = "age 0 difference is due to imprecision in
+lifetable approach for this age")
 }

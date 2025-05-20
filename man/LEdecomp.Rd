@@ -95,20 +95,11 @@ LEdecomp(mx1,mx2,age=x,sex1='t',method = "sen_arriaga_inst")
 }
 \references{
 \insertRef{arriaga1984measuring}{LEdecomp}
-\insertREf{Chandrasekaran1986}{LEdecomp}
+\insertRef{Chandrasekaran1986}{LEdecomp}
 \insertRef{preston2000demography}{LEdecomp}
-\insertREf{Ponnapalli2005}{LEdecomp}
+\insertRef{Ponnapalli2005}{LEdecomp}
 }
 \seealso{
-\\code{\link{lifetable}}, \code{\link{arriaga}},
-\code{\link{arriaga_sym}}, \code{\link{sen_arriaga}}, \code{\link{sen_arriaga_sym}},
-\code{\link{sen_arriaga_inst}}, \code{\link{sen_arriaga_inst2}},
-\code{\link{chandrasekaran_ii}}, \code{\link{sen_chandrasekaran_ii}},
-\code{\link{sen_chandrasekaran_ii_inst}}, \code{\link{sen_chandrasekaran_ii_inst2}},
-\code{\link{chandrasekaran_iii}}, \code{\link{sen_chandrasekaran_iii}},
-\code{\link{sen_chandrasekaran_iii_inst}}, \code{\link{sen_chandrasekaran_iii_inst2}},
-\code{\link{lopez_ruzicka}}, \code{\link{lopez_ruzicka_sym}},
-\code{\link{sen_lopez_ruzicka}}, \code{\link{sen_lopez_ruzicka_sym}},
-\code{\link{sen_lopez_ruzicka_inst}}, \code{\link{sen_lopez_ruzicka_inst2}},
-\code{\link{horiuchi}}, \code{\link{stepwise}}, \code{\link{numerical}}
+\code{\link[=sen_e0_mx_lt]{sen_e0_mx_lt()}},\code{\link[=arriaga]{arriaga()}},\code{\link[=arriaga_sym]{arriaga_sym()}},
+\code{\link[=sen_arriaga]{sen_arriaga()}}, \code{\link[=sen_arriaga_sym]{sen_arriaga_sym()}}
 }

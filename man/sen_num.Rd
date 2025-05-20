@@ -24,7 +24,7 @@ Here we produce a numerical derivative based on the methods implemented in the \
 x <- 0:100
 mx <- 0.001 * exp(x * 0.07)
 sn <- sen_num(mx,age=x,sex='t',closeout=TRUE)
-sa <- sen_arriaga_instantaneous2(mx, age=age,sex='t',perturb = 1e-4)
+sa <- sen_arriaga_instantaneous2(mx, age=x,sex='t',perturb = 1e-4)
 \dontrun{
 plot(x,sa)
 lines(x,sn)

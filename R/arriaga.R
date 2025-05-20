@@ -254,7 +254,8 @@ sen_arriaga_instantaneous <- function(mx,
 #'      s1 - s2,
 #'      pch = 16,
 #'      cex=.5,
-#'      main = "very similar.\nMaybe one is more stable than the other?")
+#'      main = "very similar")
+#'
 sen_arriaga_instantaneous2 <- function(mx,
                                        age = 0:(length(mx1)-1),
                                        sex = 't',

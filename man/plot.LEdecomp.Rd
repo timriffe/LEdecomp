@@ -17,17 +17,11 @@ plot the different age-specific decomposition values for the selected method. Th
 \description{
 R function to plot the age-specific life-expectancy decomposition value using one of the different method from the \code{LEdecomp()} function.
 }
-\examples{
-
-\donttest{
-
-}
-}
 \references{
 \insertRef{arriaga1984measuring}{LEdecomp}
-\insertREf{Chandrasekaran1986}{LEdecomp}
+\insertRef{Chandrasekaran1986}{LEdecomp}
 \insertRef{preston2000demography}{LEdecomp}
-\insertREf{Ponnapalli2005}{LEdecomp}
+\insertRef{Ponnapalli2005}{LEdecomp}
 }
 \seealso{
 \code{\link{LEdecomp}}

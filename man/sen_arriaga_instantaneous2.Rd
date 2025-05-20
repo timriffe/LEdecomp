@@ -40,7 +40,8 @@ plot(x,
      s1 - s2,
      pch = 16,
      cex=.5,
-     main = "very similar.\nMaybe one is more stable than the other?")
+     main = "very similar")
+
 }
 \seealso{
 \code{\link{sen_arriaga_instantaneous}}

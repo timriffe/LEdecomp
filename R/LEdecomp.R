@@ -36,23 +36,14 @@
 #' * `sens` a vector/matrix of the sensitivity life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
 #' * `LEdecomp` a vector/matrix of the life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
 #'
-#' @seealso \\code{\link{lifetable}}, \code{\link{arriaga}},
-#' \code{\link{arriaga_sym}}, \code{\link{sen_arriaga}}, \code{\link{sen_arriaga_sym}},
-#' \code{\link{sen_arriaga_inst}}, \code{\link{sen_arriaga_inst2}},
-#' \code{\link{chandrasekaran_ii}}, \code{\link{sen_chandrasekaran_ii}},
-#' \code{\link{sen_chandrasekaran_ii_inst}}, \code{\link{sen_chandrasekaran_ii_inst2}},
-#' \code{\link{chandrasekaran_iii}}, \code{\link{sen_chandrasekaran_iii}},
-#' \code{\link{sen_chandrasekaran_iii_inst}}, \code{\link{sen_chandrasekaran_iii_inst2}},
-#' \code{\link{lopez_ruzicka}}, \code{\link{lopez_ruzicka_sym}},
-#' \code{\link{sen_lopez_ruzicka}}, \code{\link{sen_lopez_ruzicka_sym}},
-#' \code{\link{sen_lopez_ruzicka_inst}}, \code{\link{sen_lopez_ruzicka_inst2}},
-#' \code{\link{horiuchi}}, \code{\link{stepwise}}, \code{\link{numerical}}
+#' @seealso [LEdecomp::sen_e0_mx_lt()],[LEdecomp::arriaga()],[LEdecomp::arriaga_sym()],
+#' [LEdecomp::sen_arriaga()], [LEdecomp::sen_arriaga_sym()]
 #'
 #' @references
 #' \insertRef{arriaga1984measuring}{LEdecomp}
-#' \insertREf{Chandrasekaran1986}{LEdecomp}
+#' \insertRef{Chandrasekaran1986}{LEdecomp}
 #' \insertRef{preston2000demography}{LEdecomp}
-#' \insertREf{Ponnapalli2005}{LEdecomp}
+#' \insertRef{Ponnapalli2005}{LEdecomp}
 #'
 #' @importFrom DemoDecomp horiuchi
 #' @importFrom DemoDecomp horiuchi
@@ -152,9 +143,9 @@ LEdecomp <- function(mx1,
                          "sex1" = sex1,
                          "sex2" = sex2,
                          "method" = method,
+                         "func" = dec_fun,
                          "closeout" = closeout,
                          "opt" = opt,
-                         "func" = func,
                          "tol" = tol,
                          "Num_Intervals" = Num_Intervals,
                          "symmetrical" = symmetrical,
@@ -441,9 +432,9 @@ LEdecomp <- function(mx1,
                  "sex1" = sex1,
                  "sex2" = sex2,
                  "method" = method,
+                 "func" = dec_fun,
                  "closeout" = closeout,
                  "opt" = opt,
-                 "func" = dec_fun,
                  "tol" = tol,
                  "Num_Intervals" = Num_Intervals,
                  "symmetrical" = symmetrical,

@@ -4,8 +4,13 @@
 #' \deqn{m_{x} = m_{x}^{1} * w + m_{x}^{2} * (1-w)}
 #' @inheritParams arriaga
 #' @param w the parameter weight to optimize, default 0.5
-#' @param tol double. tolerance level for residual, passed to `optimise()`
-#' @param sen_fun function name, current options include `sen_arriaga_instantaneous`, `sen_arriaga_instantaneous2`, `sen_arriaga_sym`, `sen_e0_mx_lt`, `sen_num`
+#' @param sen_fun function name, current options include `sen_e0_mx_lt`,
+#' `sen_arriaga_instantaneous`, `sen_arriaga_instantaneous2`,
+#' `sen_arriaga_sym`, `sen_num`,`sen_chandrasekaran_II_instantaneous`
+#' ,`sen_chandrasekaran_ii_instantaneous2`,`sen_chandrasekaran_iii_instantaneous`,
+#'  `sen_chandrasekaran_iii_instantaneous2`,`sen_lopez_ruzicka_instantaneous`,
+#'  `sen_lopez_ruzicka_instantaneous2`
+#' @param ... optional arguments passed to a given sensitivity function.
 #' @return age-specific sensitivity of life expectancy to changes in mortality rates.
 #' @export
 #' @examples
@@ -32,7 +37,8 @@ sen_resid <- function(w=.5,
                     sex1,
                     sex2 = sex1,
                     closeout = TRUE,
-                    sen_fun = sen_arriaga_instantaneous, ...){
+                    sen_fun = sen_arriaga_instantaneous,
+                    ...){
 
   mx    <- w * mx1 + (1-w) * mx2
   sex   <- ifelse(sex1 != sex2,"t",sex1)
@@ -85,7 +91,8 @@ sen_resid <- function(w=.5,
 #' plot(x, s1, type= 'l')
 #' lines(x, s2, col = 'red', lty = 2, lwd = 2)
 #'
-#' plot(x, s2-s1, main = "age 0 difference is due to imprecision\nin lifetable approach #' for this age")
+#' plot(x, s2-s1, main = "age 0 difference is due to imprecision in
+#' lifetable approach for this age")
 
 sen_min <- function(mx1,
                     mx2,
@@ -99,7 +106,7 @@ sen_min <- function(mx1,
   w <- optimize(sen_resid,
            mx1 = mx1,
            mx2 = mx2,
-           age = x,
+           age = age,
            sen_fun = sen_fun,
            sex1 = sex1,
            sex2 = sex2,

@@ -253,7 +253,7 @@ chandrasekaran_III <- function(mx1, mx2,
   # It must be equal to (main_effect + operative_effect)/2
   exclusive_effect <- (main_effect + operative_effect)/2
 
-  # eq 1.8
+  # eq 1.8 (per Ponnapalli from Murthy & Gandhi (2004))
   interaction_effect <- (ex2_next - ex1_next) * (((lx1*lx2_next)/lx2 + (lx2*lx1_next)/lx1) -
                                                    (lx2_next + lx1_next))/2
 

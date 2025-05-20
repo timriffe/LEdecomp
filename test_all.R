@@ -49,6 +49,14 @@ for (m in methods){
 }
 barplot(sort(D_defaults),horiz=TRUE,las=1)
 
-# are arriaga and lopez ruzicka equivalent?
+# arriaga and lopez_ruzicka are equivalent :-)
 LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="arriaga",opt=F)$LEdecomp -
   LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="lopez_ruzicka",opt=F)$LEdecomp
+
+# chandrasekaran ii and iii are equivalent :-)
+LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="chandrasekaran_iii",opt=F)$LEdecomp -
+  LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="chandrasekaran_ii",opt=F)$LEdecomp
+
+# chandrasekaran and arriaga_sym are equivalent :-)
+LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="chandrasekaran_iii",opt=F)$LEdecomp -
+  LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="arriaga_sym",opt=F)$LEdecomp

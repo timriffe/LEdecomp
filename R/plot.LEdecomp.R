@@ -12,17 +12,12 @@
 #' @references
 #'
 #' \insertRef{arriaga1984measuring}{LEdecomp}
-#' \insertREf{Chandrasekaran1986}{LEdecomp}
+#' \insertRef{Chandrasekaran1986}{LEdecomp}
 #' \insertRef{preston2000demography}{LEdecomp}
-#' \insertREf{Ponnapalli2005}{LEdecomp}
+#' \insertRef{Ponnapalli2005}{LEdecomp}
 #'
-#' @importFrom ggplot2 ggplot aes geom_bar labs theme_classic
+#' @importFrom ggplot2 ggplot aes geom_bar labs theme_classic .data
 #' @importFrom graphics barplot
-#' @examples
-#'
-#' \donttest{
-#'
-#' }
 #' @export
 plot.LEdecomp <- function(x, ...){
   if(!is.null(x)){
@@ -48,7 +43,7 @@ plot.LEdecomp <- function(x, ...){
 
     } else if(
       # TR: shorter?
-      grepl(cc1_2$method, pattern = "sen_")
+      grepl(x$method, pattern = "sen_")
       # x$method == "sen_arriaga" | x$method == "sen_arriaga_sym" |
       #         x$method == "sen_arriaga_inst" | x$method == "sen_arriaga_inst2" |
       #         x$method == "sen_chandrasekaran_ii" | x$method == "sen_chandrasekaran_ii_inst" | x$method == "sen_chandrasekaran_ii_inst2" |
@@ -68,7 +63,7 @@ plot.LEdecomp <- function(x, ...){
       #            "lopez_ruzicka", "lopez_ruzicka_sym", "lopez_ruzicka_inst", "lopez_ruzicka_sym__inst2")
       # dicc <- names[which(x$method == values)[1]]
 
-      dicc <- gsub(method, pattern = "sen_", replacement = "")
+      dicc <- gsub(x$method, pattern = "sen_", replacement = "")
 
       data <- data.frame(age = x$age,
                          LEdecomp = x$LEdecomp)
@@ -94,7 +89,9 @@ plot.LEdecomp <- function(x, ...){
                          cause = rep(colnames(x$LEdecomp), each = length(x$age)))
       title <- paste(x$method, "cause-of-death LE decomposition method")
 
-      ggplot(data, aes(fill = cause, y = LEdecomp, x = age)) +
+      ggplot(data, aes(fill = .data[["cause"]],
+                       y = .data[["LEdecomp"]],
+                       x = .data[["age"]])) +
         geom_bar(position = "stack", stat = "identity") +
         labs(title = title) +
         theme_classic()
@@ -123,7 +120,9 @@ plot.LEdecomp <- function(x, ...){
                          cause = rep(colnames(x$LEdecomp), each = length(x$age)))
       title <- paste(dicc, "cause-of-death sensitivity Life-Expectancy decomposition method.")
 
-      ggplot2::ggplot(data, ggplot2::aes(fill = cause, y = LEdecomp, x = age)) +
+      ggplot2::ggplot(data, ggplot2::aes(fill = .data[["cause"]],
+                                         y = .data[["LEdecomp"]],
+                                         x =.data[["age"]])) +
         ggplot2::geom_bar(position = "stack", stat = "identity") +
         ggplot2::labs(title = title) +
         ggplot2::theme_classic()
