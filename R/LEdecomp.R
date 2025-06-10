@@ -70,12 +70,12 @@ LEdecomp <- function(mx1,
                                 "arriaga", "arriaga_sym",
                                 "sen_arriaga", "sen_arriaga_sym",
                                 "sen_arriaga_inst", "sen_arriaga_inst2",
-                                "chandrasekaran_ii","chandrasekaran_iii_sym",
+                                "chandrasekaran_ii",
                                 "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
-                                "sen_chandrasekaran_ii_inst2","sen_chandrasekaran_ii_sym",
-                                "chandrasekaran_iii","chandrasekaran_iii_sym",
+                                "sen_chandrasekaran_ii_inst2",
+                                "chandrasekaran_iii",
                                 "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
-                                "sen_chandrasekaran_iii_inst2","sen_chandrasekaran_iii_sym",
+                                "sen_chandrasekaran_iii_inst2",
                                 "lopez_ruzicka", "lopez_ruzicka_sym",
                                 "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym",
                                 "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_inst2",
@@ -170,7 +170,11 @@ LEdecomp <- function(mx1,
   }
 
   # handle dimensions
-  deez_dims <- dim(mx1)
+
+  # incoming dimensions
+  deez_dims_orig <- dim(mx1)
+  # probably we should return decomp in same dims?
+
   nages     <- length(age)
   # recall if mx1 is matrix length() still works as if dimensionless vector
   nmx       <- length(mx1)
@@ -215,15 +219,11 @@ LEdecomp <- function(mx1,
                     "sen_arriaga_inst" = sen_arriaga_instantaneous,
                     "sen_arriaga_inst2" = sen_arriaga_instantaneous2,
                     "chandrasekaran_ii" = chandrasekaran_II,
-                    "chandrasekaran_ii_sym" = chandrasekaran_II_sym,
                     "sen_chandrasekaran_ii" = sen_chandrasekaran_II,
-                    "sen_chandrasekaran_ii_sym" = sen_chandrasekaran_II_sym,
                     "sen_chandrasekaran_ii_inst" = sen_chandrasekaran_II_instantaneous,
                     "sen_chandrasekaran_ii_inst2" = sen_chandrasekaran_II_instantaneous2,
                     "chandrasekaran_iii"= chandrasekaran_III,
-                    "chandrasekaran_iii_sym" = chandrasekaran_III_sym,
                     "sen_chandrasekaran_iii" = sen_chandrasekaran_III,
-                    "sen_chandrasekaran_iii_sym" = sen_chandrasekaran_III_sym,
                     "sen_chandrasekaran_iii_inst" = sen_chandrasekaran_III_instantaneous,
                     "sen_chandrasekaran_iii_inst2" = sen_chandrasekaran_III_instantaneous2,
                     "lopez_ruzicka" = lopez_ruzicka,
@@ -282,9 +282,7 @@ LEdecomp <- function(mx1,
   if (method %in% c("arriaga",
                     "arriaga_sym",
                     "chandrasekaran_ii",
-                    "chandrasekaran_ii_sym",
                     "chandrasekaran_iii",
-                    "chandrasekaran_iii_sym",
                     "lopez_ruzicka",
                     "lopez_ruzicka_sym")){
     # handle causes per Preston Box 4.3 in this case
@@ -402,9 +400,7 @@ LEdecomp <- function(mx1,
   # ----------------------------------------------------------------- #
   if (method %in% c("sen_arriaga","sen_arriaga_sym",
                     "sen_chandrasekaran_ii","sen_chandrasekaran_iii",
-                    "sen_chandrasekaran_ii_sym","sen_chandrasekaran_iii_sym",
-                    "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym",
-                    "sen_chandrasekaran_ii","sen_chandrasekaran_iii")){
+                    "sen_lopez_ruzicka","sen_lopez_ruzicka_sym")){
     # this might have dims
     delta  <- mx2 - mx1
     # first block, causes of death
@@ -505,7 +501,7 @@ print.LEdecomp <- function(x, ...) {
 
   }
     } else if(is.matrix(x$LEdecomp)){
-      if(x$method %in%c("arriaga", "arriaga_sym",  "chandrasekaran_ii","chandrasekaran_ii_sym", "chandrasekaran_iii_sym" , "lopez_ruzicka","lopez_ruzicka_sym", "horiuchi","stepwise")){
+      if(x$method %in%c("arriaga", "arriaga_sym",  "chandrasekaran_ii" , "lopez_ruzicka","lopez_ruzicka_sym", "horiuchi","stepwise")){
 
         cat(paste("Estimated the", x$method, "cause-of-death Life-Expectancy decomposition method."))
 

@@ -36,7 +36,7 @@ b <- .07
 x <- 0:100
 mx1 <- a * exp(x * b)
 mx2 <- a/2 * exp(x * b)
-cc <- arriaga(mx1, mx2, age = x)
+cc <- chandrasekaran_II(mx1, mx2, age = x)
 e01 <- mx_to_e0(mx1, age = x)
 e02 <- mx_to_e0(mx2, age = x)
 (delta <- e02 - e01)
@@ -45,18 +45,6 @@ sum(cc)
 \dontrun{
  plot(x, cc)
 }
-# asymmetrical with a decomposition in the opposite direction
-cc2 <- -arriaga(mx1 = mx2, mx2 = mx1, age = x)
-plot(x, cc)
-lines(x,cc2)
-# also we lose some precision?
-sum(cc);sum(cc2)
-# found it!
-delta-sum(cc2); cc2[length(cc2)] / 2
-
-# But this is no problem if closeout = FALSE
--arriaga(mx1 = mx2, mx2 = mx1, age = x,closeout=FALSE) |> sum()
-arriaga(mx1 = mx1, mx2 = mx2, age = x,closeout=FALSE) |> sum()
 }
 \references{
 \insertRef{arriaga1984measuring}{LEdecomp}

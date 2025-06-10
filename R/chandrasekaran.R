@@ -31,7 +31,7 @@
 #' x <- 0:100
 #' mx1 <- a * exp(x * b)
 #' mx2 <- a/2 * exp(x * b)
-#' cc <- arriaga(mx1, mx2, age = x)
+#' cc <- chandrasekaran_II(mx1, mx2, age = x)
 #' e01 <- mx_to_e0(mx1, age = x)
 #' e02 <- mx_to_e0(mx2, age = x)
 #' (delta <- e02 - e01)
@@ -40,26 +40,7 @@
 #'\dontrun{
 #'  plot(x, cc)
 #'}
-#' # asymmetrical with a decomposition in the opposite direction
-#' cc2 <- -arriaga(mx1 = mx2, mx2 = mx1, age = x)
-#' plot(x, cc)
-#' lines(x,cc2)
-#' # also we lose some precision?
-#' sum(cc);sum(cc2)
-#' # found it!
-#' delta-sum(cc2); cc2[length(cc2)] / 2
-#'
-#' # But this is no problem if closeout = FALSE
-#' -arriaga(mx1 = mx2, mx2 = mx1, age = x,closeout=FALSE) |> sum()
-#' arriaga(mx1 = mx1, mx2 = mx2, age = x,closeout=FALSE) |> sum()
-#  a <- .001
-#  b <- .07
-#  x <- 0:100
-#  mx1 <- a * exp(x * b)
-#  mx2 <- a/2 * exp(x * b)
-#  sex1 = "m"
-#  sex2 = "m"
-#  closeout = TRUE
+
 chandrasekaran_II <- function(mx1, mx2,
                               age,
                               sex1 = 't',
@@ -118,22 +99,7 @@ chandrasekaran_II <- function(mx1, mx2,
 
   approachII
 }
-# Narrator "this method should already be symmetrical" realized later.
-sen_chandrasekaran_II_sym <- function(mx1,
-                                      mx2,
-                                      age = 0:(length(mx1) - 1),
-                                      sex1 = 't',
-                                      sex2 = sex1,
-                                      closeout = TRUE){
-  delta <- mx2 - mx1
-  a_avg <- chandrasekaran_II_sym(mx1 = mx1,
-                                 mx2 = mx2,
-                                 age = age,
-                                 sex1 = sex1,
-                                 sex2 = sex2,
-                                 closeout = closeout)
-  a_avg / delta
-}
+
 sen_chandrasekaran_II <- function(mx1,
                                   mx2,
                                   age,
@@ -163,28 +129,6 @@ sen_chandrasekaran_II_instantaneous <- function(mx,
                               age = age,
                               sex1 = sex, sex2 = sex, closeout = closeout)
   s1
-}
-chandrasekaran_II_sym <- function(mx1,
-                                  mx2,
-                                  age,
-                                  sex1 = 't',
-                                  sex2 = sex1,
-                                  closeout = TRUE){
-  a1 <- chandrasekaran_II(mx1,
-                          mx2,
-                          age = age,
-                          sex1 = sex1,
-                          sex2 = sex2,
-                          closeout = closeout)
-  a2 <- chandrasekaran_II(mx2,
-                          mx1,
-                          age = age,
-                          sex1 = sex2,
-                          sex2 = sex1,
-                          closeout = closeout)
-
-  a_avg <- (a1 - a2) / 2
-  a_avg
 }
 
 sen_chandrasekaran_II_instantaneous2 <- function(mx,
@@ -261,29 +205,6 @@ chandrasekaran_III <- function(mx1, mx2,
   total_effect
 }
 
-# Narrator "this method should already be symmetrical" realized later.
-chandrasekaran_III_sym <- function(mx1,
-                                  mx2,
-                                  age,
-                                  sex1 = 't',
-                                  sex2 = sex1,
-                                  closeout = TRUE){
-  a1 <- chandrasekaran_III(mx1,
-                           mx2,
-                           age = age,
-                           sex1 = sex1,
-                           sex2 = sex2,
-                           closeout = closeout)
-  a2 <- chandrasekaran_III(mx2,
-                           mx1,
-                           age = age,
-                           sex1 = sex2,
-                           sex2 = sex1,
-                           closeout = closeout)
-
-  a_avg <- (a1 - a2) / 2
-  a_avg
-}
 sen_chandrasekaran_III <- function(mx1, mx2,
                                    age,
                                    sex1 = 't',
@@ -302,21 +223,7 @@ sen_chandrasekaran_III <- function(mx1, mx2,
   sen
 
 }
-sen_chandrasekaran_III_sym <- function(mx1,
-                                       mx2,
-                                       age = 0:(length(mx1) - 1),
-                                       sex1 = 't',
-                                       sex2 = sex1,
-                                       closeout = TRUE){
-  delta <- mx2 - mx1
-  a_avg <- chandrasekaran_III_sym(mx1 = mx1,
-                                  mx2 = mx2,
-                                  age = age,
-                                  sex1 = sex1,
-                                  sex2 = sex2,
-                                  closeout = closeout)
-  a_avg / delta
-}
+
 sen_chandrasekaran_III_instantaneous <- function(mx,
                                                  age = 0:(length(mx1)-1),
                                                  sex = 't',
