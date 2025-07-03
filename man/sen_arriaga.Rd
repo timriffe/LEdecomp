@@ -52,8 +52,8 @@ lines(x,cc_check)
 }
 }
 \references{
-\insertRef{arriaga1984measuring}{coddecomp}
-\insertRef{preston2000demography}{coddecomp}
+\insertRef{arriaga1984measuring}{LEdecomp}
+\insertRef{preston2000demography}{LEdecomp}
 }
 \seealso{
 \code{\link{arriaga}}

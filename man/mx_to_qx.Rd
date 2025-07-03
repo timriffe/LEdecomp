@@ -17,7 +17,7 @@ mx_to_qx(mx, ax, closeout = TRUE)
 \code{qx} gives conditional death probabilities, in this case forced to be consistent with a set of \code{mx} and \code{ax} values per HMD Method Protocol eq 71.
 }
 \references{
-\insertRef{wilmoth2021methods}{coddecomp}
+\insertRef{wilmoth2021methods}{LEdecomp}
 }
 \seealso{
 \link[DemoTools]{lt_id_ma_q}

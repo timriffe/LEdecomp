@@ -18,8 +18,8 @@
 #' @importFrom data.table shift
 #' @export
 #' @references
-#' \insertRef{arriaga1984measuring}{coddecomp}
-#' \insertRef{preston2000demography}{coddecomp}
+#' \insertRef{arriaga1984measuring}{LEdecomp}
+#' \insertRef{preston2000demography}{LEdecomp}
 #' @examples
 #' a <- .001
 #' b <- .07
@@ -100,8 +100,8 @@ arriaga <- function(mx1,
 #' @importFrom data.table shift
 #' @export
 #' @references
-#' \insertRef{arriaga1984measuring}{coddecomp}
-#' \insertRef{preston2000demography}{coddecomp}
+#' \insertRef{arriaga1984measuring}{LEdecomp}
+#' \insertRef{preston2000demography}{LEdecomp}
 #' @examples
 #' a <- .001
 #' b <- .07
@@ -254,7 +254,8 @@ sen_arriaga_instantaneous <- function(mx,
 #'      s1 - s2,
 #'      pch = 16,
 #'      cex=.5,
-#'      main = "very similar.\nMaybe one is more stable than the other?")
+#'      main = "very similar")
+#'
 sen_arriaga_instantaneous2 <- function(mx,
                                        age = 0:(length(mx1)-1),
                                        sex = 't',

@@ -18,5 +18,5 @@ numeric vector of remaining life expectancy \code{ex}
 Here we combine HMD Method Protocol equations 79 and 80. We calculate all the remaining years left to live at each age, then condition this on survival to each age.
 }
 \references{
-\insertRef{wilmoth2021methods}{coddecomp}
+\insertRef{wilmoth2021methods}{LEdecomp}
 }

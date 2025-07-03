@@ -45,7 +45,7 @@ b <- .07
 x <- 0:100
 mx1 <- a * exp(x * b)
 mx2 <- a/2 * exp(x * b)
-cc <- arriaga(mx1, mx2, age = x) 
+cc <- arriaga(mx1, mx2, age = x)
 e01 <- mx_to_e0(mx1, age = x)
 e02 <- mx_to_e0(mx2, age = x)
 (delta <- e02 - e01)
@@ -68,6 +68,6 @@ delta-sum(cc2); cc2[length(cc2)] / 2
 arriaga(mx1 = mx1, mx2 = mx2, age = x,closeout=FALSE) |> sum()
 }
 \references{
-\insertRef{arriaga1984measuring}{coddecomp}
-\insertRef{preston2000demography}{coddecomp}
+\insertRef{arriaga1984measuring}{LEdecomp}
+\insertRef{preston2000demography}{LEdecomp}
 }

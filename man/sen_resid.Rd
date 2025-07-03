@@ -17,6 +17,8 @@ sen_resid(
 )
 }
 \arguments{
+\item{w}{the parameter weight to optimize, default 0.5}
+
 \item{mx1}{numeric vector of the mortality rates (central death rates) for population 1}
 
 \item{mx2}{numeric vector of the mortality rates (central death rates) for population 2}
@@ -29,9 +31,14 @@ sen_resid(
 
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 
-\item{sen_fun}{function name, current options include \code{sen_arriaga_instantaneous}, \code{sen_arriaga_instantaneous2}, \code{sen_arriaga_sym}, \code{sen_e0_mx_lt}, \code{sen_num}}
+\item{sen_fun}{function name, current options include \code{sen_e0_mx_lt},
+\code{sen_arriaga_instantaneous}, \code{sen_arriaga_instantaneous2},
+\code{sen_arriaga_sym}, \code{sen_num},\code{sen_chandrasekaran_II_instantaneous}
+,\code{sen_chandrasekaran_ii_instantaneous2},\code{sen_chandrasekaran_iii_instantaneous},
+\code{sen_chandrasekaran_iii_instantaneous2},\code{sen_lopez_ruzicka_instantaneous},
+\code{sen_lopez_ruzicka_instantaneous2}}
 
-\item{tol}{double. tolerance level for residual, passed to \code{optimise()}}
+\item{...}{optional arguments passed to a given sensitivity function.}
 }
 \value{
 age-specific sensitivity of life expectancy to changes in mortality rates.
@@ -53,9 +60,8 @@ w <- optimize(sen_resid,
               sen_fun = sen_arriaga_instantaneous,
               sex1 = 't',
               sex2 = 't',
-              closeout = TRUE, 
-              interval = c(.4,.6),
-              tol = 1e-10)$minimum
+              closeout = TRUE,
+              interval = c(.4,.6))$minimum
 w
 
 }

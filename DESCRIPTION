@@ -1,8 +1,8 @@
 Package: LEdecomp
 Type: Package
 Title: Decompose life expectancy into contributions from rates in different ages and potentially also causes of death
-Version: 00.00.008
-Date: 2024-10-17
+Version: 00.00.012
+Date: 2025-06-10
 Authors@R: c(
    person("Tim", "Riffe", role = c("aut", "cre"), 
           email = "tim.riffe@gmail.com", comment = c(ORCID = "0000-0002-2673-4622")),
@@ -14,17 +14,19 @@ License: GPL-3
 LazyLoad: yes
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports:
+  numDeriv,
+  Rdpack,
+  DemoDecomp,
   DemoTools,
   data.table,
-  numDeriv,
-  Rdpack
+  ggplot2
 Depends:
     R (>= 4.3)
 RdMacros: Rdpack
-BugReports: https://github.com/timriffe/coddecomp/issues
+BugReports: https://github.com/timriffe/LEdecomp/issues
 Encoding: UTF-8
 Remotes: 
     github::timriffe/DemoTools
-URL: https://github.com/timriffe/coddecomp
+URL: https://github.com/timriffe/LEdecomp

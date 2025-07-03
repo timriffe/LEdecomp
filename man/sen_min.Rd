@@ -32,6 +32,8 @@ sen_min(
 \item{sen_fun}{function name, current options include \code{sen_arriaga_instantaneous}, \code{sen_arriaga_instantaneous1}, \code{sen_arriaga_sym}, \code{sen_e0_mx_lt},  \code{sen_num}}
 
 \item{tol}{double. tolerance level for residual, passed to \code{optimise()}}
+
+\item{...}{optional arguments to pass to \code{sen_fun()}}
 }
 \value{
 age-specific sensitivity of life expectancy to changes in mortality rates.
@@ -52,11 +54,11 @@ mx2 <- a/2 * exp(x * b)
 mx  <- (mx1 + mx2) / 2
 s1 <- sen_min(mx1, mx2,
               age = x, sex1 = 't',
-              closeout = TRUE, 
+              closeout = TRUE,
               sen_fun = sen_arriaga_instantaneous)
 s2 <- sen_min(mx1, mx2,
               age = x, sex1 = 't',
-              closeout = TRUE, 
+              closeout = TRUE,
               sen_fun = sen_e0_mx_lt,
               tol = 1e-12)
 
@@ -72,5 +74,6 @@ gap2-gap
 plot(x, s1, type= 'l')
 lines(x, s2, col = 'red', lty = 2, lwd = 2)
 
-plot(x, s2-s1, main = "age 0 difference is due to imprecision\nin lifetable approach #' for this age")
+plot(x, s2-s1, main = "age 0 difference is due to imprecision in
+lifetable approach for this age")
 }
