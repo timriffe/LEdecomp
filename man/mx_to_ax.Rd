@@ -4,10 +4,18 @@
 \alias{mx_to_ax}
 \title{produce single-age \code{ax} values}
 \usage{
-mx_to_ax(mx, age = 0:(length(mx) - 1), sex = "t", closeout = TRUE)
+mx_to_ax(
+  mx,
+  nx = rep(1, length(mx)),
+  age = 0:(length(mx) - 1),
+  sex = "t",
+  closeout = TRUE
+)
 }
 \arguments{
 \item{mx}{numeric vector of the mortality rates (central death rates)}
+
+\item{nx}{age interval width, assumes 1 by default}
 
 \item{age}{integer vector of the lower bound of each age group (currently only single ages supported)}
 
@@ -20,7 +28,4 @@ We assume mid-interval \code{ax} except for age 0 and potentially the open age g
 }
 \details{
 For the case of Total sex, we estimate the male and female \eqn{a(0)} using the Andreev-Kingkade rule of thumb, and then average them. We assume a value of 1/2 for all other ages, unless \code{closeout = TRUE}, in which case we close with \code{1/mx} for the final value.
-}
-\seealso{
-\link[DemoTools]{lt_rule_ak_m0_a0}
 }

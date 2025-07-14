@@ -4,7 +4,7 @@
 \alias{qx_to_lx}
 \title{Calculate the survival curve}
 \usage{
-qx_to_lx(qx)
+qx_to_lx(qx, radix = 1)
 }
 \arguments{
 \item{qx}{numeric vector of conditional death probabilities}
@@ -14,7 +14,4 @@ numeric vector of \code{lx} values
 }
 \description{
 The survival curve is calculated as the cumulative product of the conditional survival probabilities, which are the complement of conditional death probabilities, \code{qx}, except we take care to start with a clean 1. This function no radix option. \code{lx} with a radix of 1 can be interpreted as the probability of surviving from birth to age \code{x}.
-}
-\seealso{
-\link[DemoTools]{lt_id_q_l}
 }

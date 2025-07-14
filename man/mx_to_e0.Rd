@@ -4,7 +4,7 @@
 \alias{mx_to_e0}
 \title{calculate life expectancy at birth from mortality rates}
 \usage{
-mx_to_e0(mx, age, sex = "t", closeout = TRUE)
+mx_to_e0(mx, age, sex = "t", nx = rep(1, length(age)), closeout = TRUE)
 }
 \arguments{
 \item{mx}{numeric vector of the mortality rates (central death rates)}
@@ -12,6 +12,8 @@ mx_to_e0(mx, age, sex = "t", closeout = TRUE)
 \item{age}{integer vector of the lower bound of each age group (currently only single ages supported)}
 
 \item{sex}{character: Male (\code{"m"}), Female (\code{"f"}), or Total (\code{"t"})}
+
+\item{nx}{age interval width, assumes 1 by default}
 
 \item{closeout}{logical. Default \code{TRUE}.}
 }

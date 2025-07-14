@@ -4,7 +4,7 @@
 \alias{ald_to_Lx}
 \title{Calculate the lifetable exposure}
 \usage{
-ald_to_Lx(ax, lx, dx)
+ald_to_Lx(ax, lx, dx, nx)
 }
 \arguments{
 \item{ax}{numeric vector of ax, average time spent in the age interval by those that die in the interval}
@@ -21,7 +21,4 @@ numeric vector of \code{Lx} values
 }
 \references{
 \insertRef{wilmoth2021methods}{LEdecomp}
-}
-\seealso{
-\link[DemoTools]{lt_id_lda_L}
 }
