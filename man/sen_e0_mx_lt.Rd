@@ -4,12 +4,20 @@
 \alias{sen_e0_mx_lt}
 \title{A direct approximation of the sensitivity of life expectancy at birth to changes in mortality.}
 \usage{
-sen_e0_mx_lt(mx, age = 0:(length(mx) - 1), sex = "t", closeout = TRUE)
+sen_e0_mx_lt(
+  mx,
+  age = 0:(length(mx) - 1),
+  nx = rep(1, length(mx)),
+  sex = "t",
+  closeout = TRUE
+)
 }
 \arguments{
 \item{mx}{numeric vector of the mortality rates (central death rates)}
 
 \item{age}{integer vector of the lower bound of each age group (currently only single ages supported)}
+
+\item{nx}{age interval width, assumes 1 by default}
 
 \item{sex}{character: Male (\code{"m"}), Female (\code{"f"}), or Total (\code{"t"})}
 

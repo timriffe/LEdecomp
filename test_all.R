@@ -19,7 +19,7 @@ rowSums(mx1_c) - mx1
 rowSums(mx2_c) - mx2
 
 #devtools::load_all()
-library(DemoTools)
+
 library(dplyr)
 library(data.table)
 devtools::load_all()

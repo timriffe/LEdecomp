@@ -35,8 +35,8 @@ mx_to_ax <- function(mx,
     }, 0.31411)))
   }
 
-  stopifnot(all(diff(age) == 1))
-  ax <- rep(nx / 2, length(mx))
+  # stopifnot(all(diff(age) == 1))
+  ax  <- nx / 2
   sex <- sex |> tolower() |> substr(1,1)
   sex <- ifelse(sex == "b","t",sex)
   stopifnot(sex %in% c("m","f","t"))
@@ -61,11 +61,11 @@ mx_to_ax <- function(mx,
 #' @inheritParams mx_to_ax
 #' @param ax numeric vector of `ax` values
 #' @export
-mx_to_qx <- function(mx, ax, nx, closeout = TRUE){
+mx_to_qx <- function(mx, ax, nx = rep(1,length(mx)), closeout = TRUE){
   n <- length(mx)
-  stopifnot(n == length(nax))
+  stopifnot(n == length(ax))
   stopifnot(n == length(nx))
-  qx <- (nx * mx) / (1 + (nx - nax) * mx)
+  qx <- (nx * mx) / (1 + (nx - ax) * mx)
   if (closeout) {
     qx[length(qx)] <- 1
     if (length(mx) == 1) {

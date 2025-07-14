@@ -33,7 +33,8 @@
 sen_resid <- function(w=.5,
                     mx1,
                     mx2,
-                    age,
+                    age = 0:(length(mx)-1),
+                    nx = rep(1,length(mx)),
                     sex1,
                     sex2 = sex1,
                     closeout = TRUE,
@@ -42,10 +43,22 @@ sen_resid <- function(w=.5,
 
   mx    <- w * mx1 + (1-w) * mx2
   sex   <- ifelse(sex1 != sex2,"t",sex1)
-  s     <- sen_fun(mx, age = age, sex = sex, closeout = closeout, ...)
+  s     <- sen_fun(mx,
+                   age = age,
+                   nx = nx,
+                   sex = sex,
+                   closeout = closeout, ...)
   delta <- mx2 - mx1
-  e02   <- mx_to_e0(mx=mx2, age=age,sex=sex2,closeout=closeout)
-  e01   <- mx_to_e0(mx=mx1, age=age,sex=sex1,closeout=closeout)
+  e02   <- mx_to_e0(mx = mx2,
+                    age = age,
+                    nx = nx,
+                    sex = sex2,
+                    closeout = closeout)
+  e01   <- mx_to_e0(mx = mx1,
+                    age = age,
+                    nx = nx,
+                    sex = sex1,
+                    closeout = closeout)
   gap   <- e02 - e01
   gap_hat <- sum(s * delta)
   abs(gap - gap_hat)

@@ -4,7 +4,7 @@
 \alias{mx_to_qx}
 \title{produce single-age \code{qx} values}
 \usage{
-mx_to_qx(mx, ax, nx, closeout = TRUE)
+mx_to_qx(mx, ax, nx = rep(1, length(mx)), closeout = TRUE)
 }
 \arguments{
 \item{mx}{numeric vector of the mortality rates (central death rates)}

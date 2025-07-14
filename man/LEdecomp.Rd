@@ -7,7 +7,8 @@
 LEdecomp(
   mx1,
   mx2,
-  age,
+  age = (1:length(mx1)) - 1,
+  nx = rep(1, length(mx1)),
   sex1 = "t",
   sex2 = sex1,
   method = c("lifetable", "arriaga", "arriaga_sym", "sen_arriaga", "sen_arriaga_sym",
@@ -33,6 +34,8 @@ LEdecomp(
 \item{mx2}{numeric. age-structured mortality rates for population 2, must be same length as \code{mx1}}
 
 \item{age}{integer. lower bound of each age group, must be same length as \code{mx1}}
+
+\item{nx}{integer vector of age intervals, default 1.}
 
 \item{sex1}{character. \code{"m"},\code{"f"}, or \code{"t"}, affects a0 treatment.}
 

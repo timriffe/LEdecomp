@@ -21,8 +21,17 @@
 #' \dontrun{
 #' plot(x, sn - sa, main = "still uncertain what accounts for the age 0 discrepancy")
 #' }
-sen_num <- function(mx,age,sex='t',closeout=TRUE,...){
-  numDeriv::grad(mx_to_e0,mx,age=age,sex=sex,closeout=closeout,...)
+sen_num <- function(mx,
+                    age = (1:length(mx))-1,
+                    nx = rep(1,length(mx)),
+                    sex = 't',
+                    closeout = TRUE,...){
+  numDeriv::grad(mx_to_e0,
+                 mx,
+                 age = age,
+                 nx = nx,
+                 sex = sex,
+                 closeout = closeout,...)
 }
 
 #  x <- 0:100

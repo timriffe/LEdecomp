@@ -9,6 +9,7 @@
 #' @param mx1 numeric vector of the mortality rates (central death rates) for population 1
 #' @param mx2 numeric vector of the mortality rates (central death rates) for population 2
 #' @param age integer vector of the lower bound of each age group (currently only single ages supported)
+#' @param nx integer vector of age intervals, default 1.
 #' @param sex1 character either the sex for population 1: Male (`"m"`), Female (`"f"`), or Total (`"t"`)
 #' @param sex2 character either the sex for population 2: Male (`"m"`), Female (`"f"`), or Total (`"t"`) assumed same as `sex1` unless otherwise specified.
 #' @param closeout logical. Default `TRUE`. Shall we use the HMD Method Protocol to close out the `ax` and `qx` values? See details.
@@ -42,23 +43,28 @@
 #'}
 
 chandrasekaran_II <- function(mx1, mx2,
-                              age,
+                              age = (1:length(mx1))-1,
+                              nx = rep(1, length(mx1)),
                               sex1 = 't',
                               sex2 = sex1,
                               closeout = TRUE){
   ax1 <- mx_to_ax(mx = mx1,
                   age = age,
+                  nx = nx,
                   sex = sex1,
                   closeout = closeout)
   ax2 <- mx_to_ax(mx = mx2,
                   age = age,
+                  nx = nx,
                   sex = sex2,
                   closeout = closeout)
   qx1 <- mx_to_qx(mx = mx1,
                   ax = ax1,
+                  nx = nx,
                   closeout = closeout)
   qx2 <- mx_to_qx(mx = mx2,
                   ax = ax2,
+                  nx = nx,
                   closeout = closeout)
   lx1 <- qx_to_lx(qx1)
   lx2 <- qx_to_lx(qx2)
@@ -66,10 +72,12 @@ chandrasekaran_II <- function(mx1, mx2,
   dx2 <- lx_to_dx(lx2)
   Lx1 <- ald_to_Lx(ax = ax1,
                    lx = lx1,
-                   dx = dx1)
+                   dx = dx1,
+                   nx = nx)
   Lx2 <- ald_to_Lx(ax = ax2,
                    lx = lx2,
-                   dx = dx2)
+                   dx = dx2,
+                   nx = nx)
   Tx1 <- rcumsum(Lx1)
   Tx2 <- rcumsum(Lx2)
   ex1 <- Tx1 / lx1
@@ -102,7 +110,8 @@ chandrasekaran_II <- function(mx1, mx2,
 
 sen_chandrasekaran_II <- function(mx1,
                                   mx2,
-                                  age,
+                                  age = (1:length(mx1))-1,
+                                  nx = rep(1,length(mx1)),
                                   sex1 = 't',
                                   sex2 = sex1,
                                   closeout = TRUE){
@@ -110,6 +119,7 @@ sen_chandrasekaran_II <- function(mx1,
   approachII <- chandrasekaran_II(mx1 = mx1,
                                   mx2 = mx2,
                                   age = age,
+                                  nx = nx,
                                   sex1 = sex1,
                                   sex2 = sex2,
                                   closeout = closeout)
@@ -119,48 +129,63 @@ sen_chandrasekaran_II <- function(mx1,
 
 }
 sen_chandrasekaran_II_instantaneous <- function(mx,
-                                                age = 0:(length(mx1)-1),
+                                                age = (1:length(mx1))-1,
+                                                nx = rep(1,length(mx)),
                                                 sex = 't',
                                                 perturb = 1e-6,
                                                 closeout = TRUE){
   mx1 <- mx * (1 / (1 - perturb))
   mx2 <- mx * (1 - perturb) / 1
-  s1 <- sen_chandrasekaran_II(mx1 = mx1, mx2 = mx2,
+  s1 <- sen_chandrasekaran_II(mx1 = mx1,
+                              mx2 = mx2,
                               age = age,
-                              sex1 = sex, sex2 = sex, closeout = closeout)
+                              nx = nx,
+                              sex1 = sex,
+                              sex2 = sex,
+                              closeout = closeout)
   s1
 }
 
 sen_chandrasekaran_II_instantaneous2 <- function(mx,
-                                                 age = 0:(length(mx1)-1),
+                                                 age = (1:length(mx1))-1,
+                                                 nx = rep(1,length(mx)),
                                                  sex = 't',
                                                  perturb = 1e-6,
                                                  closeout = TRUE){
   mx1 <- exp(log(mx) + perturb)
   mx2 <- exp(log(mx) - perturb)
-  s1 <- sen_chandrasekaran_II(mx1 = mx1, mx2 = mx2,
+  s1 <- sen_chandrasekaran_II(mx1 = mx1,
+                              mx2 = mx2,
                               age = age,
-                              sex1 = sex, sex2 = sex, closeout = closeout)
+                              nx = nx,
+                              sex1 = sex,
+                              sex2 = sex,
+                              closeout = closeout)
   s1
 }
 chandrasekaran_III <- function(mx1, mx2,
-                               age,
+                               age = (1:length(mx1))-1,
+                               nx = rep(1,length(mx1)),
                                sex1 = 't',
                                sex2 = sex1,
                                closeout = TRUE){
   ax1 <- mx_to_ax(mx = mx1,
                   age = age,
+                  nx = nx,
                   sex = sex1,
                   closeout = closeout)
   ax2 <- mx_to_ax(mx = mx2,
                   age = age,
+                  nx = nx,
                   sex = sex2,
                   closeout = closeout)
   qx1 <- mx_to_qx(mx = mx1,
                   ax = ax1,
+                  nx = nx,
                   closeout = closeout)
   qx2 <- mx_to_qx(mx = mx2,
                   ax = ax2,
+                  nx = nx,
                   closeout = closeout)
   lx1 <- qx_to_lx(qx1)
   lx2 <- qx_to_lx(qx2)
@@ -168,10 +193,12 @@ chandrasekaran_III <- function(mx1, mx2,
   dx2 <- lx_to_dx(lx2)
   Lx1 <- ald_to_Lx(ax = ax1,
                    lx = lx1,
-                   dx = dx1)
+                   dx = dx1,
+                   nx = nx)
   Lx2 <- ald_to_Lx(ax = ax2,
                    lx = lx2,
-                   dx = dx2)
+                   dx = dx2,
+                   nx = nx)
   Tx1 <- rcumsum(Lx1)
   Tx2 <- rcumsum(Lx2)
   ex1 <- Tx1 / lx1
@@ -206,7 +233,8 @@ chandrasekaran_III <- function(mx1, mx2,
 }
 
 sen_chandrasekaran_III <- function(mx1, mx2,
-                                   age,
+                                   age = (1:length(mx1)) - 1,
+                                   nx = rep(1,length(mx1)),
                                    sex1 = 't',
                                    sex2 = sex1,
                                    closeout = TRUE){
@@ -214,6 +242,7 @@ sen_chandrasekaran_III <- function(mx1, mx2,
   exclusive_effect <- chandrasekaran_III(mx1 = mx1,
                                          mx2 = mx2,
                                          age = age,
+                                         nx = nx,
                                          sex1 = sex1,
                                          sex2 = sex2,
                                          closeout = closeout)
@@ -225,27 +254,37 @@ sen_chandrasekaran_III <- function(mx1, mx2,
 }
 
 sen_chandrasekaran_III_instantaneous <- function(mx,
-                                                 age = 0:(length(mx1)-1),
+                                                 age = (1:length(mx1))-1,
+                                                 nx = rep(1,length(mx1)),
                                                  sex = 't',
                                                  perturb = 1e-6,
                                                  closeout = TRUE){
   mx1 <- mx * (1 / (1 - perturb))
   mx2 <- mx * (1 - perturb) / 1
-  s1 <- sen_chandrasekaran_III(mx1 = mx1, mx2 = mx2,
+  s1 <- sen_chandrasekaran_III(mx1 = mx1,
+                               mx2 = mx2,
                                age = age,
-                               sex1 = sex, sex2 = sex, closeout = closeout)
+                               nx = nx,
+                               sex1 = sex,
+                               sex2 = sex,
+                               closeout = closeout)
   s1
 }
 sen_chandrasekaran_III_instantaneous2 <- function(mx,
-                                                  age = 0:(length(mx1)-1),
+                                                  age = (1:length(mx1))-1,
+                                                  nx = rep(1,length(mx1)),
                                                   sex = 't',
                                                   perturb = 1e-6,
                                                   closeout = TRUE){
   mx1 <- exp(log(mx) + perturb)
   mx2 <- exp(log(mx) - perturb)
-  s1 <- sen_chandrasekaran_III(mx1 = mx1, mx2 = mx2,
+  s1 <- sen_chandrasekaran_III(mx1 = mx1,
+                               mx2 = mx2,
                                age = age,
-                               sex1 = sex, sex2 = sex, closeout = closeout)
+                               nx = nx,
+                               sex1 = sex,
+                               sex2 = sex,
+                               closeout = closeout)
   s1
 }
 

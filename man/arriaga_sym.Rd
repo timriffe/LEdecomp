@@ -8,6 +8,7 @@ arriaga_sym(
   mx1,
   mx2,
   age = 0:(length(mx1) - 1),
+  nx = rep(1, length(mx1)),
   sex1 = "t",
   sex2 = sex1,
   closeout = TRUE
@@ -19,6 +20,8 @@ arriaga_sym(
 \item{mx2}{numeric vector of the mortality rates (central death rates) for population 2}
 
 \item{age}{integer vector of the lower bound of each age group (currently only single ages supported)}
+
+\item{nx}{integer vector of age intervals, default 1.}
 
 \item{sex1}{character either the sex for population 1: Male (\code{"m"}), Female (\code{"f"}), or Total (\code{"t"})}
 

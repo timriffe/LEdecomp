@@ -4,7 +4,15 @@
 \alias{chandrasekaran_II}
 \title{II approach of Chandrasekaran decomposition approach}
 \usage{
-chandrasekaran_II(mx1, mx2, age, sex1 = "t", sex2 = sex1, closeout = TRUE)
+chandrasekaran_II(
+  mx1,
+  mx2,
+  age = (1:length(mx1)) - 1,
+  nx = rep(1, length(mx1)),
+  sex1 = "t",
+  sex2 = sex1,
+  closeout = TRUE
+)
 }
 \arguments{
 \item{mx1}{numeric vector of the mortality rates (central death rates) for population 1}
@@ -12,6 +20,8 @@ chandrasekaran_II(mx1, mx2, age, sex1 = "t", sex2 = sex1, closeout = TRUE)
 \item{mx2}{numeric vector of the mortality rates (central death rates) for population 2}
 
 \item{age}{integer vector of the lower bound of each age group (currently only single ages supported)}
+
+\item{nx}{integer vector of age intervals, default 1.}
 
 \item{sex1}{character either the sex for population 1: Male (\code{"m"}), Female (\code{"f"}), or Total (\code{"t"})}
 
