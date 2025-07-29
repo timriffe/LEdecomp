@@ -15,6 +15,3 @@ numeric vector of \code{dx} values
 \description{
 Minus the decumulation of the survival curve gives the death distribution. Or the element-wise product of \code{lx} and the conditional death probabilities \code{qx} gives the same thing.
 }
-\seealso{
-\link[DemoTools]{lt_id_l_d}
-}

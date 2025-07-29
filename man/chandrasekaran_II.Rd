@@ -4,7 +4,15 @@
 \alias{chandrasekaran_II}
 \title{II approach of Chandrasekaran decomposition approach}
 \usage{
-chandrasekaran_II(mx1, mx2, age, sex1 = "t", sex2 = sex1, closeout = TRUE)
+chandrasekaran_II(
+  mx1,
+  mx2,
+  age = (1:length(mx1)) - 1,
+  nx = rep(1, length(mx1)),
+  sex1 = "t",
+  sex2 = sex1,
+  closeout = TRUE
+)
 }
 \arguments{
 \item{mx1}{numeric vector of the mortality rates (central death rates) for population 1}
@@ -12,6 +20,8 @@ chandrasekaran_II(mx1, mx2, age, sex1 = "t", sex2 = sex1, closeout = TRUE)
 \item{mx2}{numeric vector of the mortality rates (central death rates) for population 2}
 
 \item{age}{integer vector of the lower bound of each age group (currently only single ages supported)}
+
+\item{nx}{integer vector of age intervals, default 1.}
 
 \item{sex1}{character either the sex for population 1: Male (\code{"m"}), Female (\code{"f"}), or Total (\code{"t"})}
 
@@ -24,11 +34,20 @@ chandrasekaran_II(mx1, mx2, age, sex1 = "t", sex2 = sex1, closeout = TRUE)
 }
 \description{
 Following the notation given in Ponnapalli (2005), and the decomposition method can written as:
-\deqn{_{n}\Delta_{x} = \frac{\left(e_x^2 - e_x^1\right)\left(l_x^2 + l_x^1 \right)}{2} - \frac{\left(e^{2}_{x+n} - e^{1}_{x+n} \right) \left(l^{2}_{x+n} + l^{1}_{x+n} \right)}{2} - \frac{_{n}L_{x}^{1}}{l_{x}^{1}}\right) + \frac{T^{2}_{x+n}}{l_{0}^{1}} \cdot \left( \frac{l_{x}^{1}}{l_{x}^{2}} - \frac{l_{x+n}^{1}}{l_{x+n}^{2}}  \right) }
+\deqn{
+_{n}\Delta_{x} =
+\frac{(e_x^2 - e_x^1)(l_x^2 + l_x^1)}{2}
+-
+\frac{(e_{x+n}^2 - e_{x+n}^1)(l_{x+n}^2 + l_{x+n}^1)}{2}
+-
+\frac{_{n}L_{x}^{1}}{l_{x}^{1}}
++
+\frac{T_{x+n}^{2}}{l_{0}^{1}} \left( \frac{l_{x}^{1}}{l_{x}^{2}} - \frac{l_{x+n}^{1}}{l_{x+n}^{2}} \right)
+}
 where \eqn{_{n}\Delta_{x}} is the contribution of rate differences in age \eqn{x} to the difference in life expectancy implied by \code{mx1} and \code{mx2}. This formula can be averaged between ‘effect interaction deferred’ and ‘effect interaction forwarded’ from the Ponnapalli (2005).
 }
 \details{
-setting \code{closeout} to \code{TRUE} will result in value of \code{1/mx} for the final age group, of \code{ax} and a value of 1 for the closeout of \code{qx}.
+setting \code{closeout} to \code{TRUE} will result in value of \code{1/mx} for the final age group, of \code{ax} and a value of 1 for the closeout of \code{qx}. This function gives numerically identical results to \code{arriaga_sym()}, \code{lopez_ruzicka_sym()}, and \code{chandrasekaran_III()}.
 }
 \examples{
 a <- .001

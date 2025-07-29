@@ -7,7 +7,8 @@
 LEdecomp(
   mx1,
   mx2,
-  age,
+  age = (1:length(mx1)) - 1,
+  nx = rep(1, length(mx1)),
   sex1 = "t",
   sex2 = sex1,
   method = c("lifetable", "arriaga", "arriaga_sym", "sen_arriaga", "sen_arriaga_sym",
@@ -34,11 +35,13 @@ LEdecomp(
 
 \item{age}{integer. lower bound of each age group, must be same length as \code{mx1}}
 
+\item{nx}{integer vector of age intervals, default 1.}
+
 \item{sex1}{character. \code{"m"},\code{"f"}, or \code{"t"}, affects a0 treatment.}
 
 \item{sex2}{character. \code{"m"},\code{"f"}, or \code{"t"}, affects a0 treatment.}
 
-\item{method}{character. \code{"lifetable"}, \verb{"arriaga"'}, \verb{"arriaga_sym"'}, \verb{"sen_arriaga"'}, \verb{"sen_arriaga_sym"'}, \verb{"sen_arriaga_inst"'}, \verb{"sen_arriaga_inst2"'}, \verb{"chandrasekaran_ii"'}, \verb{"sen_chandrasekaran_ii"'}, \verb{"sen_chandrasekaran_ii_inst"'}, \verb{"sen_chandrasekaran_ii_inst2"'}, \verb{"chandrasekaran_iii"'}, \verb{"sen_chandrasekaran_iii"'}, \verb{"sen_chandrasekaran_iii_inst"'}, \verb{"sen_chandrasekaran_iii_inst2"'}, \verb{"lopez_ruzicka"'}, \verb{"lopez_ruzicka_sym"'}, \verb{"sen_lopez_ruzicka"'}, \verb{"sen_lopez_ruzicka_sym"'}, \verb{"sen_lopez_ruzicka_inst"'}, \verb{"sen_lopez_ruzicka_inst2"'}, \verb{"horiuchi"'}, \verb{"stepwise"'}, \code{"numerical"}}
+\item{method}{character. \code{"lifetable"}, \code{"arriaga"}, \code{"arriaga_sym"}, \verb{"sen_arriaga"'}, \code{"sen_arriaga_sym"}, \verb{"sen_arriaga_inst"'}, \verb{"sen_arriaga_inst2"'}, \code{"chandrasekaran_ii"}, \code{"sen_chandrasekaran_ii"}, \code{"sen_chandrasekaran_ii_inst"}, \code{"sen_chandrasekaran_ii_inst2"}, \code{"chandrasekaran_iii"}, \code{"sen_chandrasekaran_iii"}, \code{"sen_chandrasekaran_iii_inst"}, \code{"sen_chandrasekaran_iii_inst2"}, \code{"lopez_ruzicka"}, \code{"lopez_ruzicka_sym"}, \code{"sen_lopez_ruzicka"}, \code{"sen_lopez_ruzicka_sym"}, \code{"sen_lopez_ruzicka_inst"}, \code{"sen_lopez_ruzicka_inst2"}, \code{"horiuchi"}, \code{"stepwise"}, \code{"numerical"}}
 
 \item{closeout}{logical. Do we handle closeout, or truncate at top age.}
 

@@ -7,9 +7,10 @@
 #' @param mx1 numeric. age-structured mortality rates for population 1.
 #' @param mx2 numeric. age-structured mortality rates for population 2, must be same length as `mx1`
 #' @param age integer. lower bound of each age group, must be same length as `mx1`
+#' @param nx integer vector of age intervals, default 1.
 #' @param sex1 character. `"m"`,`"f"`, or `"t"`, affects a0 treatment.
 #' @param sex2 character. `"m"`,`"f"`, or `"t"`, affects a0 treatment.
-#' @param method character. `"lifetable"`, `"arriaga"'`, `"arriaga_sym"'`, `"sen_arriaga"'`, `"sen_arriaga_sym"'`, `"sen_arriaga_inst"'`, `"sen_arriaga_inst2"'`, `"chandrasekaran_ii"'`, `"sen_chandrasekaran_ii"'`, `"sen_chandrasekaran_ii_inst"'`, `"sen_chandrasekaran_ii_inst2"'`, `"chandrasekaran_iii"'`, `"sen_chandrasekaran_iii"'`, `"sen_chandrasekaran_iii_inst"'`, `"sen_chandrasekaran_iii_inst2"'`, `"lopez_ruzicka"'`, `"lopez_ruzicka_sym"'`, `"sen_lopez_ruzicka"'`, `"sen_lopez_ruzicka_sym"'`, `"sen_lopez_ruzicka_inst"'`, `"sen_lopez_ruzicka_inst2"'`, `"horiuchi"'`, `"stepwise"'`, `"numerical"`
+#' @param method character. `"lifetable"`, `"arriaga"`, `"arriaga_sym"`, `"sen_arriaga"'`, `"sen_arriaga_sym"`, `"sen_arriaga_inst"'`, `"sen_arriaga_inst2"'`, `"chandrasekaran_ii"`, `"sen_chandrasekaran_ii"`, `"sen_chandrasekaran_ii_inst"`, `"sen_chandrasekaran_ii_inst2"`, `"chandrasekaran_iii"`, `"sen_chandrasekaran_iii"`, `"sen_chandrasekaran_iii_inst"`, `"sen_chandrasekaran_iii_inst2"`, `"lopez_ruzicka"`, `"lopez_ruzicka_sym"`, `"sen_lopez_ruzicka"`, `"sen_lopez_ruzicka_sym"`, `"sen_lopez_ruzicka_inst"`, `"sen_lopez_ruzicka_inst2"`, `"horiuchi"`, `"stepwise"`, `"numerical"`
 #' @param closeout logical. Do we handle closeout, or truncate at top age.
 #' @param opt logical, default `TRUE`. For lifetable, numerical, and instantaneous sensitivity-based decomposition, shall we optimize the rate averaging to eliminate the decomposition residual?
 #' @param tol numeric, default `1e-10`. Tolerance parameter for rate averaging optimization.
@@ -63,7 +64,8 @@
 #' @export
 LEdecomp <- function(mx1,
                      mx2,
-                     age,
+                     age = (1:length(mx1))-1,
+                     nx = rep(1, length(mx1)),
                      sex1 = 't',
                      sex2 = sex1,
                      method = c("lifetable",
@@ -109,6 +111,7 @@ LEdecomp <- function(mx1,
           d1 <- LEdecomp(mx1 = mx1,
                          mx2 = mx2,
                          age = age,
+                         nx = nx,
                          sex1 = sex1,
                          sex2 = sex1,
                          method = method,
@@ -123,6 +126,7 @@ LEdecomp <- function(mx1,
           d2 <- LEdecomp(mx1 = mx1,
                          mx2 = mx2,
                          age = age,
+                         nx = nx,
                          sex1 = sex2,
                          sex2 = sex2,
                          method = method,
@@ -139,10 +143,12 @@ LEdecomp <- function(mx1,
           #
           LE2 <- mx_to_e0(rowSums(as.matrix(mx2)),
                           age = age,
+                          nx = nx,
                           sex = sex1,
                           closeout = closeout)
           LE1 <- mx_to_e0(rowSums(as.matrix(mx1)),
                           age = age,
+                          nx = nx,
                           sex = sex1,
                           closeout = closeout)
           out <- list("mx1" = mx1,
@@ -198,6 +204,7 @@ LEdecomp <- function(mx1,
                         c("lifetable", "arriaga", "arriaga_sym",
                           "sen_arriaga", "sen_arriaga_sym",
                           "sen_arriaga_inst", "sen_arriaga_inst2",
+                          "sen_arriaga_sym_inst","sen_arriaga_sym_inst2",
                           "chandrasekaran_ii","chandrasekaran_ii_sym",
                           "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
                           "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_ii_sym",
@@ -218,6 +225,8 @@ LEdecomp <- function(mx1,
                     "sen_arriaga_sym" = sen_arriaga_sym,
                     "sen_arriaga_inst" = sen_arriaga_instantaneous,
                     "sen_arriaga_inst2" = sen_arriaga_instantaneous2,
+                    "sen_arriaga_sym_inst" = sen_arriaga_sym_instantaneous,
+                    "sen_arriaga_sym_inst2" = sen_arriaga_sym_instantaneous2,
                     "chandrasekaran_ii" = chandrasekaran_II,
                     "sen_chandrasekaran_ii" = sen_chandrasekaran_II,
                     "sen_chandrasekaran_ii_inst" = sen_chandrasekaran_II_instantaneous,
@@ -239,12 +248,12 @@ LEdecomp <- function(mx1,
   # ----------------------------------------------------------------- #
   if (method %in% c("stepwise","horiuchi")){
 
-    mx_to_e0_vec <- function(mx,n_causes, age, sex, closeout,...){
+    mx_to_e0_vec <- function(mx,n_causes, age, nx, sex, closeout,...){
       if (!is.null(n_causes)){
         dim(mx) <- c(length(mx) / n_causes, n_causes)
         mx <- rowSums(mx)
       }
-      mx_to_e0(mx, age = age, sex = sex, closeout = closeout)
+      mx_to_e0(mx, age = age, nx = nx, sex = sex, closeout = closeout)
     }
     if (method == "stepwise"){
       if (!is.null(n_causes)){
@@ -258,6 +267,7 @@ LEdecomp <- function(mx1,
                                        direction = direction,
                                        n_causes = n_causes,
                                        age = age,
+                                       nx = nx,
                                        sex = sex1, # see current sex solution above
                                        closeout = closeout,
                                        ...)
@@ -266,6 +276,7 @@ LEdecomp <- function(mx1,
       decomp <- DemoDecomp::horiuchi(func = mx_to_e0_vec,
                                      pars1 = c(mx1), pars2 = c(mx2),
                                      age = age,
+                                     nx = nx,
                                      n_causes = n_causes,
                                      sex = sex1, # see current sex solution above
                                      N = Num_Intervals,
@@ -289,11 +300,12 @@ LEdecomp <- function(mx1,
     if (!is.null(n_causes)){
       mx1_all     <- rowSums(mx1)
       mx2_all     <- rowSums(mx2)
-      delta   <- mx2_all - mx1_all
+      delta       <- mx2_all - mx1_all
       delta_split <- (mx2 - mx1) / delta
       decomp_all  <- dec_fun(mx1 = mx1_all,
                              mx2 = mx2_all,
                              age = age,
+                             nx = nx,
                              sex1 = sex1,
                              sex2 = sex1, # see diff sex solution at start
                              closeout = closeout)
@@ -312,6 +324,7 @@ LEdecomp <- function(mx1,
       decomp  <- dec_fun(mx1 = mx1,
                          mx2 = mx2,
                          age = age,
+                         nx = nx,
                          sex1 = sex1,
                          sex2 = sex1, # see diff sex solution at start
                          closeout = closeout)
@@ -327,6 +340,7 @@ LEdecomp <- function(mx1,
   # using Num_intervals argument                                      #
   # ----------------------------------------------------------------- #
   if (method %in% c("lifetable", "sen_arriaga_inst", "sen_arriaga_inst2",
+                    "sen_arriaga_sym_inst","sen_arriaga_sym_inst2",
                     "sen_chandrasekaran_ii_inst",
                     "sen_chandrasekaran_ii_inst2",
                     "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_iii_inst2",
@@ -341,6 +355,7 @@ LEdecomp <- function(mx1,
         sen     <- sen_min(mx1 = mx1_all,
                            mx2 = mx2_all,
                            age = age,
+                           nx = nx,
                            sex1 = sex1,
                            sex2 = sex1, # see diff sex solution at start
                            closeout = closeout,
@@ -352,6 +367,7 @@ LEdecomp <- function(mx1,
         sen     <- sen_min(mx1 = mx1,
                            mx2 = mx2,
                            age = age,
+                           nx = nx,
                            sex1 = sex1,
                            sex2 = sex1, # see diff sex solution at start
                            closeout = closeout,
@@ -369,6 +385,7 @@ LEdecomp <- function(mx1,
         delta  <- mx2 - mx1
         sen <- dec_fun(mx = mx_avg,
                        age = age,
+                       nx = nx,
                        sex = sex1,
                        closeout = closeout)
 
@@ -380,9 +397,12 @@ LEdecomp <- function(mx1,
     Delta <-
       mx_to_e0(mx2,
                age = age,
+               nx = nx,
                sex = sex1,
                closeout = closeout) -
-      mx_to_e0(mx1, age = age,
+      mx_to_e0(mx1,
+               age = age,
+               nx = nx,
                sex = sex1,
                closeout = closeout)
     if (abs(sum(decomp) - Delta) > .1){
@@ -414,6 +434,7 @@ LEdecomp <- function(mx1,
       sen         <- dec_fun(mx1 = mx1_all,
                              mx2 = mx2_all,
                              age = age,
+                             nx = nx,
                              sex1 = sex1,
                              sex2 = sex1, # see diff sex solution at start
                              closeout = closeout)
@@ -422,6 +443,7 @@ LEdecomp <- function(mx1,
       sen         <- dec_fun(mx1 = mx1,
                              mx2 = mx2,
                              age = age,
+                             nx = nx,
                              sex1 = sex1,
                              sex2 = sex1, # see diff sex solution at start
                              closeout = closeout)
@@ -433,10 +455,12 @@ LEdecomp <- function(mx1,
   # presumably we've used all options by now
   LE2 <- mx_to_e0(rowSums(as.matrix(mx2)),
                   age = age,
+                  nx = nx,
                   sex = sex1,
                   closeout = closeout)
   LE1 <- mx_to_e0(rowSums(as.matrix(mx1)),
                   age = age,
+                  nx = nx,
                   sex = sex1,
                   closeout = closeout)
 
@@ -481,17 +505,19 @@ print.LEdecomp <- function(x, ...) {
 
       cat(paste("Estimated the", x$method, "Life-Expectancy decomposition method."))
 
-    } else if(x$method %in% c( "sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2" , "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym__inst2")){
+    } else if(x$method %in% c( "sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" ,
+                               "sen_arriaga_inst2" ,  "sen_arriaga_sym_inst", "sen_arriaga_sym_inst2", "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2" , "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym_inst2")){
 
       values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst",
-                  "sen_arriaga_inst2", "sen_chandrasekaran_ii",
+
+                  "sen_arriaga_inst2", "sen_arriaga_sym_inst", "sen_arriaga_sym_inst2","sen_chandrasekaran_ii",
                   "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2",
                   "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
                   "sen_chandrasekaran_iii_inst2", "sen_lopez_ruzicka",
                   "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst",
                   "sen_lopez_ruzicka_inst2")
 
-      names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2",
+      names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2","arriaga_sym_inst","arriaga_sym_inst2",
                  "chandrasekaran_ii", "chandrasekaran_ii_inst", "chandrasekaran_ii_inst2",
                  "chandrasekaran_iii", "chandrasekaran_iii_inst", "chandrasekaran_iii_inst2",
                  "lopez_ruzicka", "lopez_ruzicka_sym", "lopez_ruzicka_inst", "lopez_ruzicka_sym__inst2")
@@ -505,10 +531,12 @@ print.LEdecomp <- function(x, ...) {
 
         cat(paste("Estimated the", x$method, "cause-of-death Life-Expectancy decomposition method."))
 
-      } else if(x$method %in%c( "lifetable","sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym_inst2","numerical")){
+      } else if(x$method %in%c( "lifetable","sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_arriaga_sym_inst" , "sen_arriaga_sym_inst2",
+                                "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym_inst2","numerical")){
 
         values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst",
-                    "sen_arriaga_inst2", "sen_chandrasekaran_ii",
+                    "sen_arriaga_inst2", "sen_arriaga_sym_inst" ,
+                    "sen_arriaga_sym_inst2", "sen_chandrasekaran_ii",
                     "sen_chandrasekaran_ii_inst","sen_chandrasekaran_ii_inst2",
                     "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
                     "sen_chandrasekaran_iii_inst2", "sen_lopez_ruzicka",
@@ -516,6 +544,7 @@ print.LEdecomp <- function(x, ...) {
                     "sen_lopez_ruzicka_sym__inst2")
 
         names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2",
+                   "sen_arriaga_sym_inst" ,"sen_arriaga_sym_inst2",
                    "chandrasekaran_ii", "chandrasekaran_ii_inst",
                    "chandrasekaran_ii_inst2", "chandrasekaran_iii",
                    "chandrasekaran_iii_inst", "chandrasekaran_iii_inst2",

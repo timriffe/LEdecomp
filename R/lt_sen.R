@@ -32,18 +32,24 @@
 #' }
 sen_e0_mx_lt <- function(mx,
                          age = 0:(length(mx)-1),
+                         nx = rep(1,length(mx)),
                          sex = 't',
                          closeout = TRUE){
   ax <- mx_to_ax(mx = mx,
                  age = age,
+                 nx = nx,
                  sex = sex,
                  closeout = closeout)
-  qx <- mx_to_qx(mx, ax)
+  qx <- mx_to_qx(mx = mx,
+                 ax = ax,
+                 nx = nx,
+                 closeout = closeout)
   lx <- qx_to_lx(qx)
   dx <- lx_to_dx(lx)
   Lx <- ald_to_Lx(ax = ax,
                   lx = lx,
-                  dx = dx)
+                  dx = dx,
+                  nx = nx)
   ex <- lL_to_ex(lx = lx, Lx = Lx)
   # ex <- mx_to_ex(mx)
   N <- length(mx)
@@ -51,7 +57,7 @@ sen_e0_mx_lt <- function(mx,
   # This is the current-best approximation,
   # but still requires an unknown adjustment for age 0
   exs <- shift(ex, n = -1, fill = ex[N])
-  ex2 <- ex * (1 - ax) + exs * ax
+  ex2 <- ex * (nx - ax) + exs * ax
 
   ex2[N] <- ex[N]
 

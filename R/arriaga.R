@@ -4,12 +4,12 @@
 #' @title classic Arriaga decomposition
 #' @description Following the notation given in Preston et al (2000), Arriaga's decomposition method can written as:
 #' \deqn{_{n}\Delta_{x} = \frac{l_x^1}{l_0^1}\cdot \left( \frac{_{n}L_{x}^{2}}{l_{x}^{2}} - \frac{_{n}L_{x}^{1}}{l_{x}^{1}}\right) + \frac{T^{2}_{x+n}}{l_{0}^{1}} \cdot \left( \frac{l_{x}^{1}}{l_{x}^{2}} - \frac{l_{x+n}^{1}}{l_{x+n}^{2}}  \right) }
-#' where \eqn{_{n}\Delta_{x}} is the contribution of rate differences in age \eqn{x} to the difference in life expectancy implied by `mx1` and `mx2`. The first part of the sum refers to the so-called direct effect (in age group \eqn{x}), whereas the second part refers to indirect effects in ages above age \eqn{x}. Usually the indirect effects are far larger than the direct effects.
 #' @details A little-known property of this decomposition method is that it is directional, in the sense that we are comparing a movement of `mx1` to `mx2`, and this is not exactly symmetrical with a comparison of `mx2` with `mx1`. Note also, if decomposing in reverse from the usual, you may need a slight adjustment to the closeout value in order to match sums properly (see examples for a demonstration).
 #'
 #' @param mx1 numeric vector of the mortality rates (central death rates) for population 1
 #' @param mx2 numeric vector of the mortality rates (central death rates) for population 2
 #' @param age integer vector of the lower bound of each age group (currently only single ages supported)
+#' @param nx integer vector of age intervals, default 1.
 #' @param sex1 character either the sex for population 1: Male (`"m"`), Female (`"f"`), or Total (`"t"`)
 #' @param sex2 character either the sex for population 2: Male (`"m"`), Female (`"f"`), or Total (`"t"`) assumed same as `sex1` unless otherwise specified.
 #' @param closeout logical. Default `TRUE`. Shall we use the HMD Method Protocol to close out the `ax` and `qx` values? See details.
@@ -50,23 +50,28 @@
 arriaga <- function(mx1,
                     mx2,
                     age = 0:(length(mx1) - 1),
+                    nx = rep(1,length(mx1)),
                     sex1 = 't',
                     sex2 = sex1,
                     closeout = TRUE){
 
     ax1 <- mx_to_ax(mx = mx1,
                     age = age,
+                    nx = nx,
                     sex = sex1,
                     closeout = closeout)
     ax2 <- mx_to_ax(mx = mx2,
                     age = age,
+                    nx = nx,
                     sex = sex2,
                     closeout = closeout)
     qx1 <- mx_to_qx(mx = mx1,
                     ax = ax1,
+                    nx = nx,
                     closeout = closeout)
     qx2 <- mx_to_qx(mx = mx2,
                     ax = ax2,
+                    nx = nx,
                     closeout = closeout)
     lx1 <- qx_to_lx(qx1)
     lx2 <- qx_to_lx(qx2)
@@ -74,10 +79,12 @@ arriaga <- function(mx1,
     dx2 <- lx_to_dx(lx2)
     Lx1 <- ald_to_Lx(ax = ax1,
                      lx = lx1,
-                     dx = dx1)
+                     dx = dx1,
+                     nx = nx)
     Lx2 <- ald_to_Lx(ax = ax2,
                      lx = lx2,
-                     dx = dx2)
+                     dx = dx2,
+                     nx = nx)
     Tx1 <- rcumsum(Lx1)
     Tx2 <- rcumsum(Lx2)
 
@@ -123,22 +130,27 @@ arriaga <- function(mx1,
 sen_arriaga <- function(mx1,
                         mx2,
                         age = 0:(length(mx1)-1),
+                        nx = rep(1,length(mx1)),
                         sex1 = 't',
                         sex2 = sex1,
                         closeout = TRUE){
   ax1 <- mx_to_ax(mx = mx1,
                   age = age,
+                  nx = nx,
                   sex = sex1,
                   closeout = closeout)
   ax2 <- mx_to_ax(mx = mx2,
                   age = age,
+                  nx = nx,
                   sex = sex2,
                   closeout = closeout)
   qx1 <- mx_to_qx(mx = mx1,
                   ax = ax1,
+                  nx = nx,
                   closeout = closeout)
   qx2 <- mx_to_qx(mx = mx2,
                   ax = ax2,
+                  nx = nx,
                   closeout = closeout)
   lx1 <- qx_to_lx(qx1)
   lx2 <- qx_to_lx(qx2)
@@ -146,10 +158,12 @@ sen_arriaga <- function(mx1,
   dx2 <- lx_to_dx(lx2)
   Lx1 <- ald_to_Lx(ax = ax1,
                    lx = lx1,
-                   dx = dx1)
+                   dx = dx1,
+                   nx = nx)
   Lx2 <- ald_to_Lx(ax = ax2,
                    lx = lx2,
-                   dx = dx2)
+                   dx = dx2,
+                   nx = nx)
   Tx1 <- rcumsum(Lx1)
   Tx2 <- rcumsum(Lx2)
 
@@ -209,6 +223,7 @@ sen_arriaga <- function(mx1,
 sen_arriaga_instantaneous <- function(mx,
                                       age = 0:(length(mx1)-1),
                                       sex = 't',
+                                      nx = rep(1,length(mx)),
                                       perturb = 1e-6,
                                       closeout = TRUE){
   mx1 <- mx * (1 / (1 - perturb))
@@ -216,12 +231,14 @@ sen_arriaga_instantaneous <- function(mx,
   s1 <- sen_arriaga(mx1 = mx1,
                     mx2 = mx2,
                     age = age,
+                    nx = nx,
                     sex1 = sex,
                     sex2 = sex,
                     closeout = closeout)
   s2 <- sen_arriaga(mx1 = mx2,
                     mx2 = mx1,
                     age = age,
+                    nx = nx,
                     sex1 = sex,
                     sex2 = sex,
                     closeout = closeout)
@@ -259,6 +276,7 @@ sen_arriaga_instantaneous <- function(mx,
 sen_arriaga_instantaneous2 <- function(mx,
                                        age = 0:(length(mx1)-1),
                                        sex = 't',
+                                       nx = rep(1,length(mx)),
                                        perturb = 1e-6,
                                        closeout = TRUE){
   mx1 <- exp(log(mx) + perturb)
@@ -266,12 +284,14 @@ sen_arriaga_instantaneous2 <- function(mx,
   s1 <- sen_arriaga(mx1 = mx1,
                     mx2 = mx2,
                     age = age,
+                    nx = nx,
                     sex1 = sex,
                     sex2 = sex,
                     closeout = closeout)
   s2 <- sen_arriaga(mx1 = mx2,
                     mx2 = mx1,
                     age = age,
+                    nx = nx,
                     sex1 = sex,
                     sex2 = sex,
                     closeout = closeout)
@@ -285,6 +305,8 @@ sen_arriaga_instantaneous2 <- function(mx,
 
 #' @title Estimate sensitivity of life expectancy using a symmetrical Arriaga approach.
 #' @description This approach conducts a classic Arriaga decomposition in both directions, averaging the (sign-adjusted) result, i.e. `a_avg = (arriaga(mx1,mx2, ...) - arriaga(mx2, mx1, ...)) / 2`.
+#' #@note The final age group's contribution from the reversed decomposition is halved before averaging. This empirical adjustment ensures symmetry and numeric stability, though the theoretical basis requires further exploration.
+
 #' @export
 #' @inheritParams arriaga
 #' @seealso \code{\link{arriaga}}
@@ -311,18 +333,21 @@ sen_arriaga_instantaneous2 <- function(mx,
 arriaga_sym <- function(mx1,
                         mx2,
                         age = 0:(length(mx1) - 1),
+                        nx = rep(1,length(mx1)),
                         sex1 = 't',
                         sex2 = sex1,
                         closeout = TRUE){
   a1 <- arriaga(mx1,
                 mx2,
                 age = age,
+                nx = nx,
                 sex1 = sex1,
                 sex2 = sex2,
                 closeout = closeout)
   a2 <- arriaga(mx2,
                 mx1,
                 age = age,
+                nx = nx,
                 sex1 = sex2,
                 sex2 = sex1,
                 closeout = closeout)
@@ -364,6 +389,7 @@ arriaga_sym <- function(mx1,
 sen_arriaga_sym <- function(mx1,
                             mx2,
                             age = 0:(length(mx1) - 1),
+                            nx = rep(1,length(mx1)),
                             sex1 = 't',
                             sex2 = sex1,
                             closeout = TRUE){
@@ -371,6 +397,7 @@ sen_arriaga_sym <- function(mx1,
  a_avg <- arriaga_sym(mx1 = mx1,
                       mx2 = mx2,
                       age = age,
+                      nx = nx,
                       sex1 = sex1,
                       sex2 = sex2,
                       closeout = closeout)
@@ -378,4 +405,88 @@ sen_arriaga_sym <- function(mx1,
 }
 
 
+#' @title Instantaneous sensitivity via symmetrical Arriaga decomposition
+#'
+#' @description
+#' Estimates the sensitivity of life expectancy to small changes in age-specific mortality rates using the symmetrical Arriaga decomposition. This is done by applying a small multiplicative perturbation to the input mortality rates and using the symmetrical sensitivity function `sen_arriaga_sym()`.
+#'
+#' Specifically, the function constructs:
+#' \deqn{m_{x}^{1} = m_x \cdot \left(\frac{1}{1 - h}\right)}
+#' \deqn{m_{x}^{2} = m_x \cdot (1 - h)}
+#' and applies \code{sen_arriaga_sym(mx1, mx2, ...)} to the result.
+#'
+#' @inheritParams sen_arriaga_sym
+#' @param mx Numeric vector of mortality rates (central death rates).
+#' @param sex Character; "m" for male, "f" for female, or "t" for total.
+#' @param perturb Numeric; a small constant determining the perturbation size (default 1e-6).
+#'
+#' @details This function yields an instantaneous approximation to the derivative of life expectancy with respect to mortality, evaluated at the input schedule. Because `sen_arriaga_sym()` is itself symmetrical, only the "forward" perturbation is required.
+#'
+#' @seealso \code{\link{sen_arriaga_sym}}, \code{\link{sen_arriaga_sym_instantaneous2}}, \code{\link{sen_lopez_ruzicka_instantaneous}}
+#'
+#' @export
+#' @examples
+#' a <- 0.001
+#' b <- 0.07
+#' x <- 0:100
+#' mx <- a * exp(x * b)
+#' s <- sen_arriaga_sym_instantaneous(mx, age = x)
+#' \dontrun{
+#' plot(x, s, type = "l")
+#' }
+
+
+sen_arriaga_sym_instantaneous <- function(mx,
+                                      age = 0:(length(mx1)-1),
+                                      sex = 't',
+                                      nx = rep(1,length(mx)),
+                                      perturb = 1e-6,
+                                      closeout = TRUE){
+  mx1 <- mx * (1 / (1 - perturb))
+  mx2 <- mx * (1 - perturb) / 1
+  s1 <- sen_arriaga_sym(mx1 = mx1,
+                        mx2 = mx2,
+                        age = age,
+                        nx = nx,
+                        sex1 = sex,
+                        sex2 = sex,
+                        closeout = closeout)
+
+  s1
+}
+
+#' @title Estimate sensitivity of life expectancy for a set of mortality rates by perturbing in the log space.
+#' @description This is a second approach for estimating the sensitivity for a single set of rates. Here, rather than directly expanding and contracting rates to convert `mx` into `mx1` and `mx2` we instead shift the logged mortality rates up and down by the factor `perturb = h`. Specifically:
+#' \deqn{m_{x}^{1} = e^{\ln\left(m_x\right) + h}}
+#' \deqn{m_{x}^{2} = e^{\ln\left(m_x\right) - h}}
+#' @export
+#' @inheritParams sen_arriaga_instantaneous
+#' @seealso \code{\link{sen_arriaga_instantaneous}}
+#' @examples
+#' a <- 0.001
+#' b <- 0.07
+#' x <- 0:100
+#' mx <- a * exp(x * b)
+#' s <- sen_arriaga_sym_instantaneous2(mx, age = x)
+#' \dontrun{
+#' plot(x, s, type = "l")
+#' }
+
+sen_arriaga_sym_instantaneous2 <- function(mx,
+                                       age = 0:(length(mx1)-1),
+                                       sex = 't',
+                                       nx = rep(1,length(mx)),
+                                       perturb = 1e-6,
+                                       closeout = TRUE){
+  mx1 <- exp(log(mx) + perturb)
+  mx2 <- exp(log(mx) - perturb)
+  s1 <- sen_arriaga_sym(mx1 = mx1,
+                    mx2 = mx2,
+                    age = age,
+                    nx = nx,
+                    sex1 = sex,
+                    sex2 = sex,
+                    closeout = closeout)
+  s1
+}
 

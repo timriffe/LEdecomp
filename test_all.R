@@ -19,7 +19,7 @@ rowSums(mx1_c) - mx1
 rowSums(mx2_c) - mx2
 
 #devtools::load_all()
-library(DemoTools)
+
 library(dplyr)
 library(data.table)
 devtools::load_all()
@@ -30,12 +30,12 @@ methods <- c(
 "lifetable", "arriaga", "arriaga_sym",
 "sen_arriaga", "sen_arriaga_sym",
 "sen_arriaga_inst", "sen_arriaga_inst2",
-"chandrasekaran_ii","chandrasekaran_ii_sym",
+"chandrasekaran_ii",
 "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
-"sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_ii_sym",
-"chandrasekaran_iii","chandrasekaran_iii_sym",
+"sen_chandrasekaran_ii_inst2",
+"chandrasekaran_iii",
 "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
-"sen_chandrasekaran_iii_inst2", "sen_chandrasekaran_iii_sym",
+"sen_chandrasekaran_iii_inst2",
 "lopez_ruzicka", "lopez_ruzicka_sym",
 "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym",
 "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_inst2",
@@ -53,6 +53,7 @@ barplot(sort(D_defaults),horiz=TRUE,las=1)
 LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="arriaga",opt=F)$LEdecomp -
   LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="lopez_ruzicka",opt=F)$LEdecomp
 
+
 # chandrasekaran ii and iii are equivalent :-)
 LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="chandrasekaran_iii",opt=F)$LEdecomp -
   LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="chandrasekaran_ii",opt=F)$LEdecomp
@@ -60,3 +61,6 @@ LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="chandrasekaran_iii",opt=F)$LEde
 # chandrasekaran and arriaga_sym are equivalent :-)
 LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="chandrasekaran_iii",opt=F)$LEdecomp -
   LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method="arriaga_sym",opt=F)$LEdecomp
+
+# meaning that the following *four* are equivalent:
+# arriaga_sym; lopez_ruzicka_sym; chandrasekaran_II; chandrasekaran_III

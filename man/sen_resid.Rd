@@ -8,7 +8,8 @@ sen_resid(
   w = 0.5,
   mx1,
   mx2,
-  age,
+  age = 0:(length(mx) - 1),
+  nx = rep(1, length(mx)),
   sex1,
   sex2 = sex1,
   closeout = TRUE,
@@ -24,6 +25,8 @@ sen_resid(
 \item{mx2}{numeric vector of the mortality rates (central death rates) for population 2}
 
 \item{age}{integer vector of the lower bound of each age group (currently only single ages supported)}
+
+\item{nx}{integer vector of age intervals, default 1.}
 
 \item{sex1}{character either the sex for population 1: Male (\code{"m"}), Female (\code{"f"}), or Total (\code{"t"})}
 

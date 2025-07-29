@@ -4,21 +4,17 @@
 \alias{mx_to_qx}
 \title{produce single-age \code{qx} values}
 \usage{
-mx_to_qx(mx, ax, closeout = TRUE)
+mx_to_qx(mx, ax, nx = rep(1, length(mx)), closeout = TRUE)
 }
 \arguments{
 \item{mx}{numeric vector of the mortality rates (central death rates)}
 
 \item{ax}{numeric vector of \code{ax} values}
 
+\item{nx}{age interval width, assumes 1 by default}
+
 \item{closeout}{logical. Default \code{TRUE}.}
 }
 \description{
 \code{qx} gives conditional death probabilities, in this case forced to be consistent with a set of \code{mx} and \code{ax} values per HMD Method Protocol eq 71.
-}
-\references{
-\insertRef{wilmoth2021methods}{LEdecomp}
-}
-\seealso{
-\link[DemoTools]{lt_id_ma_q}
 }
