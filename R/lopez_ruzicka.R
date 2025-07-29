@@ -183,6 +183,40 @@ sen_lopez_ruzicka <- function(mx1,
   sen
 
 }
+
+#' @title Sensitivity from symmetric Lopez-Ruzicka decomposition
+#'
+#' @description Computes the sensitivity of life expectancy to changes in age-specific mortality rates using the symmetric version of the Lopez-Ruzicka decomposition, as described by Ponnapalli (2005). The sensitivity is obtained by dividing the symmetric decomposition result by the differences in mortality rates (`mx2 - mx1`). This yields a pointwise estimate of the derivative of life expectancy with respect to each age-specific mortality rate evaluated at an imagined midpoint between the first and second set of mortality rates.
+#'
+#' @details This method gives numerically identical results to `sen_arriaga_sym()`, `sen_chandrasekaran_II()`, and `sen_chandrasekaran_III()`.
+#'
+#' @inheritParams lopez_ruzicka
+#'
+#' @return A numeric vector of sensitivity values by age group.
+#'
+#' @seealso
+#' \code{\link{lopez_ruzicka_sym}},
+#' \code{\link{sen_arriaga_sym}},
+#' \code{\link{sen_chandrasekaran_II}},
+#' \code{\link{sen_chandrasekaran_III}}
+#'
+#' @references
+#' \insertRef{Ponnapalli2005}{LEdecomp}
+#'
+#' @export
+#'
+#' @examples
+#' a <- 0.001
+#' b <- 0.07
+#' x <- 0:100
+#' mx1 <- a * exp(x * b)
+#' mx2 <- a/2 * exp(x * b)
+#' s <- sen_lopez_ruzicka_sym(mx1, mx2, age = x)
+#'
+#' # Check equivalence with symmetric Arriaga
+#' s2 <- sen_arriaga_sym(mx1, mx2, age = x)
+#' all.equal(s, s2)
+
 sen_lopez_ruzicka_sym <- function(mx1, mx2,
                                   age = (1:length(mx1))-1,
                                   nx = rep(1,length(mx1)),
@@ -199,6 +233,46 @@ sen_lopez_ruzicka_sym <- function(mx1, mx2,
                              closeout = closeout)
   a_avg / delta
 }
+
+#' @title Instantaneous sensitivity via Lopez-Ruzicka decomposition
+#'
+#' @description
+#' Estimates the sensitivity of life expectancy to small changes in mortality rates
+#' using the Lopez-Ruzicka decomposition. This is done by perturbing the input
+#' mortality rates up and down by a small factor and averaging the resulting directional
+#' sensitivities to approximate a symmetric derivative.
+#'
+#' Specifically:
+#' \deqn{m_x^{1} = m_x \cdot \left( \frac{1}{1 - h} \right)}
+#' \deqn{m_x^{2} = m_x \cdot (1 - h)}
+#' and applies \code{sen_lopez_ruzicka(mx1, mx2, ...)} and \code{sen_lopez_ruzicka(mx2, mx1, ...)},
+#' returning their average.
+#'
+#' @inheritParams sen_lopez_ruzicka_sym
+#' @param mx Numeric vector of mortality rates (central death rates).
+#' @param sex Character; "m" for male, "f" for female, or "t" for total.
+#' @param perturb Numeric; a small constant determining the perturbation size (default: 1e-6).
+#'
+#' @details
+#' This method gives numerically identical results to
+#' `sen_arriaga_sym_instantaneous()`,
+#' `sen_chandrasekaran_II_instantaneous()`, and
+#' `sen_chandrasekaran_III_instantaneous()`.
+#'
+#' @seealso
+#' \code{\link{sen_lopez_ruzicka}}, \code{\link{sen_lopez_ruzicka_instantaneous2}}, \code{\link{sen_arriaga_sym_instantaneous}}, \code{\link{sen_chandrasekaran_II_instantaneous}}
+#'
+#' @export
+#'
+#' @examples
+#' a <- 0.001
+#' b <- 0.07
+#' x <- 0:100
+#' mx <- a * exp(x * b)
+#' s <- sen_lopez_ruzicka_instantaneous(mx, age = x)
+#' \dontrun{
+#' plot(x, s, type = "l")
+#' }
 
 sen_lopez_ruzicka_instantaneous <- function(mx,
                                             age = (1:length(mx1))-1,
@@ -222,16 +296,47 @@ sen_lopez_ruzicka_instantaneous <- function(mx,
                           sex1 = sex,
                           sex2 = sex,
                           closeout = closeout)
-  # TR: is this closeout actually needed here?
-  # I have my doubts this was checked
-  #To match the solution with the arriaga
-  # if (closeout){
-  #   s2[length(s2)] <- s2[length(s2)] * 2
-  # }
+
   sen <- (s1 + s2) / 2
 
   sen
 }
+
+#' @title Log-space instantaneous sensitivity via Lopez-Ruzicka decomposition
+#'
+#' @description Estimates the sensitivity of life expectancy to small changes in mortality rates using the Lopez-Ruzicka decomposition and log-space perturbation. This is done by shifting the log of the input mortality rates up and down by a small constant, then exponentiating, and computing the average directional sensitivity.
+#'
+#' Specifically:
+#' \deqn{m_x^{1} = \exp(\ln m_x + h)}
+#' \deqn{m_x^{2} = \exp(\ln m_x - h)}
+#' and applies \code{sen_lopez_ruzicka(mx1, mx2, ...)} and \code{sen_lopez_ruzicka(mx2, mx1, ...)},
+#' returning their average.
+#'
+#' @inheritParams sen_lopez_ruzicka_instantaneous
+#'
+#' @details
+#' This approach gives numerically identical results to
+#' `sen_arriaga_sym_instantaneous2()`,
+#' `sen_chandrasekaran_II_instantaneous2()`, and
+#' `sen_chandrasekaran_III_instantaneous2()`.
+#'
+#' @seealso
+#' \code{\link{sen_lopez_ruzicka_instantaneous}},
+#' \code{\link{sen_arriaga_sym_instantaneous2}},
+#' \code{\link{sen_chandrasekaran_III_instantaneous2}}
+#'
+#' @export
+#'
+#' @examples
+#' a <- 0.001
+#' b <- 0.07
+#' x <- 0:100
+#' mx <- a * exp(x * b)
+#' s <- sen_lopez_ruzicka_instantaneous2(mx, age = x)
+#' \dontrun{
+#' plot(x, s, type = "l")
+#' }
+
 sen_lopez_ruzicka_instantaneous2 <- function(mx,
                                              age = (1:length(mx1))-1,
                                              nx = rep(1,length(mx1)),

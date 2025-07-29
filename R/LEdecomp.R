@@ -10,7 +10,7 @@
 #' @param nx integer vector of age intervals, default 1.
 #' @param sex1 character. `"m"`,`"f"`, or `"t"`, affects a0 treatment.
 #' @param sex2 character. `"m"`,`"f"`, or `"t"`, affects a0 treatment.
-#' @param method character. `"lifetable"`, `"arriaga"'`, `"arriaga_sym"'`, `"sen_arriaga"'`, `"sen_arriaga_sym"'`, `"sen_arriaga_inst"'`, `"sen_arriaga_inst2"'`, `"chandrasekaran_ii"'`, `"sen_chandrasekaran_ii"'`, `"sen_chandrasekaran_ii_inst"'`, `"sen_chandrasekaran_ii_inst2"'`, `"chandrasekaran_iii"'`, `"sen_chandrasekaran_iii"'`, `"sen_chandrasekaran_iii_inst"'`, `"sen_chandrasekaran_iii_inst2"'`, `"lopez_ruzicka"'`, `"lopez_ruzicka_sym"'`, `"sen_lopez_ruzicka"'`, `"sen_lopez_ruzicka_sym"'`, `"sen_lopez_ruzicka_inst"'`, `"sen_lopez_ruzicka_inst2"'`, `"horiuchi"'`, `"stepwise"'`, `"numerical"`
+#' @param method character. `"lifetable"`, `"arriaga"`, `"arriaga_sym"`, `"sen_arriaga"'`, `"sen_arriaga_sym"`, `"sen_arriaga_inst"'`, `"sen_arriaga_inst2"'`, `"chandrasekaran_ii"`, `"sen_chandrasekaran_ii"`, `"sen_chandrasekaran_ii_inst"`, `"sen_chandrasekaran_ii_inst2"`, `"chandrasekaran_iii"`, `"sen_chandrasekaran_iii"`, `"sen_chandrasekaran_iii_inst"`, `"sen_chandrasekaran_iii_inst2"`, `"lopez_ruzicka"`, `"lopez_ruzicka_sym"`, `"sen_lopez_ruzicka"`, `"sen_lopez_ruzicka_sym"`, `"sen_lopez_ruzicka_inst"`, `"sen_lopez_ruzicka_inst2"`, `"horiuchi"`, `"stepwise"`, `"numerical"`
 #' @param closeout logical. Do we handle closeout, or truncate at top age.
 #' @param opt logical, default `TRUE`. For lifetable, numerical, and instantaneous sensitivity-based decomposition, shall we optimize the rate averaging to eliminate the decomposition residual?
 #' @param tol numeric, default `1e-10`. Tolerance parameter for rate averaging optimization.
@@ -501,7 +501,7 @@ print.LEdecomp <- function(x, ...) {
 
       cat(paste("Estimated the", x$method, "Life-Expectancy decomposition method."))
 
-    } else if(x$method %in% c( "sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2" , "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym__inst2")){
+    } else if(x$method %in% c( "sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2" , "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym_inst2")){
 
       values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst",
                   "sen_arriaga_inst2", "sen_chandrasekaran_ii",
