@@ -85,6 +85,7 @@ mx_to_qx <- function(mx, ax, nx = rep(1,length(mx)), closeout = TRUE){
 #' @title Calculate the survival curve
 #' @description The survival curve is calculated as the cumulative product of the conditional survival probabilities, which are the complement of conditional death probabilities, `qx`, except we take care to start with a clean 1. This function no radix option. `lx` with a radix of 1 can be interpreted as the probability of surviving from birth to age `x`.
 #' @param qx numeric vector of conditional death probabilities
+#' @param radix initial lifetable cohort size, $l(0)$. Default 1.
 #' @return numeric vector of `lx` values
 #' @export
 qx_to_lx <- function(qx, radix  = 1){
@@ -105,6 +106,7 @@ lx_to_dx <- function(lx){
 #' @param ax numeric vector of ax, average time spent in the age interval by those that die in the interval
 #' @param lx numeric vector of lx, lifetable survivorship at exact ages.
 #' @param dx  numeric vector of dx, the lifetable deaths distribution.
+#' @param nx age interval width, assumes 1 by default
 #' @return numeric vector of `Lx` values
 #' @export
 #' @references

@@ -19,7 +19,6 @@ Imports:
   numDeriv,
   Rdpack,
   DemoDecomp,
-  DemoTools,
   data.table,
   ggplot2
 Depends:

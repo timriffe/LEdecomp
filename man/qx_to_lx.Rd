@@ -8,6 +8,8 @@ qx_to_lx(qx, radix = 1)
 }
 \arguments{
 \item{qx}{numeric vector of conditional death probabilities}
+
+\item{radix}{initial lifetable cohort size, $l(0)$. Default 1.}
 }
 \value{
 numeric vector of \code{lx} values

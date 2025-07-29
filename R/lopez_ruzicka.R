@@ -163,6 +163,44 @@ lopez_ruzicka_sym <- function(mx1,
   a_avg
 
 }
+
+
+#' @title Sensitivity from Lopez-Ruzicka decomposition
+#'
+#' @description
+#' Computes the sensitivity of life expectancy to changes in age-specific mortality rates using the Lopez-Ruzicka decomposition approach. The sensitivity is calculated by dividing the age-specific contributions (from `lopez_ruzicka()`) by the differences in mortality rates (`mx2 - mx1`). This gives a pointwise estimate of the derivative of life expectancy with respect to each age-specific mortality rate, evaluated at an imagined midpoint between the two input rate schedules.
+#'
+#' @details
+#' This method gives numerically identical results to `sen_arriaga()`.
+#'
+#' @inheritParams lopez_ruzicka
+#'
+#' @return A numeric vector of sensitivity values by age group.
+#'
+#' @seealso
+#' \code{\link{lopez_ruzicka}}, \code{\link{sen_arriaga}}, \code{\link{sen_chandrasekaran_III}}
+#'
+#' @references
+#' \insertRef{Ponnapalli2005}{LEdecomp}
+#'
+#' @examples
+#' a <- 0.001
+#' b <- 0.07
+#' x <- 0:100
+#' mx1 <- a * exp(x * b)
+#' mx2 <- a / 2 * exp(x * b)
+#' s <- sen_lopez_ruzicka(mx1, mx2, age = x)
+#'
+#' # Check that multiplying sensitivity by rate difference reproduces the decomposition
+#' cc_check <- s * (mx2 - mx1)
+#' cc <- lopez_ruzicka(mx1, mx2, age = x)
+#' \dontrun{
+#' plot(x, cc, type = "l")
+#' lines(x, cc_check, col = "red", lty = 2)
+#' }
+#'
+#' @export
+
 sen_lopez_ruzicka <- function(mx1,
                               mx2,
                               age = (1:length(mx1))-1,

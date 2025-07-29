@@ -405,4 +405,88 @@ sen_arriaga_sym <- function(mx1,
 }
 
 
+#' @title Instantaneous sensitivity via symmetrical Arriaga decomposition
+#'
+#' @description
+#' Estimates the sensitivity of life expectancy to small changes in age-specific mortality rates using the symmetrical Arriaga decomposition. This is done by applying a small multiplicative perturbation to the input mortality rates and using the symmetrical sensitivity function `sen_arriaga_sym()`.
+#'
+#' Specifically, the function constructs:
+#' \deqn{m_{x}^{1} = m_x \cdot \left(\frac{1}{1 - h}\right)}
+#' \deqn{m_{x}^{2} = m_x \cdot (1 - h)}
+#' and applies \code{sen_arriaga_sym(mx1, mx2, ...)} to the result.
+#'
+#' @inheritParams sen_arriaga_sym
+#' @param mx Numeric vector of mortality rates (central death rates).
+#' @param sex Character; "m" for male, "f" for female, or "t" for total.
+#' @param perturb Numeric; a small constant determining the perturbation size (default 1e-6).
+#'
+#' @details This function yields an instantaneous approximation to the derivative of life expectancy with respect to mortality, evaluated at the input schedule. Because `sen_arriaga_sym()` is itself symmetrical, only the "forward" perturbation is required.
+#'
+#' @seealso \code{\link{sen_arriaga_sym}}, \code{\link{sen_arriaga_sym_instantaneous2}}, \code{\link{sen_lopez_ruzicka_instantaneous}}
+#'
+#' @export
+#' @examples
+#' a <- 0.001
+#' b <- 0.07
+#' x <- 0:100
+#' mx <- a * exp(x * b)
+#' s <- sen_arriaga_sym_instantaneous(mx, age = x)
+#' \dontrun{
+#' plot(x, s, type = "l")
+#' }
+
+
+sen_arriaga_sym_instantaneous <- function(mx,
+                                      age = 0:(length(mx1)-1),
+                                      sex = 't',
+                                      nx = rep(1,length(mx)),
+                                      perturb = 1e-6,
+                                      closeout = TRUE){
+  mx1 <- mx * (1 / (1 - perturb))
+  mx2 <- mx * (1 - perturb) / 1
+  s1 <- sen_arriaga_sym(mx1 = mx1,
+                        mx2 = mx2,
+                        age = age,
+                        nx = nx,
+                        sex1 = sex,
+                        sex2 = sex,
+                        closeout = closeout)
+
+  s1
+}
+
+#' @title Estimate sensitivity of life expectancy for a set of mortality rates by perturbing in the log space.
+#' @description This is a second approach for estimating the sensitivity for a single set of rates. Here, rather than directly expanding and contracting rates to convert `mx` into `mx1` and `mx2` we instead shift the logged mortality rates up and down by the factor `perturb = h`. Specifically:
+#' \deqn{m_{x}^{1} = e^{\ln\left(m_x\right) + h}}
+#' \deqn{m_{x}^{2} = e^{\ln\left(m_x\right) - h}}
+#' @export
+#' @inheritParams sen_arriaga_instantaneous
+#' @seealso \code{\link{sen_arriaga_instantaneous}}
+#' @examples
+#' a <- 0.001
+#' b <- 0.07
+#' x <- 0:100
+#' mx <- a * exp(x * b)
+#' s <- sen_arriaga_sym_instantaneous2(mx, age = x)
+#' \dontrun{
+#' plot(x, s, type = "l")
+#' }
+
+sen_arriaga_sym_instantaneous2 <- function(mx,
+                                       age = 0:(length(mx1)-1),
+                                       sex = 't',
+                                       nx = rep(1,length(mx)),
+                                       perturb = 1e-6,
+                                       closeout = TRUE){
+  mx1 <- exp(log(mx) + perturb)
+  mx2 <- exp(log(mx) - perturb)
+  s1 <- sen_arriaga_sym(mx1 = mx1,
+                    mx2 = mx2,
+                    age = age,
+                    nx = nx,
+                    sex1 = sex,
+                    sex2 = sex,
+                    closeout = closeout)
+  s1
+}
 

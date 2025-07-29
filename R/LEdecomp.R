@@ -204,6 +204,7 @@ LEdecomp <- function(mx1,
                         c("lifetable", "arriaga", "arriaga_sym",
                           "sen_arriaga", "sen_arriaga_sym",
                           "sen_arriaga_inst", "sen_arriaga_inst2",
+                          "sen_arriaga_sym_inst","sen_arriaga_sym_inst2",
                           "chandrasekaran_ii","chandrasekaran_ii_sym",
                           "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
                           "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_ii_sym",
@@ -224,6 +225,8 @@ LEdecomp <- function(mx1,
                     "sen_arriaga_sym" = sen_arriaga_sym,
                     "sen_arriaga_inst" = sen_arriaga_instantaneous,
                     "sen_arriaga_inst2" = sen_arriaga_instantaneous2,
+                    "sen_arriaga_sym_inst" = sen_arriaga_sym_instantaneous,
+                    "sen_arriaga_sym_inst2" = sen_arriaga_sym_instantaneous2,
                     "chandrasekaran_ii" = chandrasekaran_II,
                     "sen_chandrasekaran_ii" = sen_chandrasekaran_II,
                     "sen_chandrasekaran_ii_inst" = sen_chandrasekaran_II_instantaneous,
@@ -337,6 +340,7 @@ LEdecomp <- function(mx1,
   # using Num_intervals argument                                      #
   # ----------------------------------------------------------------- #
   if (method %in% c("lifetable", "sen_arriaga_inst", "sen_arriaga_inst2",
+                    "sen_arriaga_sym_inst","sen_arriaga_sym_inst2",
                     "sen_chandrasekaran_ii_inst",
                     "sen_chandrasekaran_ii_inst2",
                     "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_iii_inst2",
@@ -501,17 +505,19 @@ print.LEdecomp <- function(x, ...) {
 
       cat(paste("Estimated the", x$method, "Life-Expectancy decomposition method."))
 
-    } else if(x$method %in% c( "sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2" , "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym_inst2")){
+    } else if(x$method %in% c( "sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" ,
+                               "sen_arriaga_inst2" ,  "sen_arriaga_sym_inst", "sen_arriaga_sym_inst2", "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2" , "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym_inst2")){
 
       values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst",
-                  "sen_arriaga_inst2", "sen_chandrasekaran_ii",
+
+                  "sen_arriaga_inst2", "sen_arriaga_sym_inst", "sen_arriaga_sym_inst2","sen_chandrasekaran_ii",
                   "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2",
                   "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
                   "sen_chandrasekaran_iii_inst2", "sen_lopez_ruzicka",
                   "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst",
                   "sen_lopez_ruzicka_inst2")
 
-      names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2",
+      names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2","arriaga_sym_inst","arriaga_sym_inst2",
                  "chandrasekaran_ii", "chandrasekaran_ii_inst", "chandrasekaran_ii_inst2",
                  "chandrasekaran_iii", "chandrasekaran_iii_inst", "chandrasekaran_iii_inst2",
                  "lopez_ruzicka", "lopez_ruzicka_sym", "lopez_ruzicka_inst", "lopez_ruzicka_sym__inst2")
@@ -525,10 +531,12 @@ print.LEdecomp <- function(x, ...) {
 
         cat(paste("Estimated the", x$method, "cause-of-death Life-Expectancy decomposition method."))
 
-      } else if(x$method %in%c( "lifetable","sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym_inst2","numerical")){
+      } else if(x$method %in%c( "lifetable","sen_arriaga", "sen_arriaga_sym" , "sen_arriaga_inst" , "sen_arriaga_inst2" , "sen_arriaga_sym_inst" , "sen_arriaga_sym_inst2",
+                                "sen_chandrasekaran_ii" , "sen_chandrasekaran_ii_inst" , "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_iii" , "sen_chandrasekaran_iii_inst" , "sen_chandrasekaran_iii_inst2" , "sen_lopez_ruzicka" , "sen_lopez_ruzicka_sym" , "sen_lopez_ruzicka_inst" , "sen_lopez_ruzicka_sym_inst2","numerical")){
 
         values <- c("sen_arriaga", "sen_arriaga_sym", "sen_arriaga_inst",
-                    "sen_arriaga_inst2", "sen_chandrasekaran_ii",
+                    "sen_arriaga_inst2", "sen_arriaga_sym_inst" ,
+                    "sen_arriaga_sym_inst2", "sen_chandrasekaran_ii",
                     "sen_chandrasekaran_ii_inst","sen_chandrasekaran_ii_inst2",
                     "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
                     "sen_chandrasekaran_iii_inst2", "sen_lopez_ruzicka",
@@ -536,6 +544,7 @@ print.LEdecomp <- function(x, ...) {
                     "sen_lopez_ruzicka_sym__inst2")
 
         names <- c("arriaga", "arriaga_sym", "arriaga_inst", "arriaga_inst2",
+                   "sen_arriaga_sym_inst" ,"sen_arriaga_sym_inst2",
                    "chandrasekaran_ii", "chandrasekaran_ii_inst",
                    "chandrasekaran_ii_inst2", "chandrasekaran_iii",
                    "chandrasekaran_iii_inst", "chandrasekaran_iii_inst2",

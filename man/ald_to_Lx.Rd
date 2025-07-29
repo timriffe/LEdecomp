@@ -12,6 +12,8 @@ ald_to_Lx(ax, lx, dx, nx)
 \item{lx}{numeric vector of lx, lifetable survivorship at exact ages.}
 
 \item{dx}{numeric vector of dx, the lifetable deaths distribution.}
+
+\item{nx}{age interval width, assumes 1 by default}
 }
 \value{
 numeric vector of \code{Lx} values
