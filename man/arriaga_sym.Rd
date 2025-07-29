@@ -31,6 +31,7 @@ arriaga_sym(
 }
 \description{
 This approach conducts a classic Arriaga decomposition in both directions, averaging the (sign-adjusted) result, i.e. \code{a_avg = (arriaga(mx1,mx2, ...) - arriaga(mx2, mx1, ...)) / 2}.
+#@note The final age group's contribution from the reversed decomposition is halved before averaging. This empirical adjustment ensures symmetry and numeric stability, though the theoretical basis requires further exploration.
 }
 \examples{
 a <- .001

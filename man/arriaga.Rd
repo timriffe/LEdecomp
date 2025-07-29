@@ -35,7 +35,6 @@ arriaga(
 \description{
 Following the notation given in Preston et al (2000), Arriaga's decomposition method can written as:
 \deqn{_{n}\Delta_{x} = \frac{l_x^1}{l_0^1}\cdot \left( \frac{_{n}L_{x}^{2}}{l_{x}^{2}} - \frac{_{n}L_{x}^{1}}{l_{x}^{1}}\right) + \frac{T^{2}_{x+n}}{l_{0}^{1}} \cdot \left( \frac{l_{x}^{1}}{l_{x}^{2}} - \frac{l_{x+n}^{1}}{l_{x+n}^{2}}  \right) }
-where \eqn{_{n}\Delta_{x}} is the contribution of rate differences in age \eqn{x} to the difference in life expectancy implied by \code{mx1} and \code{mx2}. The first part of the sum refers to the so-called direct effect (in age group \eqn{x}), whereas the second part refers to indirect effects in ages above age \eqn{x}. Usually the indirect effects are far larger than the direct effects.
 }
 \details{
 A little-known property of this decomposition method is that it is directional, in the sense that we are comparing a movement of \code{mx1} to \code{mx2}, and this is not exactly symmetrical with a comparison of \code{mx2} with \code{mx1}. Note also, if decomposing in reverse from the usual, you may need a slight adjustment to the closeout value in order to match sums properly (see examples for a demonstration).

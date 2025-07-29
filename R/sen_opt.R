@@ -93,8 +93,8 @@ sen_resid <- function(w=.5,
 #'               tol = 1e-12)
 #'
 #' # check sums
-#' e01 <- mx_to_e0(mx1,x,'t',TRUE)
-#' e02 <- mx_to_e0(mx2,x,'t',TRUE)
+#' e01 <- mx_to_e0(mx1,age=x,sex='t',closeout=TRUE)
+#' e02 <- mx_to_e0(mx2,age=x,sex='t',closeout=TRUE)
 #' (gap <- e02 - e01)
 #' delta <- mx2 - mx1
 #' (gap1 <- sum(s1 * delta))
