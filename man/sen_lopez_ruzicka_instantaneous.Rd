@@ -27,10 +27,7 @@ sen_lopez_ruzicka_instantaneous(
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 }
 \description{
-Estimates the sensitivity of life expectancy to small changes in mortality rates
-using the Lopez-Ruzicka decomposition. This is done by perturbing the input
-mortality rates up and down by a small factor and averaging the resulting directional
-sensitivities to approximate a symmetric derivative.
+Estimates the sensitivity of life expectancy to small changes in mortality rates using the Lopez-Ruzicka decomposition. This is done by perturbing the input mortality rates up and down by a small factor and averaging the resulting directional sensitivities to approximate a symmetric derivative.
 
 Specifically:
 \deqn{m_x^{1} = m_x \cdot \left( \frac{1}{1 - h} \right)}

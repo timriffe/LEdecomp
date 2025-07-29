@@ -89,9 +89,7 @@ arriaga <- function(mx1,
     Tx2 <- rcumsum(Lx2)
 
     direct = lx1 * (Lx2 / lx2 - Lx1 / lx1)
-    indirect = shift(Tx2, n = -1, fill = 0) * (lx1 / lx2 - shift(lx1, n = -1, fill = 0) / shift(lx2, n = -1, fill = 0))
-    N <- length(mx1)
-    indirect[N] = lx1[N] * (Tx2[N] / lx2[N] - Tx1[N] / lx1[N])
+    indirect = shift(Tx2, n = -1, fill = 0) * (lx1 / lx2 - shift(lx1, n = -1, fill = 0) / shift(lx2, n = -1, fill = 1))
 
     cc = direct + indirect
     return(cc)
@@ -134,48 +132,17 @@ sen_arriaga <- function(mx1,
                         sex1 = 't',
                         sex2 = sex1,
                         closeout = TRUE){
-  ax1 <- mx_to_ax(mx = mx1,
-                  age = age,
-                  nx = nx,
-                  sex = sex1,
-                  closeout = closeout)
-  ax2 <- mx_to_ax(mx = mx2,
-                  age = age,
-                  nx = nx,
-                  sex = sex2,
-                  closeout = closeout)
-  qx1 <- mx_to_qx(mx = mx1,
-                  ax = ax1,
-                  nx = nx,
-                  closeout = closeout)
-  qx2 <- mx_to_qx(mx = mx2,
-                  ax = ax2,
-                  nx = nx,
-                  closeout = closeout)
-  lx1 <- qx_to_lx(qx1)
-  lx2 <- qx_to_lx(qx2)
-  dx1 <- lx_to_dx(lx1)
-  dx2 <- lx_to_dx(lx2)
-  Lx1 <- ald_to_Lx(ax = ax1,
-                   lx = lx1,
-                   dx = dx1,
-                   nx = nx)
-  Lx2 <- ald_to_Lx(ax = ax2,
-                   lx = lx2,
-                   dx = dx2,
-                   nx = nx)
-  Tx1 <- rcumsum(Lx1)
-  Tx2 <- rcumsum(Lx2)
 
-  direct = lx1 * (Lx2 / lx2 - Lx1 / lx1)
-  N = length(mx1)
-  indirect = shift(Tx2, n = -1, fill = 0) * (lx1 / lx2 - shift(lx1, n = -1, fill = 0) / shift(lx2, n = -1, fill = 0))
-  indirect[N] = lx1[N] * (Tx2[N] / lx2[N] - Tx1[N] / lx1[N])
-  #indirect = ifelse(is.na(indirect),0,indirect),
-  cc = direct + indirect
-  delta = mx2 - mx1
+  cc <- arriaga(mx1 = mx1,
+                mx2 = mx2,
+                age = age,
+                nx = nx,
+                sex1 = sex1,
+                sex2 = sex2,
+                closeout = closeout)
+  delta <- mx2 - mx1
   # watch out for 0s in delta denominator
-  sen = cc / delta
+  sen <- cc / delta
   sen
 }
 
@@ -242,13 +209,7 @@ sen_arriaga_instantaneous <- function(mx,
                     sex1 = sex,
                     sex2 = sex,
                     closeout = closeout)
-  # TR: this might need revision,
-  # due to a discovery in the examples of arriaga()
 
-  #To match the solution with the arriaga
-  if (closeout){
-    s2[length(s2)] <- s2[length(s2)] * 2
-  }
   (s1 + s2) / 2
 }
 
@@ -295,11 +256,7 @@ sen_arriaga_instantaneous2 <- function(mx,
                     sex1 = sex,
                     sex2 = sex,
                     closeout = closeout)
-  # TR: this might need revision,
-  # due to a discovery in the examples of arriaga()
-  if (closeout){
-    s2[length(s2)] <- s2[length(s2)] * 2
-  }
+
   (s1 + s2) / 2
 }
 
@@ -352,9 +309,6 @@ arriaga_sym <- function(mx1,
                 sex2 = sex1,
                 closeout = closeout)
 
-  # This closeout adjustment is necessary, but I can't
-  # say I fully understand why this works out.
-  a2[length(a2)] <- a2[length(a2)] /2
   a_avg <- (a1 - a2) / 2
   a_avg
 }

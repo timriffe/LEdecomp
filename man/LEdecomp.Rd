@@ -12,12 +12,14 @@ LEdecomp(
   sex1 = "t",
   sex2 = sex1,
   method = c("lifetable", "arriaga", "arriaga_sym", "sen_arriaga", "sen_arriaga_sym",
-    "sen_arriaga_inst", "sen_arriaga_inst2", "chandrasekaran_ii",
-    "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2",
-    "chandrasekaran_iii", "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
+    "sen_arriaga_inst", "sen_arriaga_inst2", "sen_arriaga_sym_inst",
+    "sen_arriaga_sym_inst2", "chandrasekaran_ii", "sen_chandrasekaran_ii",
+    "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2", "chandrasekaran_iii",
+    "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
     "sen_chandrasekaran_iii_inst2", "lopez_ruzicka", "lopez_ruzicka_sym",
     "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst",
-    "sen_lopez_ruzicka_inst2", "horiuchi", "stepwise", "numerical"),
+    "sen_lopez_ruzicka_inst2", 
+     "horiuchi", "stepwise", "numerical"),
   closeout = TRUE,
   opt = TRUE,
   tol = 1e-10,
@@ -41,7 +43,7 @@ LEdecomp(
 
 \item{sex2}{character. \code{"m"},\code{"f"}, or \code{"t"}, affects a0 treatment.}
 
-\item{method}{character. \code{"lifetable"}, \code{"arriaga"}, \code{"arriaga_sym"}, \verb{"sen_arriaga"'}, \code{"sen_arriaga_sym"}, \verb{"sen_arriaga_inst"'}, \verb{"sen_arriaga_inst2"'}, \code{"chandrasekaran_ii"}, \code{"sen_chandrasekaran_ii"}, \code{"sen_chandrasekaran_ii_inst"}, \code{"sen_chandrasekaran_ii_inst2"}, \code{"chandrasekaran_iii"}, \code{"sen_chandrasekaran_iii"}, \code{"sen_chandrasekaran_iii_inst"}, \code{"sen_chandrasekaran_iii_inst2"}, \code{"lopez_ruzicka"}, \code{"lopez_ruzicka_sym"}, \code{"sen_lopez_ruzicka"}, \code{"sen_lopez_ruzicka_sym"}, \code{"sen_lopez_ruzicka_inst"}, \code{"sen_lopez_ruzicka_inst2"}, \code{"horiuchi"}, \code{"stepwise"}, \code{"numerical"}}
+\item{method}{character. \code{"lifetable"}, \code{"arriaga"}, \code{"arriaga_sym"}, \verb{"sen_arriaga"'}, \code{"sen_arriaga_sym"}, \verb{"sen_arriaga_inst"'}, \verb{"sen_arriaga_inst2"'},\code{"sen_arriaga_sym_inst"},\code{"sen_arriaga_sym_inst2"}, \code{"chandrasekaran_ii"}, \code{"sen_chandrasekaran_ii"}, \code{"sen_chandrasekaran_ii_inst"}, \code{"sen_chandrasekaran_ii_inst2"}, \code{"chandrasekaran_iii"}, \code{"sen_chandrasekaran_iii"}, \code{"sen_chandrasekaran_iii_inst"}, \code{"sen_chandrasekaran_iii_inst2"}, \code{"lopez_ruzicka"}, \code{"lopez_ruzicka_sym"}, \code{"sen_lopez_ruzicka"}, \code{"sen_lopez_ruzicka_sym"}, \code{"sen_lopez_ruzicka_inst"}, \code{"sen_lopez_ruzicka_inst2"}, \code{"sen_lopez_ruzicka_sym_inst"}, \code{"sen_lopez_ruzicka_sym_inst2"}, "\verb{horiuchi"}, \code{"stepwise"}, \code{"numerical"}}
 
 \item{closeout}{logical. Do we handle closeout, or truncate at top age.}
 
@@ -94,6 +96,9 @@ mx1 <- a * exp(x * b)
 mx2 <- a/2 * exp(x * b)
 
 LEdecomp(mx1,mx2,age=x,sex1='t',method = "sen_arriaga_inst")
+
+# what methods are available?
+available_methods()
 }
 \references{
 \insertRef{arriaga1984measuring}{LEdecomp}

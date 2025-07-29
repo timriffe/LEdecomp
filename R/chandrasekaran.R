@@ -175,7 +175,7 @@ sen_chandrasekaran_II <- function(mx1,
 #' @title Instantaneous sensitivity via Chandrasekaran II decomposition
 #'
 #' @description
-#' Estimates the sensitivity of life expectancy to small changes in mortality rates using the Chandrasekaran II decomposition. This is done by perturbing the input mortality rates up and down by a small factor and calculating the directional sensitivity. Only the "up" perturbation is used in this version.
+#' Estimates the sensitivity of life expectancy to small changes in mortality rates using the Chandrasekaran II decomposition. This is done by perturbing the input mortality rates up and down by a small factor and calculating the directional sensitivity.
 #'
 #' Specifically, the function constructs:
 #' \deqn{m_{x}^{1} = m_x \cdot \left(\frac{1}{1 - h}\right)}
@@ -219,14 +219,7 @@ sen_chandrasekaran_II_instantaneous <- function(mx,
                               sex1 = sex,
                               sex2 = sex,
                               closeout = closeout)
-  s2 <- sen_chandrasekaran_II(mx1 = mx2,
-                              mx2 = mx1,
-                              age = age,
-                              nx = nx,
-                              sex1 = sex,
-                              sex2 = sex,
-                              closeout = closeout)
-  (s1 + s2) / 2
+  s1
 }
 #' @title Log-space instantaneous sensitivity via Chandrasekaran II decomposition
 #'
@@ -275,14 +268,7 @@ sen_chandrasekaran_II_instantaneous2 <- function(mx,
                               sex1 = sex,
                               sex2 = sex,
                               closeout = closeout)
-  s2 <- sen_chandrasekaran_II(mx1 = mx2,
-                              mx2 = mx1,
-                              age = age,
-                              nx = nx,
-                              sex1 = sex,
-                              sex2 = sex,
-                              closeout = closeout)
-  (s1 + s2) / 2
+  s1
 }
 
 #' @title Chandrasekaran III decomposition
@@ -455,7 +441,6 @@ sen_chandrasekaran_III <- function(mx1, mx2,
                                    sex1 = 't',
                                    sex2 = sex1,
                                    closeout = TRUE){
-  # TR: redundant code replaced with function call...
   exclusive_effect <- chandrasekaran_III(mx1 = mx1,
                                          mx2 = mx2,
                                          age = age,
@@ -523,14 +508,7 @@ sen_chandrasekaran_III_instantaneous <- function(mx,
                                sex1 = sex,
                                sex2 = sex,
                                closeout = closeout)
-  s2 <- sen_chandrasekaran_III(mx1 = mx2,
-                               mx2 = mx1,
-                               age = age,
-                               nx = nx,
-                               sex1 = sex,
-                               sex2 = sex,
-                               closeout = closeout)
-  (s1 + s2) / 2
+  s1
 }
 
 
@@ -546,7 +524,7 @@ sen_chandrasekaran_III_instantaneous <- function(mx,
 #'
 #' @inheritParams sen_chandrasekaran_III_instantaneous
 #'
-#' @details This version uses symmetric log-space perturbations and averages the forward and reverse sensitivity estimates. It gives numerically identical results to `sen_arriaga_sym_instantaneous2()`, `sen_lopez_ruzicka_instantaneous2()`, and `sen_chandrasekaran_II_instantaneous2()`.
+#' @details This version uses symmetric log-space perturbations. It gives numerically identical results to `sen_arriaga_sym_instantaneous2()`, `sen_lopez_ruzicka_instantaneous2()`, and `sen_chandrasekaran_II_instantaneous2()`.
 #'
 #' @seealso
 #' \code{\link{sen_chandrasekaran_III_instantaneous}},
@@ -582,14 +560,7 @@ sen_chandrasekaran_III_instantaneous2 <- function(mx,
                                sex1 = sex,
                                sex2 = sex,
                                closeout = closeout)
-  s2 <- sen_chandrasekaran_III(mx1 = mx2,
-                               mx2 = mx1,
-                               age = age,
-                               nx = nx,
-                               sex1 = sex,
-                               sex2 = sex,
-                               closeout = closeout)
-  (s1 + s2) / 2
+  s1
 }
 
 
