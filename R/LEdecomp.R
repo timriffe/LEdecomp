@@ -10,7 +10,7 @@
 #' @param nx integer vector of age intervals, default 1.
 #' @param sex1 character. `"m"`,`"f"`, or `"t"`, affects a0 treatment.
 #' @param sex2 character. `"m"`,`"f"`, or `"t"`, affects a0 treatment.
-#' @param method character. `"lifetable"`, `"arriaga"`, `"arriaga_sym"`, `"sen_arriaga"'`, `"sen_arriaga_sym"`, `"sen_arriaga_inst"'`, `"sen_arriaga_inst2"'`, `"chandrasekaran_ii"`, `"sen_chandrasekaran_ii"`, `"sen_chandrasekaran_ii_inst"`, `"sen_chandrasekaran_ii_inst2"`, `"chandrasekaran_iii"`, `"sen_chandrasekaran_iii"`, `"sen_chandrasekaran_iii_inst"`, `"sen_chandrasekaran_iii_inst2"`, `"lopez_ruzicka"`, `"lopez_ruzicka_sym"`, `"sen_lopez_ruzicka"`, `"sen_lopez_ruzicka_sym"`, `"sen_lopez_ruzicka_inst"`, `"sen_lopez_ruzicka_inst2"`, `"horiuchi"`, `"stepwise"`, `"numerical"`
+#' @param method character. `"lifetable"`, `"arriaga"`, `"arriaga_sym"`, `"sen_arriaga"'`, `"sen_arriaga_sym"`, `"sen_arriaga_inst"'`, `"sen_arriaga_inst2"'`,`"sen_arriaga_sym_inst"`,`"sen_arriaga_sym_inst2"`, `"chandrasekaran_ii"`, `"sen_chandrasekaran_ii"`, `"sen_chandrasekaran_ii_inst"`, `"sen_chandrasekaran_ii_inst2"`, `"chandrasekaran_iii"`, `"sen_chandrasekaran_iii"`, `"sen_chandrasekaran_iii_inst"`, `"sen_chandrasekaran_iii_inst2"`, `"lopez_ruzicka"`, `"lopez_ruzicka_sym"`, `"sen_lopez_ruzicka"`, `"sen_lopez_ruzicka_sym"`, `"sen_lopez_ruzicka_inst"`, `"sen_lopez_ruzicka_inst2"`, `"sen_lopez_ruzicka_sym_inst"`, `"sen_lopez_ruzicka_sym_inst2"`, "`horiuchi"`, `"stepwise"`, `"numerical"`
 #' @param closeout logical. Do we handle closeout, or truncate at top age.
 #' @param opt logical, default `TRUE`. For lifetable, numerical, and instantaneous sensitivity-based decomposition, shall we optimize the rate averaging to eliminate the decomposition residual?
 #' @param tol numeric, default `1e-10`. Tolerance parameter for rate averaging optimization.
@@ -61,6 +61,9 @@
 #' mx2 <- a/2 * exp(x * b)
 #'
 #' LEdecomp(mx1,mx2,age=x,sex1='t',method = "sen_arriaga_inst")
+#'
+#' # what methods are available?
+#' available_methods()
 #' @export
 LEdecomp <- function(mx1,
                      mx2,
@@ -72,6 +75,7 @@ LEdecomp <- function(mx1,
                                 "arriaga", "arriaga_sym",
                                 "sen_arriaga", "sen_arriaga_sym",
                                 "sen_arriaga_inst", "sen_arriaga_inst2",
+                                "sen_arriaga_sym_inst", "sen_arriaga_sym_inst2",
                                 "chandrasekaran_ii",
                                 "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
                                 "sen_chandrasekaran_ii_inst2",
@@ -97,7 +101,9 @@ LEdecomp <- function(mx1,
   if(is.null(mx1) || is.null(mx2) || is.null(age)){
     warning("Arguments mx1, mx2, age, and sex1, need to be provided.")
   }
-
+  if (!(method %in% method_registry$method)) {
+    stop("Method '", method, "' not found in method_registry.")
+  }
   # TR: we need a way to handle case where sex1 != sex2 i.e. a sex decomp,
   # wherein a0 is handled differently for each sex. This will be a mini-
   # recursion solution, i.e. once with male vs male, again with female vs female,
@@ -201,52 +207,16 @@ LEdecomp <- function(mx1,
   method <- tolower(method)
   method <- match.arg(method,
                       choices =
-                        c("lifetable", "arriaga", "arriaga_sym",
-                          "sen_arriaga", "sen_arriaga_sym",
-                          "sen_arriaga_inst", "sen_arriaga_inst2",
-                          "sen_arriaga_sym_inst","sen_arriaga_sym_inst2",
-                          "chandrasekaran_ii","chandrasekaran_ii_sym",
-                          "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
-                          "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_ii_sym",
-                          "chandrasekaran_iii","chandrasekaran_iii_sym",
-                          "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
-                          "sen_chandrasekaran_iii_inst2", "sen_chandrasekaran_iii_sym",
-                          "lopez_ruzicka", "lopez_ruzicka_sym",
-                          "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym",
-                          "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_inst2",
-                          "horiuchi", "stepwise", "numerical"),
+                        method_registry$method,
                       several.ok = FALSE)
   # assign generic decomp function name
-  dec_fun <- switch(method,
-                    "lifetable" = sen_e0_mx_lt,
-                    "arriaga" = arriaga,
-                    "arriaga_sym" = arriaga_sym,
-                    "sen_arriaga" = sen_arriaga,
-                    "sen_arriaga_sym" = sen_arriaga_sym,
-                    "sen_arriaga_inst" = sen_arriaga_instantaneous,
-                    "sen_arriaga_inst2" = sen_arriaga_instantaneous2,
-                    "sen_arriaga_sym_inst" = sen_arriaga_sym_instantaneous,
-                    "sen_arriaga_sym_inst2" = sen_arriaga_sym_instantaneous2,
-                    "chandrasekaran_ii" = chandrasekaran_II,
-                    "sen_chandrasekaran_ii" = sen_chandrasekaran_II,
-                    "sen_chandrasekaran_ii_inst" = sen_chandrasekaran_II_instantaneous,
-                    "sen_chandrasekaran_ii_inst2" = sen_chandrasekaran_II_instantaneous2,
-                    "chandrasekaran_iii"= chandrasekaran_III,
-                    "sen_chandrasekaran_iii" = sen_chandrasekaran_III,
-                    "sen_chandrasekaran_iii_inst" = sen_chandrasekaran_III_instantaneous,
-                    "sen_chandrasekaran_iii_inst2" = sen_chandrasekaran_III_instantaneous2,
-                    "lopez_ruzicka" = lopez_ruzicka,
-                    "lopez_ruzicka_sym" = lopez_ruzicka_sym,
-                    "sen_lopez_ruzicka" = sen_lopez_ruzicka,
-                    "sen_lopez_ruzicka_sym" = sen_lopez_ruzicka_sym,
-                    "sen_lopez_ruzicka_inst" = sen_lopez_ruzicka_instantaneous,
-                    "sen_lopez_ruzicka_inst2" = sen_lopez_ruzicka_instantaneous2,
-                    "numerical" = sen_num)
+  dec_fun <- get_dec_fun(method)
   # ----------------------------------------------------------------- #
   # method block for stepwise, numerical, horiuchi                    #
   # should handle vector and matrix cases                             #
   # ----------------------------------------------------------------- #
-  if (method %in% c("stepwise","horiuchi")){
+  gen_methods <- method_registry$method[method_registry$category == "general"]
+  if (method %in% gen_methods){
 
     mx_to_e0_vec <- function(mx,n_causes, age, nx, sex, closeout,...){
       if (!is.null(n_causes)){
@@ -290,12 +260,8 @@ LEdecomp <- function(mx1,
   # ----------------------------------------------------------------- #
   # handle all "direct" methods together                              #
   # ----------------------------------------------------------------- #
-  if (method %in% c("arriaga",
-                    "arriaga_sym",
-                    "chandrasekaran_ii",
-                    "chandrasekaran_iii",
-                    "lopez_ruzicka",
-                    "lopez_ruzicka_sym")){
+  dir_methods <- method_registry$method[method_registry$category == "direct"]
+  if (method %in% dir_methods){
     # handle causes per Preston Box 4.3 in this case
     if (!is.null(n_causes)){
       mx1_all     <- rowSums(mx1)
@@ -339,88 +305,93 @@ LEdecomp <- function(mx1,
   # TR: really all of these could use DemoDecomp::ltre(), thereby     #
   # using Num_intervals argument                                      #
   # ----------------------------------------------------------------- #
-  if (method %in% c("lifetable", "sen_arriaga_inst", "sen_arriaga_inst2",
-                    "sen_arriaga_sym_inst","sen_arriaga_sym_inst2",
-                    "sen_chandrasekaran_ii_inst",
-                    "sen_chandrasekaran_ii_inst2",
-                    "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_iii_inst2",
-                    "sen_lopez_ruzicka_inst", "sen_lopez_ruzicka_inst2","numerical")){
-    # First, either we optimize or we insist on the midpoint between mx1 and mx2
-    # (1) yes, we optimize the averaging
-    if (opt){
-      # second case: we have causes of death
-      if (!is.null(n_causes)){
-        mx1_all <- rowSums(mx1)
-        mx2_all <- rowSums(mx2)
-        sen     <- sen_min(mx1 = mx1_all,
+  opt_methods <- method_registry$method[method_registry$category == "opt_ok"]
+  if (method %in% opt_methods){
+    if (!is.null(n_causes)){
+      # Collapse to all-cause mortality
+      mx1_all <- rowSums(mx1)
+      mx2_all <- rowSums(mx2)
+      delta   <- mx2 - mx1
+
+      # Compute sensitivities on all-cause mx
+      if (opt) {
+        sen_all <- sen_min(mx1 = mx1_all,
                            mx2 = mx2_all,
                            age = age,
                            nx = nx,
                            sex1 = sex1,
-                           sex2 = sex1, # see diff sex solution at start
+                           sex2 = sex1,
                            closeout = closeout,
                            sen_fun = dec_fun,
                            tol = tol)
-        delta   <- mx2 - mx1
       } else {
-        # all-cause mortality only
-        sen     <- sen_min(mx1 = mx1,
-                           mx2 = mx2,
+        mx_avg <- (mx1_all + mx2_all) / 2
+        sen_all <- dec_fun(mx = mx_avg,
                            age = age,
                            nx = nx,
-                           sex1 = sex1,
-                           sex2 = sex1, # see diff sex solution at start
-                           closeout = closeout,
-                           sen_fun = dec_fun,
-                           tol = tol)
-        delta   <- mx2 - mx1
+                           sex = sex1,
+                           closeout = closeout)
       }
+
+      # Expand sensitivity vector to matrix (recycle over causes)
+      sen <- matrix(sen_all, nrow = nages, ncol = n_causes)
+
+      # Final decomposition matrix
+      decomp <- sen * delta
+
     } else {
-      # (2) we don't optimize, i.e. we take average mx
-      if (!is.null(n_causes)){
-        mx_avg <- (rowSums(mx2) + rowSums(mx1)) / 2
+      # All-cause case (no causes of death)
+      delta <- mx2 - mx1
+
+      if (opt) {
+        sen <- sen_min(mx1 = mx1,
+                       mx2 = mx2,
+                       age = age,
+                       nx = nx,
+                       sex1 = sex1,
+                       sex2 = sex1,
+                       closeout = closeout,
+                       sen_fun = dec_fun,
+                       tol = tol)
       } else {
         mx_avg <- (mx1 + mx2) / 2
-      }
-        delta  <- mx2 - mx1
         sen <- dec_fun(mx = mx_avg,
                        age = age,
                        nx = nx,
                        sex = sex1,
                        closeout = closeout)
+      }
 
-
+      decomp <- sen * delta
     }
-    # all four of these cases back out the decomp in the same way;
-    decomp <- sen * delta
 
+    # Residual check
     Delta <-
-      mx_to_e0(mx2,
+      mx_to_e0(rowSums(as.matrix(mx2)),
                age = age,
                nx = nx,
                sex = sex1,
                closeout = closeout) -
-      mx_to_e0(mx1,
+      mx_to_e0(rowSums(as.matrix(mx1)),
                age = age,
                nx = nx,
                sex = sex1,
                closeout = closeout)
     if (abs(sum(decomp) - Delta) > .1){
-      if (opt){
-        warning("\nYou used a sensitivity-based method (",method,") but still have a decomposition residual of",round(sum(decomp) - Delta,3),". Consider comparing with other methods\n")
-      }
-      if (!opt){
-        warning("\nYou used a sensitivity-based method (",method,") evaluated at the midpoint between mx1 and mx1, giving a decomposition residual of",round(sum(decomp) - Delta,3),". Consider comparing with other methods or setting opt=TRUE\n")
-      }
+      msg <- paste0("\nYou used a sensitivity-based method (", method, ") ",
+                    if (opt) "with opt = TRUE" else "evaluated at midpoint",
+                    ", but the residual is ", round(sum(decomp) - Delta, 3),
+                    ". Consider comparing with other methods.\n")
+      warning(msg)
     }
   }
+
   # ----------------------------------------------------------------- #
   # sensitivity methods using both mx1 and mx2,                       #
   # basically all are conversions of direct methods                   #
   # ----------------------------------------------------------------- #
-  if (method %in% c("sen_arriaga","sen_arriaga_sym",
-                    "sen_chandrasekaran_ii","sen_chandrasekaran_iii",
-                    "sen_lopez_ruzicka","sen_lopez_ruzicka_sym")){
+  ds_methods <- method_registry$method[method_registry$category == "direct_sen"]
+  if (method %in% ds_methods){
     # this might have dims
     delta  <- mx2 - mx1
     # first block, causes of death
