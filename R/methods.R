@@ -30,7 +30,8 @@ if (do_this){
     "numerical",                   "sen_num",                                "opt_ok",     NA,
     "stepwise",                    "stepwise_replacement",                   "general",    "DemoDecomp",
     "horiuchi",                    "horiuchi",                               "general",    "DemoDecomp"
-  )
+  ) |>
+    dplyr::mutate(pkg = ifelse(is.na(pkg),"LEdecomp","pkg"))
 
 usethis::use_data(method_registry, internal = FALSE, overwrite = TRUE)
 
@@ -48,7 +49,7 @@ usethis::use_data(method_registry, internal = FALSE, overwrite = TRUE)
 #' \describe{
 #'   \item{method}{Character. The method name used in the `method` argument of `LEdecomp()`.}
 #'   \item{fun_name}{Character. The actual function name (as a string) used to compute the decomposition.}
-#'   \item{class}{Character. One of `"direct"`, `"direct_sen"`, `"opt_ok"`, or `"general"`, indicating how the method operates internally:
+#'   \item{category}{Character. One of `"direct"`, `"direct_sen"`, `"opt_ok"`, or `"general"`, indicating how the method operates internally:
 #'     \itemize{
 #'       \item `"direct"`: Classic decomposition methods using two full input vectors (e.g., Arriaga, Lopez-Ruzicka).
 #'       \item `"direct_sen"`: Sensitivity-based methods that take \code{mx1} and \code{mx2}, and divide the result by their difference.
@@ -56,6 +57,7 @@ usethis::use_data(method_registry, internal = FALSE, overwrite = TRUE)
 #'       \item `"general"`: Generic methods like \code{stepwise} and \code{horiuchi} using externally provided tools (e.g., from DemoDecomp).
 #'     }
 #'   }
+#'   \item{pkg}{Character. The package where the underlying decomp function resides.}
 #' }
 #'
 #' @seealso \code{\link{available_methods}}, \code{\link{LEdecomp}}
