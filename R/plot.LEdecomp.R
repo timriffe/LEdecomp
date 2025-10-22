@@ -99,6 +99,8 @@ plot.LEdecomp <- function(x, ...){
       data <- data.frame(age = rep(x$age, dim(x$mx1)[2]),
                          LEdecomp = as.vector(x$LEdecomp),
                          cause = rep(colnames(x$LEdecomp), each = length(x$age)))
+      #This allows to order the cause of death in order c1, c2, etc.
+      data$cause <- factor(data$cause, levels = paste0("c", 1:(length(colnames(x$LEdecomp)))))
       title <- paste(x$method, "cause-of-death LE decomposition method")
 
       ggplot(data, aes(fill = .data[["cause"]],
