@@ -50,8 +50,7 @@ Let \eqn{e_x^i} denote remaining life expectancy at age \eqn{x} for population \
 }
 }
 
-The total contribution to life expectancy difference in age group \eqn{x} is the
-sum of the exclusive and interaction effects.
+The total contribution to life expectancy difference in age group \eqn{x} is the sum of the exclusive and interaction effects.
 }
 \details{
 This method produces \strong{numerically identical results} to \code{arriaga()}.

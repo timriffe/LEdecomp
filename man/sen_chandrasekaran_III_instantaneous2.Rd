@@ -36,7 +36,7 @@ and applies \code{sen_chandrasekaran_III(mx1, mx2, ...)} and \code{sen_chandrase
 returning their average.
 }
 \details{
-This version uses symmetric log-space perturbations and averages the forward and reverse sensitivity estimates. It gives numerically identical results to \code{sen_arriaga_sym_instantaneous2()}, \code{sen_lopez_ruzicka_instantaneous2()}, and \code{sen_chandrasekaran_II_instantaneous2()}.
+This version uses symmetric log-space perturbations. It gives numerically identical results to \code{sen_arriaga_sym_instantaneous2()}, \code{sen_lopez_ruzicka_instantaneous2()}, and \code{sen_chandrasekaran_II_instantaneous2()}.
 }
 \examples{
 a <- 0.001

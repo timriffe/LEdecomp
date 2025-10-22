@@ -27,7 +27,7 @@ sen_chandrasekaran_II_instantaneous(
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 }
 \description{
-Estimates the sensitivity of life expectancy to small changes in mortality rates using the Chandrasekaran II decomposition. This is done by perturbing the input mortality rates up and down by a small factor and calculating the directional sensitivity. Only the "up" perturbation is used in this version.
+Estimates the sensitivity of life expectancy to small changes in mortality rates using the Chandrasekaran II decomposition. This is done by perturbing the input mortality rates up and down by a small factor and calculating the directional sensitivity.
 
 Specifically, the function constructs:
 \deqn{m_{x}^{1} = m_x \cdot \left(\frac{1}{1 - h}\right)}

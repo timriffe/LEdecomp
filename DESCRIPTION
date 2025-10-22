@@ -1,7 +1,7 @@
 Package: LEdecomp
 Type: Package
 Title: Decompose life expectancy into contributions from rates in different ages and potentially also causes of death
-Version: 00.00.014
+Version: 00.00.015
 Date: 2025-07-29
 Authors@R: c(
    person("Tim", "Riffe", role = c("aut", "cre"), 
@@ -29,3 +29,6 @@ Encoding: UTF-8
 Remotes: 
     github::timriffe/DemoTools
 URL: https://github.com/timriffe/LEdecomp
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
