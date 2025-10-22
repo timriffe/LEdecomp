@@ -36,10 +36,18 @@ plot.LEdecomp <- function(x, ...){
   if (!grepl(x$method, pattern = "sen_")){
       data <- data.frame(age = x$age,
                          LEdecomp = x$LEdecomp)
+
       title <- paste(x$method, " LE decomposition method")
 
-      barplot(names = data$age, height = data$LEdecomp, col = "lightgreen",
-              xlab = "ages", ylab = "", main = title)
+      #barplot(names = data$age, height = data$LEdecomp, col = "lightgreen",
+      #        xlab = "ages", ylab = "", main = title)
+
+      ggplot2::ggplot(data, ggplot2::aes(y = .data[["LEdecomp"]],
+                                         x =.data[["age"]])) +
+        ggplot2::geom_bar(stat = "identity", color = "black",
+                          fill = "lightgreen") +
+        ggplot2::labs(title = title) +
+        ggplot2::theme_classic()
 
     } else if(
       # TR: shorter?
@@ -69,8 +77,12 @@ plot.LEdecomp <- function(x, ...){
                          LEdecomp = x$LEdecomp)
       title <- paste(dicc, " LE sensitivty analysis")
 
-      barplot(names = data$age, height = data$LEdecomp, col = "lightgreen",
-              xlab = "ages", ylab = "", main = title)
+      ggplot2::ggplot(data, ggplot2::aes(y = .data[["LEdecomp"]],
+                                         x =.data[["age"]])) +
+        ggplot2::geom_bar(stat = "identity", color = "black",
+                          fill = "lightgreen") +
+        ggplot2::labs(title = title) +
+        ggplot2::theme_classic()
 
     }
   } else if(is.matrix(x$LEdecomp)){
