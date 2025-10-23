@@ -93,3 +93,52 @@ test_that("Stepwise method gives different results for cause-specific decomposit
   expect_gt(sum(abs(diffs)), 1e-5,
             label = "Cause-specific and all-cause stepwise decompositions should differ")
 })
+
+test_that("Stacked vector (unlabeled) infers age, nx, n_causes and matches matrix result", {
+  skip_on_cran()
+
+  # synthetic Gompertz rates
+  a <- 0.001
+  b <- 0.07
+  age <- 0:100
+  n_age <- length(age)
+  mx1 <- a * exp(age * b)
+  mx2 <- (a/2) * exp(age * b)
+
+  # build 3-cause matrices with known splits
+  mx1_mat <- cbind(mx1/2, mx1/3, mx1/6)
+  mx2_mat <- cbind(mx2/4, mx2/2, mx2/4)
+  rownames(mx1_mat) <- rownames(mx2_mat) <- age
+  colnames(mx1_mat) <- colnames(mx2_mat) <- c("c1","c2","c3")
+
+  # stack into unlabeled vectors (column-major; matches dim<- fill)
+  mx1_stack <- as.vector(mx1_mat)
+  mx2_stack <- as.vector(mx2_mat)
+
+  # matrix baseline
+  res_mat <- LEdecomp(
+    mx1 = mx1_mat, mx2 = mx2_mat,
+    age = age, nx = rep(1, n_age),
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+
+  # stacked vector: age=NULL, nx=NULL (must be inferred)
+  res_vec <- LEdecomp(
+    mx1 = mx1_stack, mx2 = mx2_stack,
+    age = NULL, nx = NULL,
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE)
+
+  # expectations: inferred age/nx/n_causes + equality to matrix result
+  expect_identical(res_vec$age, as.numeric(age))
+  expect_equal(res_vec$LEdecomp, c(res_mat$LEdecomp), tolerance = 1e-8)
+  # also test row-summed equivalence to all-cause decomposition
+  res_all <- LEdecomp(
+    mx1 = mx1, mx2 = mx2,
+    age = age, nx = rep(1, n_age),
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+  expect_equal(rowSums(res_mat$LEdecomp), res_all$LEdecomp, tolerance = 1e-7)
+})

@@ -1,7 +1,5 @@
 #' Function for applying different Life-Expectancy decomposition and sensitivity methods
-#' @description A variety of exact or asymptotically exact life expectancy decomposition methods are implemented.
-#' Also, several life-expectancy descomposition sensitivity methods are implemented to answer how each age will
-#' change with an increase/decrease in life expectancy. See the package README and references for details.
+#' @description A variety of exact or asymptotically exact life expectancy decomposition methods are implemented. Also, several life-expectancy decomposition sensitivity methods are implemented to answer how each age will change with an increase/decrease in life expectancy. See the package README and references for details.
 #'
 #' @param mx1 numeric. Age-structured mortality rates for population 1 (vector, matrix, or data.frame).
 #' @param mx2 numeric. Age-structured mortality rates for population 2 (same shape as `mx1`).
@@ -80,6 +78,7 @@ LEdecomp <- function(mx1,
   if (length(mx1) != length(mx2)) {
     stop("Arguments 'mx1' and 'mx2' must have the same length (prior to shaping).")
   }
+
 
   # --- Normalize all inputs (shape + ages) in one place ---------------------
   norm <- normalize_inputs(mx1 = mx1, mx2 = mx2, age = age, n_causes = n_causes)
@@ -270,6 +269,23 @@ LEdecomp <- function(mx1,
   LE2 <- mx_to_e0(rowSums(as.matrix(mx2)), age = age, nx = nx, sex = sex1, closeout = closeout)
   LE1 <- mx_to_e0(rowSums(as.matrix(mx1)), age = age, nx = nx, sex = sex1, closeout = closeout)
 
+  if (norm$return_as == "stacked_vector") {
+    # collapse multi-cause matrices back to stacked vectors (cause-major)
+    if (is.matrix(decomp)) decomp <- c(decomp)
+    if (is.matrix(sen))    sen    <- c(sen)
+    if (is.matrix(mx1))    mx1    <- c(mx1)
+    if (is.matrix(mx2))    mx2    <- c(mx2)
+  } else if (norm$return_as == "matrix") {
+    # make sure they are matrices with expected dims
+    if (!is.null(norm$deez_dims)) {
+      if (!is.null(dim(decomp))) dim(decomp) <- norm$deez_dims
+      if (!is.null(dim(sen)))    dim(sen)    <- norm$deez_dims
+    }
+  } else { # "vector"
+    # drop any accidental dims
+    decomp <- c(decomp)
+    sen    <- c(sen)
+  }
   out <- list(mx1 = mx1, mx2 = mx2, age = age,
               sex1 = sex1, sex2 = sex2, method = method, func = dec_fun,
               closeout = closeout, opt = opt, tol = tol,
@@ -353,33 +369,55 @@ df_to_matrix <- function(x) {
 .ABRIDGED_CANDIDATES <- lapply(.ABRIDGED_OAG, .abrg_grid)
 .ABRIDGED_CANDIDATE_LENGTHS <- vapply(.ABRIDGED_CANDIDATES, length, 1L)
 
+# Inference of the age vector from whatever labels or shapes we can find
 infer_age <- function(mx_like, explicit_age = NULL, ripped_age = NULL, prefer_abridged = TRUE) {
+  # ----- Case 1: explicit age provided --------------------------------------
   if (!is.null(explicit_age)) return(as.numeric(explicit_age))
+
+  # ----- Case 2: 'age' column ripped from a data.frame ----------------------
   if (!is.null(ripped_age))   return(as.numeric(ripped_age))
 
+  # ----- Case 3: matrix/data.frame rownames look like ages ------------------
   rn <- tryCatch(rownames(mx_like), error = function(e) NULL)
   a  <- parse_age_labels(rn)
   if (!is.null(a) && is_num(a)) return(as.numeric(a))
 
+  # ----- Case 4: vector names look like ages --------------------------------
   if (!is.matrix(mx_like) && !is.data.frame(mx_like)) {
     a <- parse_age_labels(names(mx_like))
     if (!is.null(a) && is_num(a)) return(as.numeric(a))
   }
 
+  # ----- Case 5: matrix/data.frame with no labels -> use nrow ---------------
   if (is.matrix(mx_like) || is.data.frame(mx_like)) {
     nr <- nrow(mx_like)
     if (!is.null(nr) && nr > 0L) return(seq_len(nr) - 1L)
   }
 
+  # ----- Case 6: unlabeled vector (possibly stacked causes) -----------------
+  # Try to deduce an age grid length that divides the total length.
+  # Priority: (6a) abridged candidates (if prefer_abridged), else (6b) single-year.
+  nmx <- length(mx_like)
+
+  # (6a) Abridged candidates: use the longest candidate that divides nmx
   if (prefer_abridged) {
-    nmx <- length(mx_like)
     idx <- which((nmx %% .ABRIDGED_CANDIDATE_LENGTHS) == 0L)
     if (length(idx) > 0L) {
-      best <- .ABRIDGED_CANDIDATES[[idx[which.max(.ABRIDGED_CANDIDATE_LENGTHS[idx])]]]
-      return(as.numeric(best))
+      nages_guess <- max(.ABRIDGED_CANDIDATE_LENGTHS[idx])
+      return(as.numeric(seq_len(nages_guess) - 1L))
     }
   }
 
+  # (6b) Single-year candidates: typical max ages (0:max_age) -> lengths are max_age + 1
+  # Adjust the range if your data routinely go higher/lower.
+  single_year_lengths <- (60L:130L) + 1L  # lengths 61..131 correspond to 0:60 .. 0:130
+  div <- single_year_lengths[nmx %% single_year_lengths == 0L]
+  if (length(div) > 0L) {
+    nages_guess <- max(div)  # prefer the finest grid (e.g., 101 over 81)
+    return(as.numeric(seq_len(nages_guess) - 1L))
+  }
+
+  # ----- Case 7: final fallback (rare): assume single-year 0..(n-1) ---------
   seq_len(length(mx_like)) - 1L
 }
 
@@ -436,17 +474,18 @@ normalize_shape <- function(x, age, n_causes = NULL, what = "mx") {
 }
 
 normalize_inputs <- function(mx1, mx2, age = NULL, n_causes = NULL, prefer_abridged = TRUE) {
-  # record original dims if you later want to expose them
+  # record original forms (before ripping/ coercing)
+  orig_form1 <- if (is.data.frame(mx1) && any(tolower(names(mx1)) == "age")) "df_age" else
+    if (is.matrix(mx1)) "matrix" else "vector"
+  orig_form2 <- if (is.data.frame(mx2) && any(tolower(names(mx2)) == "age")) "df_age" else
+    if (is.matrix(mx2)) "matrix" else "vector"
+
+  # peek, infer, normalize (your existing code) ...
   deez_dims_orig <- if (is.matrix(mx1) || is.data.frame(mx1)) dim(mx1) else length(mx1)
-
-  # check for age columns so we can prioritize them in inference
   rip1 <- strip_age_col(mx1); rip2 <- strip_age_col(mx2)
-
-  # infer age with priorities: explicit > age col > rownames > names > nrow > abridged > 0:(n-1)
   age_inferred <- infer_age(rip1$x, explicit_age = age, ripped_age = rip1$age %||% rip2$age,
                             prefer_abridged = prefer_abridged)
 
-  # normalize shapes; allow age override from age column or rownames
   n1 <- normalize_shape(rip1$x, age_inferred, n_causes, what = "mx1")
   age_final <- n1$age_override %||% age_inferred
   mx1_n <- n1$x
@@ -455,32 +494,34 @@ normalize_inputs <- function(mx1, mx2, age = NULL, n_causes = NULL, prefer_abrid
   age_final <- n2$age_override %||% age_final
   mx2_n <- n2$x
 
-  # align benign 1-col differences
-  if (is.matrix(mx1_n) && !is.matrix(mx2_n)) {
-    if (ncol(mx1_n) == 1L && length(mx2_n) == length(age_final)) {
-      mx2_n <- matrix(mx2_n, nrow = length(age_final), ncol = 1L)
-    }
-  } else if (!is.matrix(mx1_n) && is.matrix(mx2_n)) {
-    if (ncol(mx2_n) == 1L && length(mx1_n) == length(age_final)) {
-      mx1_n <- matrix(mx1_n, nrow = length(age_final), ncol = 1L)
-    }
-  }
+  # align benign 1-col differences (existing)
 
-  # final compatibility check
   if (is.matrix(mx1_n) != is.matrix(mx2_n) ||
       (is.matrix(mx1_n) && !identical(dim(mx1_n), dim(mx2_n)))) {
     stop("After normalization, 'mx1' and 'mx2' have incompatible shapes.")
   }
 
-  # derived metadata
   nages    <- length(age_final)
   n_causes_out <- if (is.matrix(mx1_n)) if (ncol(mx1_n) > 1L) ncol(mx1_n) else NULL else NULL
   deez_dims <- if (is.matrix(mx1_n)) dim(mx1_n) else length(mx1_n)
 
+  # >>> decide how to shape the *output* <<<
+  # - If multi-cause and BOTH inputs were vectors originally -> return stacked vector
+  # - If any input was matrix or data.frame-with-age -> return matrix
+  # - If single-cause -> return vector
+  return_as <-
+    if (!is.null(n_causes_out)) {
+      if (orig_form1 == "vector" && orig_form2 == "vector") "stacked_vector" else "matrix"
+    } else {
+      "vector"
+    }
+
   list(mx1 = mx1_n, mx2 = mx2_n, age = as.numeric(age_final),
        nages = nages, n_causes = n_causes_out,
-       deez_dims = deez_dims, deez_dims_orig = deez_dims_orig)
+       deez_dims = deez_dims, deez_dims_orig = deez_dims_orig,
+       return_as = return_as)
 }
+
 
 # tiny helper to accept a vector default for 'method' but force a single match
 match_method <- function(method) {
@@ -497,4 +538,23 @@ default_nx_from_age <- function(age) {
   # common abridged: age == c(0,1,5,10,15,...) -> dx starts 1,4,5,5,...
   # single-year: dx all 1
   c(dx, tail(dx, 1L))
+}
+
+
+# plausible single-year grid lengths to try when x is an unlabeled stacked vector
+.single_year_lengths <- function(min_age = 60L, max_age = 130L) {
+  # lengths are (max_age + 1) when ages are 0:max_age
+  seq.int(min_age + 1L, max_age + 1L)
+}
+
+# try to guess "nages" for an unlabeled vector by divisibility
+guess_nages_from_length <- function(nxm,
+                                    abridged_lengths = .ABRIDGED_CANDIDATE_LENGTHS,
+                                    single_year_lengths = .single_year_lengths()) {
+  cand <- c(abridged_lengths, single_year_lengths)
+  cand <- sort(unique(cand))
+  div <- cand[nxm %% cand == 0L]
+  if (!length(div)) return(NA_integer_)
+  # prefer the largest (finest age grid) that divides nxm
+  max(div)
 }
