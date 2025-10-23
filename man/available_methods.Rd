@@ -4,7 +4,10 @@
 \alias{available_methods}
 \title{List available decomposition methods}
 \usage{
-available_methods()
+available_methods(category = NULL)
+}
+\arguments{
+\item{category}{character. one of \code{"direct"}, \code{"direct_sen"}, \code{"opt_ok"}, or \code{"general"}}
 }
 \value{
 A data frame of available decomposition methods.

@@ -31,7 +31,7 @@ if (do_this){
     "stepwise",                    "stepwise_replacement",                   "general",    "DemoDecomp",
     "horiuchi",                    "horiuchi",                               "general",    "DemoDecomp"
   ) |>
-    dplyr::mutate(pkg = ifelse(is.na(pkg),"LEdecomp","pkg"))
+    dplyr::mutate(pkg = ifelse(is.na(pkg),"LEdecomp",pkg))
 
 usethis::use_data(method_registry, internal = FALSE, overwrite = TRUE)
 
@@ -71,20 +71,35 @@ usethis::use_data(method_registry, internal = FALSE, overwrite = TRUE)
 #' Returns a table of all implemented methods, their function name, and category.
 #'
 #' @return A data frame of available decomposition methods.
-#' @export
+#' @param category character. one of `"direct"`, `"direct_sen"`, `"opt_ok"`, or `"general"`
 #' @examples
 #' available_methods()
-available_methods <- function() {
-  method_registry
+#' @export
+available_methods <- function(category = NULL) {
+  reg <- get("method_registry", envir = asNamespace("LEdecomp"))
+  if (!is.null(category)) {
+    reg <- reg[reg$category %in% category, , drop = FALSE]
+  }
+  reg$method
+}
+
+get_dec_fun <- function(method) {
+  m <- tolower(method)
+  row <- .get_registry()[match(m, tolower(.get_registry()$method)), ]
+  if (nrow(row) != 1L) stop("Method '", method, "' not found in method_registry.")
+  fun_name <- row$fun_name[[1]]
+  pkg      <- row$pkg[[1]]
+
+  if (identical(pkg, "LEdecomp")) {
+    # function defined in this package
+    get(fun_name, envir = asNamespace("LEdecomp"), inherits = FALSE)
+  } else {
+    # function exported by another package
+    getExportedValue(pkg, fun_name)
+  }
 }
 
 
-get_dec_fun <- function(method) {
-  row <- method_registry[method_registry$method == method, ]
-  if (!is.na(row$pkg)){
-    dec_fun <- getExportedValue( row$pkg, row$fun_name)
-  } else {
-    dec_fun <- get(row$fun_name)
-  }
-  dec_fun
+.get_registry <- function() {
+  get("method_registry", envir = asNamespace("LEdecomp"))
 }

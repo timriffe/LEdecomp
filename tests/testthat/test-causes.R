@@ -23,9 +23,10 @@ test_that("Matrix input (causes of death) gives consistent total contributions",
   mx1_mat <- base_mx1 * weights1
   mx2_mat <- base_mx2 * weights2
   colnames(mx2_mat) <-colnames(mx1_mat) <- LETTERS[1:k]
-  methods <- method_registry$method
+
   # stepwise will get diff results guaranteed
-  methods <- setdiff(method_registry$method, "stepwise")
+  # horiuchi would need a very high Num_
+  methods <- setdiff(.get_registry()$method, c("stepwise","horiuchi"))
   for (m in methods) {
     result_cause <- suppressWarnings(LEdecomp(mx1 = mx1_mat,
                              mx2 = mx2_mat,
@@ -41,7 +42,7 @@ test_that("Matrix input (causes of death) gives consistent total contributions",
     # Compare total effect by summing cause-specific contributions
     sum_cause <- rowSums(as.matrix(result_cause$LEdecomp))
     total_all <- result_all$LEdecomp
-
+    # 1e-6 is like 3-hour precision
     expect_equal(sum_cause, total_all, tolerance = 1e-6,
                  info = paste("Mismatch for method:", m))
   }

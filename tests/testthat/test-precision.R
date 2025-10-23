@@ -5,7 +5,7 @@ test_that("Instantaneous methods are stable under small log-scale perturbations"
   x <- 0:100
   mx <- a * exp(x * b)
 
-  inst_methods <- method_registry$method[method_registry$category == "opt_ok"]
+  inst_methods <- .get_registry()$method[.get_registry()$category == "opt_ok"]
   inst_methods <- setdiff(inst_methods, c("lifetable","numerical"))  # exclude non-perturbation method
 
   perturb_vals <- c(1e-3, 1e-4, 1e-5, 1e-6, 1e-7)

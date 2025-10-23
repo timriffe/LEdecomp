@@ -44,7 +44,7 @@ _{n}\Delta_{x} =
 +
 \frac{T_{x+n}^{2}}{l_{0}^{1}} \left( \frac{l_{x}^{1}}{l_{x}^{2}} - \frac{l_{x+n}^{1}}{l_{x+n}^{2}} \right)
 }
-where \eqn{_{n}\Delta_{x}} is the contribution of rate differences in age \eqn{x} to the difference in life expectancy implied by \code{mx1} and \code{mx2}. This formula can be averaged between ‘effect interaction deferred’ and ‘effect interaction forwarded’ from the Ponnapalli (2005).
+where \eqn{_{n}\Delta_{x}} is the contribution of rate differences in age \eqn{x} to the difference in life expectancy implied by \code{mx1} and \code{mx2}. This formula can be averaged between 'effect interaction deferred' and 'effect interaction forwarded' from the Ponnapalli (2005).
 }
 \details{
 setting \code{closeout} to \code{TRUE} will result in value of \code{1/mx} for the final age group, of \code{ax} and a value of 1 for the closeout of \code{qx}. This function gives numerically identical results to \code{arriaga_sym()}, \code{lopez_ruzicka_sym()}, and \code{chandrasekaran_III()}.
