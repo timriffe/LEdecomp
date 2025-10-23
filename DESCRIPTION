@@ -1,7 +1,7 @@
 Package: LEdecomp
 Type: Package
 Title: Decompose life expectancy into contributions from rates in different ages and potentially also causes of death
-Version: 00.00.017
+Version: 00.00.018
 Date: 2025-10-23
 Authors@R: c(
    person("Tim", "Riffe", role = c("aut", "cre"), 
