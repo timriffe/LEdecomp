@@ -24,4 +24,4 @@
 #' #The dataset is executed with the following information
 #' US_data_CoD
 #'
-"US_Data_CoD"
+"US_data_CoD"

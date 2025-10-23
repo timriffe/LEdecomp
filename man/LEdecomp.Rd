@@ -76,9 +76,7 @@ An object of class \code{"LEdecomp"}:
 }
 }
 \description{
-A variety of exact or asymptotically exact life expectancy decomposition methods are implemented.
-Also, several life-expectancy descomposition sensitivity methods are implemented to answer how each age will
-change with an increase/decrease in life expectancy. See the package README and references for details.
+A variety of exact or asymptotically exact life expectancy decomposition methods are implemented. Also, several life-expectancy decomposition sensitivity methods are implemented to answer how each age will change with an increase/decrease in life expectancy. See the package README and references for details.
 }
 \references{
 \insertRef{arriaga1984measuring}{LEdecomp}

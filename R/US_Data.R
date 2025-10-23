@@ -1,8 +1,5 @@
 #' US Mortality data
-#'
-#' Data from the US total population from the Human Mortality Dataset and from National Center for Health Statistics (NCHS).
-#' The use of two dataset is justified because NCHS does not contain information of exposures above age 85.
-#' The dataset contains information on mortality rates (mxt), registered deaths (Dxt) and the size of the population at risk of death (Ext) by period, from 2000 to 2020, and by age, from 0 to 100 years, for both males and females.
+#' @description Data from the US total population from the Human Mortality Dataset and from National Center for Health Statistics (NCHS). The use of two dataset is justified because NCHS does not contain information of exposures above age 85. The dataset contains information on mortality rates (mxt), registered deaths (Dxt) and the size of the population at risk of death (Ext) by period, from 2000 to 2020, and by age, from 0 to 100 years, for both males and females.
 #'
 #' @name US_data
 #'
@@ -16,12 +13,12 @@
 #'
 #' @docType data
 #' @usage US_data
-#'
+#' @export
 #' @examples
 #' #The dataset is executed with the following information
 #' US_data
-#'
-"US_Data"
+"US_data"
+
 #' @export
 print.LEdecompData <- function(x, ...){
   cat("Mortality Data\n")
