@@ -36,10 +36,18 @@ plot.LEdecomp <- function(x, ...){
   if (!grepl(x$method, pattern = "sen_")){
       data <- data.frame(age = x$age,
                          LEdecomp = x$LEdecomp)
+
       title <- paste(x$method, " LE decomposition method")
 
-      barplot(names = data$age, height = data$LEdecomp, col = "lightgreen",
-              xlab = "ages", ylab = "", main = title)
+      #barplot(names = data$age, height = data$LEdecomp, col = "lightgreen",
+      #        xlab = "ages", ylab = "", main = title)
+
+      ggplot2::ggplot(data, ggplot2::aes(y = .data[["LEdecomp"]],
+                                         x =.data[["age"]])) +
+        ggplot2::geom_bar(stat = "identity", color = "black",
+                          fill = "lightgreen") +
+        ggplot2::labs(title = title) +
+        ggplot2::theme_classic()
 
     } else if(
       # TR: shorter?
@@ -69,8 +77,12 @@ plot.LEdecomp <- function(x, ...){
                          LEdecomp = x$LEdecomp)
       title <- paste(dicc, " LE sensitivty analysis")
 
-      barplot(names = data$age, height = data$LEdecomp, col = "lightgreen",
-              xlab = "ages", ylab = "", main = title)
+      ggplot2::ggplot(data, ggplot2::aes(y = .data[["LEdecomp"]],
+                                         x =.data[["age"]])) +
+        ggplot2::geom_bar(stat = "identity", color = "black",
+                          fill = "lightgreen") +
+        ggplot2::labs(title = title) +
+        ggplot2::theme_classic()
 
     }
   } else if(is.matrix(x$LEdecomp)){
@@ -87,6 +99,8 @@ plot.LEdecomp <- function(x, ...){
       data <- data.frame(age = rep(x$age, dim(x$mx1)[2]),
                          LEdecomp = as.vector(x$LEdecomp),
                          cause = rep(colnames(x$LEdecomp), each = length(x$age)))
+      #This allows to order the cause of death in order c1, c2, etc.
+      data$cause <- factor(data$cause, levels = paste0("c", 1:(length(colnames(x$LEdecomp)))))
       title <- paste(x$method, "cause-of-death LE decomposition method")
 
       ggplot(data, aes(fill = .data[["cause"]],

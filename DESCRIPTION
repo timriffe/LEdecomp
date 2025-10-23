@@ -8,6 +8,8 @@ Authors@R: c(
           email = "tim.riffe@gmail.com", comment = c(ORCID = "0000-0002-2673-4622")),
    person("David", "Atance", role = c("aut"), 
           email = "david.atance@uah.es")
+   person("Josep", "Lledo", role = c("aut"), 
+          email = "josep.lledo@uv.es")
    )
 Description: A set of all-cause and cause-specific life expectancy sensitivity and decomposition methods.
 License: GPL-3
