@@ -32,7 +32,7 @@ LEdecomp(
 )
 }
 \arguments{
-\item{mx1}{numeric. Age-structured mortality rates for population 1 (vector, matrix, or data.frame).}
+\item{mx1}{numeric. Age-structured mortality rates for population 1 (vector, matrix, or data.frame). See Details section for more info.}
 
 \item{mx2}{numeric. Age-structured mortality rates for population 2 (same shape as \code{mx1}).}
 
@@ -63,7 +63,43 @@ to eliminate the decomposition residual?}
 
 \item{perturb}{numeric. Small perturbation for numerical derivatives.}
 
-\item{...}{optional arguments passed to \code{numDeriv::grad()} or other internals}
+\item{...}{optional arguments passed to \code{numDeriv::grad()} or other internals
+
+#' @details
+Input dimensions are flexible to accommodate different coding styles and data layouts:
+
+\strong{Accepted forms of \code{mx1} and \code{mx2}:}
+\itemize{
+\item \strong{Vector:} A single all-cause mortality schedule, one value per age.
+In this case \code{age} must be the same length, or can be omitted and will default to
+\code{0:(length(mx1)-1)}, unless we detect you might be using abridged age groups.
+\item \strong{Matrix:} Rows represent ages, columns represent causes of death.
+Row names, if any, and if numeric, are interpreted as ages and override the supplied \code{age} argument or our inferences. Column names are retained in the output for clarity.
+\item \strong{Data frame (wide):} Same layout as a matrix, with an optional column named \code{age}.
+\item \strong{Stacked vector:} A long, concatenated vector representing causes stacked on top of
+each other (i.e., all ages for cause 1, then all ages for cause 2, and so on).
+If you don't specify age, we try to detect age and the number of causes. But please specify age- it could be stacked also, or not! For example, when used inside a tidy pipeline you might write \code{mutate(LEdecomp(mx1, mx2, age))} where \code{age} is repeated for each cause, i.e. the code might look the same as if you were dealing with all-cause data. But in that case be careful data are ordered consistently.
+}
+
+\strong{Age detection and inference:}
+\itemize{
+\item If \code{age} is supplied explicitly, it is used as given.
+\item If missing, \code{LEdecomp()} attempts to infer it from (in order):
+row names, names of the input vector, a column named \code{"age"} in a data frame,
+or heuristics for single-year (0:100) or abridged (0,1,5,10,…) schedules.
+\item If \code{age} is repeated (e.g., \code{c(0:100, 0:100, 0:100)}), the function assumes
+a stacked structure and collapses \code{age} to its unique sorted values.
+The number of repetitions becomes \code{n_causes}.
+}
+
+\strong{Return shape:}
+
+The output mirrors the input form:
+\itemize{
+\item If the inputs were vectors, outputs are vectors.
+\item If inputs were matrices or data frames (wide), outputs are matrices.
+\item If inputs were stacked vectors, outputs are stacked vectors in the same order.
+}}
 }
 \value{
 An object of class \code{"LEdecomp"}:

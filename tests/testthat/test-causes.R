@@ -142,3 +142,170 @@ test_that("Stacked vector (unlabeled) infers age, nx, n_causes and matches matri
   )
   expect_equal(rowSums(res_mat$LEdecomp), res_all$LEdecomp, tolerance = 1e-7)
 })
+
+test_that("Stacked vector with repeated explicit age infers n_causes and matches matrix result", {
+  skip_on_cran()
+
+  # synthetic Gompertz rates
+  a <- 0.001
+  b <- 0.07
+  age <- 0:100
+  n_age <- length(age)
+  mx1 <- a * exp(age * b)
+  mx2 <- (a/2) * exp(age * b)
+
+  # build 3-cause matrices with known splits
+  mx1_mat <- cbind(mx1/2, mx1/3, mx1/6)
+  mx2_mat <- cbind(mx2/4, mx2/2, mx2/4)
+  rownames(mx1_mat) <- rownames(mx2_mat) <- age
+  colnames(mx1_mat) <- colnames(mx2_mat) <- c("c1","c2","c3")
+
+  # stack into vectors (column-major; matches dim<- fill)
+  mx1_stack <- as.vector(mx1_mat)
+  mx2_stack <- as.vector(mx2_mat)
+
+  # matrix baseline (expected target)
+  res_mat <- LEdecomp(
+    mx1 = mx1_mat, mx2 = mx2_mat,
+    age = age, nx = rep(1, n_age),
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+
+  # call with stacked vectors AND repeated age provided explicitly
+  rep_age <- rep(age, 3)  # typical tidy-pipeline pattern
+  res_vec <- LEdecomp(
+    mx1 = mx1_stack, mx2 = mx2_stack,
+    age = rep_age, nx = NULL,
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+
+  # expectations:
+  # 1) age collapsed to unique sorted values (0:100)
+  expect_identical(res_vec$age, as.numeric(age))
+
+  # 2) output is stacked vector that matches matrix baseline when c()'d
+  expect_equal(res_vec$LEdecomp, c(res_mat$LEdecomp), tolerance = 1e-8)
+
+  # 3) as an extra guard, the row-sum across causes equals all-cause result
+  res_all <- LEdecomp(
+    mx1 = mx1, mx2 = mx2,
+    age = age, nx = rep(1, n_age),
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+  expect_equal(rowSums(res_mat$LEdecomp), res_all$LEdecomp, tolerance = 1e-7)
+})
+
+
+test_that("Stacked vector with explicit unique age infers nx and matches matrix result", {
+  skip_on_cran()
+
+  # synthetic Gompertz rates
+  a <- 0.001
+  b <- 0.07
+  age <- 0:100
+  n_age <- length(age)
+  mx1 <- a * exp(age * b)
+  mx2 <- (a/2) * exp(age * b)
+
+  # build 3-cause matrices with known splits
+  mx1_mat <- cbind(mx1/2, mx1/3, mx1/6)
+  mx2_mat <- cbind(mx2/4, mx2/2, mx2/4)
+  rownames(mx1_mat) <- rownames(mx2_mat) <- age
+  colnames(mx1_mat) <- colnames(mx2_mat) <- c("c1","c2","c3")
+
+  # stack into vectors (column-major; matches dim<- fill)
+  mx1_stack <- as.vector(mx1_mat)
+  mx2_stack <- as.vector(mx2_mat)
+
+  # matrix baseline (explicit nx)
+  res_mat <- LEdecomp(
+    mx1 = mx1_mat, mx2 = mx2_mat,
+    age = age, nx = rep(1, n_age),
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+
+  # stacked vectors with explicit unique age; nx must be inferred from age
+  res_vec <- LEdecomp(
+    mx1 = mx1_stack, mx2 = mx2_stack,
+    age = age, nx = NULL,
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+
+  # expectations:
+  # 1) age kept as given
+  expect_identical(res_vec$age, as.numeric(age))
+
+  # 2) output is stacked vector; matches matrix baseline when c()'d
+  expect_equal(res_vec$LEdecomp, c(res_mat$LEdecomp), tolerance = 1e-8)
+
+  # 3) row sums across causes equal all-cause decomposition
+  res_all <- LEdecomp(
+    mx1 = mx1, mx2 = mx2,
+    age = age, nx = rep(1, n_age),
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+  expect_equal(rowSums(res_mat$LEdecomp), res_all$LEdecomp, tolerance = 1e-7)
+})
+
+test_that("Stacked vector with nx provided and age NULL infers age and matches matrix result", {
+  skip_on_cran()
+
+  # synthetic Gompertz rates
+  a <- 0.001
+  b <- 0.07
+  age <- 0:100
+  n_age <- length(age)
+  nx_vec <- rep(1, n_age)
+  mx1 <- a * exp(age * b)
+  mx2 <- (a/2) * exp(age * b)
+
+  # build 3-cause matrices with known splits
+  mx1_mat <- cbind(mx1/2, mx1/3, mx1/6)
+  mx2_mat <- cbind(mx2/4, mx2/2, mx2/4)
+  rownames(mx1_mat) <- rownames(mx2_mat) <- age
+  colnames(mx1_mat) <- colnames(mx2_mat) <- c("c1","c2","c3")
+
+  # stack into vectors (column-major; matches dim<- fill)
+  mx1_stack <- as.vector(mx1_mat)
+  mx2_stack <- as.vector(mx2_mat)
+
+  # matrix baseline (explicit age and nx)
+  res_mat <- LEdecomp(
+    mx1 = mx1_mat, mx2 = mx2_mat,
+    age = age, nx = nx_vec,
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+
+  # stacked vectors: age = NULL (must infer), nx provided
+  res_vec <- LEdecomp(
+    mx1 = mx1_stack, mx2 = mx2_stack,
+    age = NULL, nx = nx_vec,
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+
+  # expectations
+  # 1) inferred age equals 0:100
+  expect_identical(res_vec$age, as.numeric(age))
+
+  # 2) output is stacked vector; matches matrix baseline when c()'d
+  expect_equal(res_vec$LEdecomp, c(res_mat$LEdecomp), tolerance = 1e-8)
+
+  # 3) row sums across causes equal all-cause decomposition
+  res_all <- LEdecomp(
+    mx1 = mx1, mx2 = mx2,
+    age = age, nx = nx_vec,
+    sex1 = "t", sex2 = "t",
+    method = "sen_arriaga", opt = TRUE
+  )
+  expect_equal(rowSums(res_mat$LEdecomp), res_all$LEdecomp, tolerance = 1e-7)
+})
+
+
