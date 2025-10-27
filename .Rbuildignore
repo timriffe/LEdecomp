@@ -12,3 +12,5 @@ ggplot_graphs.R
 josep_Arriaga.RData
 US_mortalityData.RData
 US_mortalityData_CoD.RData
+cran-comments.md
+NEWS.md

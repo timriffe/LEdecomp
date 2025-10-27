@@ -3,15 +3,18 @@ library(roxygen2)
 library(devtools)
 
 devtools::load_all()
-load(file = "US_mortalityData.RData")
-load(file = "US_mortalityData_CoD.RData")
-
+# load(file = "US_mortalityData.RData")
+# load(file = "US_mortalityData_CoD.RData")
+data("US_data")
+data("US_data_CoD")
 #Load the US mortality data from HMD for Male and Female from 2000
-US_mortdata
-US_mortdata$mxt[1:100] - US_mortdata$Dxt[1:100]/US_mortdata$Ext[1:100]
-US_mortdata_cod
-US_mortdata_cod$mxt[1:100] -
-  US_mortdata_cod$Dxt[1:100]/US_mortdata_cod$Ext[1:100]
+US_data
+US_data$mxt[1:100] - US_data$Dxt[1:100]/US_data$Ext[1:100]
+US_data_CoD
+US_data_CoD$mxt[1:100] -
+  US_data_CoD$Dxt[1:100]/US_data_CoD$Ext[1:100]
+
+US_data_CoD$cause |> unique()
 
 print.LEdecompData <- function(x) {
   cat("Mortality Data\n")
@@ -20,51 +23,51 @@ print.LEdecompData <- function(x) {
   cat("Complete Life Table with ages from", c(min(x$Age)," to ", max(x$Age)), "\n")
 }
 
-US_data <- structure(list(Age = US_mortdata$Age,
-                          Gender = US_mortdata$Gender,
-                          Period = US_mortdata$Period,
-                          Ext  = US_mortdata$Ext,
-                          Dxt  = US_mortdata$Dxt,
-                          mxt = US_mortdata$mxt))
+# US_data <- structure(list(Age = US_mortdata$Age,
+#                           Gender = US_mortdata$Gender,
+#                           Period = US_mortdata$Period,
+#                           Ext  = US_mortdata$Ext,
+#                           Dxt  = US_mortdata$Dxt,
+#                           mxt = US_mortdata$mxt))
+#
+# US_data <- as.data.frame(US_data)
+# attr(US_data, "label") <- "US total population"
+# attr(US_data, "series") <- "males and females"
+#
+# class(US_data) <- c("LEdecompData", class(US_data))
+#
+# class(US_data)
+# inherits(US_data, "data.frame")
+#
+# US_data_CoD
+#
+# US_data_CoD <- structure(list(Age = US_mortdata_cod$Age,
+#                               Gender = US_mortdata_cod$Gender,
+#                               Period = US_mortdata_cod$Period,
+#                               Ext  = US_mortdata_cod$Ext,
+#                               Dxt  = US_mortdata_cod$Dxt,
+#                               mxt = US_mortdata_cod$mxt,
+#                               cause = US_mortdata_cod$cause,
+#                               cause_id = US_mortdata_cod$cause_id))
 
-US_data <- as.data.frame(US_data)
-attr(US_data, "label") <- "US total population"
-attr(US_data, "series") <- "males and females"
+# US_data_CoD <- as.data.frame(US_data_CoD)
+# attr(US_data_CoD, "label") <- "US cause-of-death data"
+# attr(US_data_CoD, "series") <- "males and females"
+#
+# class(US_data_CoD) <- c("LEdecompData", class(US_data_CoD))
+#
+# class(US_data_CoD)
+# inherits(US_data_CoD, "data.frame")
+#
+# US_data_CoD
+#
 
-class(US_data) <- c("LEdecompData", class(US_data))
-
-class(US_data)
-inherits(US_data, "data.frame")
-
-US_data_CoD
-
-US_data_CoD <- structure(list(Age = US_mortdata_cod$Age,
-                              Gender = US_mortdata_cod$Gender,
-                              Period = US_mortdata_cod$Period,
-                              Ext  = US_mortdata_cod$Ext,
-                              Dxt  = US_mortdata_cod$Dxt,
-                              mxt = US_mortdata_cod$mxt,
-                              cause = US_mortdata_cod$cause,
-                              cause_id = US_mortdata_cod$cause_id))
-
-US_data_CoD <- as.data.frame(US_data_CoD)
-attr(US_data_CoD, "label") <- "US cause-of-death data"
-attr(US_data_CoD, "series") <- "males and females"
-
-class(US_data_CoD) <- c("LEdecompData", class(US_data_CoD))
-
-class(US_data_CoD)
-inherits(US_data_CoD, "data.frame")
-
-US_data_CoD
-
-
-library(dplyr)
-
-save(US_data, file = "data/US_data.rda")
-save(US_data_CoD, file = "data/US_data_CoD.rda")
-usethis::use_data(US_data, US_data_CoD, internal = FALSE,
-                  overwrite = TRUE)
+# library(dplyr)
+#
+# save(US_data, file = "data/US_data.rda")
+# save(US_data_CoD, file = "data/US_data_CoD.rda")
+# usethis::use_data(US_data, US_data_CoD, internal = FALSE,
+#                   overwrite = TRUE)
 
 #include in the file NAMESPACE:
 library(Rdpack)
@@ -100,9 +103,12 @@ arriaga_sym20 <- LEdecomp(mx1 = US_male2020$mxt, mx2 = US_female2020$mxt, age = 
                           method = "arriaga_sym")
 arriaga_sym15 <- LEdecomp(mx1 = US_male2015$mxt, mx2 = US_female2015$mxt, age = c(0:100),
                           method = "arriaga_sym")
+
+mx_to_e0(US_female2010$mxt,age=0:100, closeout=TRUE)-
+mx_to_e0(US_male2010$mxt,age=0:100, closeout=TRUE)
+
 arriaga_sym10 <- LEdecomp(mx1 = US_male2010$mxt, mx2 = US_female2010$mxt, age = c(0:100),
                           method = "arriaga_sym")
-
 arriaga_sym10
 
 plot(arriaga_sym10) +
@@ -166,13 +172,39 @@ US_male2020_cod <- US_male2020_cod[US_male2020_cod$cause
                                    != 'All-causes',]
 US_female2020_cod <- US_female2020_cod[US_female2020_cod$cause
                                        != 'All-causes',]
+US_male2010_cod |>
+  pull(cause) |> unique() |> length()
+US_cod_2010<- LEdecomp(mx1 =US_male2010_cod |>
+                         arrange(cause, Age) |> pull(mxt),
+                       mx2 = US_female2010_cod |>
+                         arrange(cause, Age) |> pull(mxt),
+                       n_causes = 18,
+                       age = 0:100, method = "arriaga")
 
-US_cod_2010<- LEdecomp(mx1 = matrix(US_male2010_cod$mxt, 101, 18),
-                       mx2 = matrix(US_female2010_cod$mxt, 101, 18),
-                       age = c(0:100), method = "arriaga")
+US_cod_2010<- LEdecomp(mx1 =US_male2010_cod |>
+                         select(Age, cause, mxt) |>
+                         pivot_wider(names_from = cause, values_from = mxt) |>
+                         arrange(Age),
+                       mx2 = US_female2010_cod |>
+                         select(Age, cause, mxt) |>
+                         pivot_wider(names_from = cause, values_from = mxt) |>
+                         arrange(Age),
+                       n_causes = 18,
+                       age = 0:100, method = "arriaga")
+library(tidyverse)
+US_data_CoD |>
+  filter(Period == 2010,
+         cause != "All-causes") |>
+  select(Gender, Age, cause, mxt) |>
+  pivot_wider(names_from = Gender, values_from = mxt) |>
+  arrange(cause, Age) |>
+  mutate(dec=LEdecomp(mx1 = Male,
+           mx2 =  Female,
+           age = 0:100,
+           n_causes = 18,
+           method = "arriaga")[["LEdecomp"]])
+
 US_cod_2010
-arriaga_sym10
-
 #CHECK TIM
 
 cause_id <- unique(US_male2010_cod$cause_id)
