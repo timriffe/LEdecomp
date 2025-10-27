@@ -45,7 +45,7 @@ methods <- c(
 D_defaults <- rep(0,length(methods))
 names(D_defaults) <-   methods
 for (m in methods){
-  D_defaults[[m]] <- LEdecomp(mx1,mx2,age=x,sex1="t",sex2="t",method=m,opt=T)$LEdecomp |> sum()
+  D_defaults[[m]] <- LEdecomp(mx1_c,mx2_c,age=x,sex1="t",sex2="t",method=m,opt=T)$LEdecomp |> sum()
 }
 barplot(sort(D_defaults),horiz=TRUE,las=1)
 

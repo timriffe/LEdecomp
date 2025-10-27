@@ -7,8 +7,9 @@
 LEdecomp(
   mx1,
   mx2,
-  age = (1:length(mx1)) - 1,
-  nx = rep(1, length(mx1)),
+  age = NULL,
+  nx = NULL,
+  n_causes = NULL,
   sex1 = "t",
   sex2 = sex1,
   method = c("lifetable", "arriaga", "arriaga_sym", "sen_arriaga", "sen_arriaga_sym",
@@ -31,74 +32,87 @@ LEdecomp(
 )
 }
 \arguments{
-\item{mx1}{numeric. age-structured mortality rates for population 1.}
+\item{mx1}{numeric. Age-structured mortality rates for population 1 (vector, matrix, or data.frame). See Details section for more info.}
 
-\item{mx2}{numeric. age-structured mortality rates for population 2, must be same length as \code{mx1}}
+\item{mx2}{numeric. Age-structured mortality rates for population 2 (same shape as \code{mx1}).}
 
-\item{age}{integer. lower bound of each age group, must be same length as \code{mx1}}
+\item{age}{integer. Lower bound of each age group. If \code{NULL}, it will be inferred from data (see Details).}
 
-\item{nx}{integer vector of age intervals, default 1.}
+\item{nx}{integer vector of age intervals (defaults to 1 when missing).}
+
+\item{n_causes}{integer or \code{NULL}. If provided with stacked vectors, forces the number of causes (columns).}
 
 \item{sex1}{character. \code{"m"},\code{"f"}, or \code{"t"}, affects a0 treatment.}
 
 \item{sex2}{character. \code{"m"},\code{"f"}, or \code{"t"}, affects a0 treatment.}
 
-\item{method}{character. \code{"lifetable"}, \code{"arriaga"}, \code{"arriaga_sym"}, \verb{"sen_arriaga"'}, \code{"sen_arriaga_sym"}, \verb{"sen_arriaga_inst"'}, \verb{"sen_arriaga_inst2"'},\code{"sen_arriaga_sym_inst"},\code{"sen_arriaga_sym_inst2"}, \code{"chandrasekaran_ii"}, \code{"sen_chandrasekaran_ii"}, \code{"sen_chandrasekaran_ii_inst"}, \code{"sen_chandrasekaran_ii_inst2"}, \code{"chandrasekaran_iii"}, \code{"sen_chandrasekaran_iii"}, \code{"sen_chandrasekaran_iii_inst"}, \code{"sen_chandrasekaran_iii_inst2"}, \code{"lopez_ruzicka"}, \code{"lopez_ruzicka_sym"}, \code{"sen_lopez_ruzicka"}, \code{"sen_lopez_ruzicka_sym"}, \code{"sen_lopez_ruzicka_inst"}, \code{"sen_lopez_ruzicka_inst2"}, \code{"sen_lopez_ruzicka_sym_inst"}, \code{"sen_lopez_ruzicka_sym_inst2"}, "\verb{horiuchi"}, \code{"stepwise"}, \code{"numerical"}}
+\item{method}{character. One of the methods in \code{method_registry$method}.}
 
-\item{closeout}{logical. Do we handle closeout, or truncate at top age.}
+\item{closeout}{logical. Close out at top age (\code{TRUE}) or assume closed final age group (\code{FALSE}).}
 
-\item{opt}{logical, default \code{TRUE}. For lifetable, numerical, and instantaneous sensitivity-based decomposition, shall we optimize the rate averaging to eliminate the decomposition residual?}
+\item{opt}{logical. For lifetable, numerical, and instantaneous sensitivity-based methods, optimize rate averaging
+to eliminate the decomposition residual?}
 
-\item{tol}{numeric, default \code{1e-10}. Tolerance parameter for rate averaging optimization.}
+\item{tol}{numeric. Tolerance for rate-averaging optimization.}
 
-\item{Num_Intervals}{numeric, default \code{FALSE}. The number of intervals to integrate over, which is used only for \code{method} = \code{"arriaga"} or the sensitvity methods of Arriaga.}
+\item{Num_Intervals}{integer. For methods that discretize an integral (e.g., Horiuchi).}
 
-\item{symmetrical}{logical value, default \code{FALSE}. This parameter is used for \code{method} = \code{"stepwise"} and shall we want to average the results of replacing 1 with 2 and 2 with 1?}
+\item{symmetrical}{logical. For stepwise replacement only: average 1 to 2 and 2 to 1?}
 
-\item{direction}{character, default \code{'up'}. This parameter is used for \code{method} = \code{"stepwise"}, and corresponds to one of \code{"up"}, \code{"down"}, or \code{"both"}.}
+\item{direction}{character. For stepwise replacement: "up", "down", or "both".}
 
-\item{perturb}{numeric, default \code{1e-6}, perturbation value that is a numeric constant, and a very small number.}
+\item{perturb}{numeric. Small perturbation for numerical derivatives.}
 
-\item{\dots}{optional arguments passed to \code{numDeriv::grad()}}
+\item{...}{optional arguments passed to \code{numDeriv::grad()} or other internals
+
+#' @details
+Input dimensions are flexible to accommodate different coding styles and data layouts:
+
+\strong{Accepted forms of \code{mx1} and \code{mx2}:}
+\itemize{
+\item \strong{Vector:} A single all-cause mortality schedule, one value per age.
+In this case \code{age} must be the same length, or can be omitted and will default to
+\code{0:(length(mx1)-1)}, unless we detect you might be using abridged age groups.
+\item \strong{Matrix:} Rows represent ages, columns represent causes of death.
+Row names, if any, and if numeric, are interpreted as ages and override the supplied \code{age} argument or our inferences. Column names are retained in the output for clarity.
+\item \strong{Data frame (wide):} Same layout as a matrix, with an optional column named \code{age}.
+\item \strong{Stacked vector:} A long, concatenated vector representing causes stacked on top of
+each other (i.e., all ages for cause 1, then all ages for cause 2, and so on).
+If you don't specify age, we try to detect age and the number of causes. But please specify age- it could be stacked also, or not! For example, when used inside a tidy pipeline you might write \code{mutate(LEdecomp(mx1, mx2, age))} where \code{age} is repeated for each cause, i.e. the code might look the same as if you were dealing with all-cause data. But in that case be careful data are ordered consistently.
+}
+
+\strong{Age detection and inference:}
+\itemize{
+\item If \code{age} is supplied explicitly, it is used as given.
+\item If missing, \code{LEdecomp()} attempts to infer it from (in order):
+row names, names of the input vector, a column named \code{"age"} in a data frame,
+or heuristics for single-year (0:100) or abridged (0,1,5,10,…) schedules.
+\item If \code{age} is repeated (e.g., \code{c(0:100, 0:100, 0:100)}), the function assumes
+a stacked structure and collapses \code{age} to its unique sorted values.
+The number of repetitions becomes \code{n_causes}.
+}
+
+\strong{Return shape:}
+
+The output mirrors the input form:
+\itemize{
+\item If the inputs were vectors, outputs are vectors.
+\item If inputs were matrices or data frames (wide), outputs are matrices.
+\item If inputs were stacked vectors, outputs are stacked vectors in the same order.
+}}
 }
 \value{
-A list with class \code{"LEdecomp"} including different component in the Life Expectancy decomposition method:
+An object of class \code{"LEdecomp"}:
 \itemize{
-\item \code{mx1} numerical. Age-structured mortality rates for population 1.
-\item \code{mx2} numerical. Age-structured mortality rates for population 2.
-\item \code{age} integer. Lower bound of each age group, provided by the user. Single ages only.
-\item \code{sex1} character. One of \code{"m"} (male) , \code{"f"} (female),\code{"t"} (total). Sex of first population. This affects only infant mortality.
-\item \code{sex2} character. One of \code{"m"}, \code{"f"},\code{"t"}. Sex of second population. This affects only infant mortality.
-\item \code{method} character. Method selected by the user to apply the life-expectancy decomposition or sensitivity analysis.
-\item \code{closeout} logical. Shall we close out ax at the last age using inverse of mx (default TRUE), or assume a closed final age group?
-\item \code{opt} logical. For certain sensitivity methods, shall we optimize the weighting of mortality rates at which to evaluate the sensitivity? Default TRUE
-\item \code{tol} numerical. level of tolerance when optimizing sensitivity methods. Default \code{1e-10}.
-\item \code{Num_Intervals} integer. For horiuchi method only. The number of intervals to discretize the method over.
-\item \code{symmetrical} logical. for stepwise replacement algorithm only, do we average results of decomposing 1 vs 2 and 2 vs 1?
-\item \code{direction} character. For stepwise replacement algorithm only, up age, down age, or the average of both?
-\item \code{perturb} numerical. Perturbation value that is a numeric constant, and a very small number.
-\item \code{sens} a vector/matrix of the sensitivity life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
-\item \code{LE1} numerical. LE calculated from \code{mx1}.
-\item \code{LE1} numerical. LE calculated from \code{mx2}.
-\item \code{LEdecomp} numerical. a vector/matrix of the life expectancy decomposition effects that is organized in the same way as \code{mx1} and \code{mx2}.
+\item \code{mx1}, \code{mx2}, \code{age}, \code{sex1}, \code{sex2}, \code{method}, \code{closeout}, \code{opt}, \code{tol}, \code{Num_Intervals},
+\code{symmetrical}, \code{direction}, \code{perturb}
+\item \code{sens}: vector/matrix of sensitivities (same dimensions as inputs)
+\item \code{LE1}, \code{LE2}: life expectancy for \code{mx1} and \code{mx2}
+\item \code{LEdecomp}: vector/matrix of contributions (same shape as inputs)
 }
 }
 \description{
-A variety of exact or asymptotically exact life expectancy decomposition methods are implemented. Also, several life-expectancy descomposition sensitivity methods are implemented to answer how each age will change with an increase/decrease in life expectancy.
-These include the lifetable response experiment, using three potential sensitivity functions (lifetable-based \code{ltre_lt}, an instantaneous Arriaga-derived sensitivity \code{ltre_arriaga_instantaneous}, or numerical sensitivity \code{ltre_numerical}), the directional Arriaga method \code{arriaga}, a symmetrical Arriaga method \code{arriaga_symmetrical}.
-These all give similar results, except for directional \code{arriaga}, which is the most different.
-}
-\examples{
-a <- .001
-b <- .07
-x <- 0:100
-mx1 <- a * exp(x * b)
-mx2 <- a/2 * exp(x * b)
-
-LEdecomp(mx1,mx2,age=x,sex1='t',method = "sen_arriaga_inst")
-
-# what methods are available?
-available_methods()
+A variety of exact or asymptotically exact life expectancy decomposition methods are implemented. Also, several life-expectancy decomposition sensitivity methods are implemented to answer how each age will change with an increase/decrease in life expectancy. See the package README and references for details.
 }
 \references{
 \insertRef{arriaga1984measuring}{LEdecomp}
@@ -107,6 +121,6 @@ available_methods()
 \insertRef{Ponnapalli2005}{LEdecomp}
 }
 \seealso{
-\code{\link[=sen_e0_mx_lt]{sen_e0_mx_lt()}},\code{\link[=arriaga]{arriaga()}},\code{\link[=arriaga_sym]{arriaga_sym()}},
+\code{\link[=sen_e0_mx_lt]{sen_e0_mx_lt()}}, \code{\link[=arriaga]{arriaga()}}, \code{\link[=arriaga_sym]{arriaga_sym()}},
 \code{\link[=sen_arriaga]{sen_arriaga()}}, \code{\link[=sen_arriaga_sym]{sen_arriaga_sym()}}
 }

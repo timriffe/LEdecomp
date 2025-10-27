@@ -2,6 +2,7 @@
 
 S3method(plot,LEdecomp)
 S3method(print,LEdecomp)
+S3method(print,LEdecompData)
 export(LEdecomp)
 export(ald_to_Lx)
 export(arriaga)
@@ -54,3 +55,4 @@ importFrom(ggplot2,theme_classic)
 importFrom(graphics,barplot)
 importFrom(numDeriv,grad)
 importFrom(stats,optimize)
+importFrom(utils,tail)

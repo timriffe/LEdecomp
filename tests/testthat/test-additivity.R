@@ -33,7 +33,7 @@ test_that("All instantaneous methods (with opt = TRUE) give equal total effects"
   mx2 <- a / 2 * exp(x * b)
 
   # List all instantaneous method names
-  inst_methods <- method_registry$method[method_registry$category == "opt_ok"]
+  inst_methods <- .get_registry()$method[.get_registry()$category == "opt_ok"]
 
   # Calculate reference Δe₀
   e0_1 <- mx_to_e0(mx1, age = x)
@@ -57,8 +57,8 @@ test_that("Sequential additivity holds in total contributions", {
   mx2 <- a / 2 * exp(x * b)
   mx_mid <- (mx1 + mx2) / 2
 
-  methods_to_test <- method_registry$method[
-    method_registry$category %in% c("direct", "direct_sen", "opt_ok")
+  methods_to_test <- .get_registry()$method[
+    .get_registry()$category %in% c("direct", "direct_sen", "opt_ok")
   ]
 
   for (m in methods_to_test) {
@@ -84,7 +84,7 @@ test_that("Direct sensitivity methods give LEdecomp ≈ sensitivity × (mx2 - mx
   mx1 <- a * exp(x * b)
   mx2 <- a / 2 * exp(x * b)
 
-  direct_sens_methods <- method_registry$method[method_registry$category == "direct_sen"]
+  direct_sens_methods <- .get_registry()$method[.get_registry()$category == "direct_sen"]
 
   for (m in direct_sens_methods) {
     result <- LEdecomp(mx1 = mx1, mx2 = mx2, age = x, method = m)

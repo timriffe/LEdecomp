@@ -9,7 +9,7 @@ A data frame with 28 rows and 3 variables:
 \describe{
 \item{method}{Character. The method name used in the \code{method} argument of \code{LEdecomp()}.}
 \item{fun_name}{Character. The actual function name (as a string) used to compute the decomposition.}
-\item{class}{Character. One of \code{"direct"}, \code{"direct_sen"}, \code{"opt_ok"}, or \code{"general"}, indicating how the method operates internally:
+\item{category}{Character. One of \code{"direct"}, \code{"direct_sen"}, \code{"opt_ok"}, or \code{"general"}, indicating how the method operates internally:
 \itemize{
 \item \code{"direct"}: Classic decomposition methods using two full input vectors (e.g., Arriaga, Lopez-Ruzicka).
 \item \code{"direct_sen"}: Sensitivity-based methods that take \code{mx1} and \code{mx2}, and divide the result by their difference.
@@ -17,6 +17,7 @@ A data frame with 28 rows and 3 variables:
 \item \code{"general"}: Generic methods like \code{stepwise} and \code{horiuchi} using externally provided tools (e.g., from DemoDecomp).
 }
 }
+\item{pkg}{Character. The package where the underlying decomp function resides.}
 }
 }
 \usage{
