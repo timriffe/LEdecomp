@@ -114,6 +114,108 @@ An object of class \code{"LEdecomp"}:
 \description{
 A variety of exact or asymptotically exact life expectancy decomposition methods are implemented. Also, several life-expectancy decomposition sensitivity methods are implemented to answer how each age will change with an increase/decrease in life expectancy. See the package README and references for details.
 }
+\examples{
+## Simple reproducible setup
+set.seed(123)
+a <- 0.001
+b <- 0.07
+
+## 1) Vector (single cause), single-year ages
+age <- 0:50
+mx1 <- a * exp(age * b)
+mx2 <- (a / 2) * exp(age * b)
+
+res_vec <- LEdecomp(
+  mx1 = mx1, mx2 = mx2,
+  age = age, nx = rep(1, length(age)),
+  sex1 = "t", method = "sen_arriaga", opt = TRUE
+)
+round(sum(res_vec$LEdecomp), 4)
+
+## 2) Matrix (multiple causes): rows = age, cols = causes
+##    Build 3 causes with random positive weights per age
+k <- 3
+w1 <- matrix(runif(length(age) * k, 0.9, 1.1), nrow = length(age)); w1 <- w1 / rowSums(w1)
+w2 <- matrix(runif(length(age) * k, 0.9, 1.1), nrow = length(age)); w2 <- w2 / rowSums(w2)
+mx1_mat <- (mx1) * w1
+mx2_mat <- (mx2) * w2
+colnames(mx1_mat) <- colnames(mx2_mat) <- paste0("c", 1:k)
+rownames(mx1_mat) <- rownames(mx2_mat) <- as.character(age)
+
+res_mat <- LEdecomp(
+  mx1 = mx1_mat, mx2 = mx2_mat,
+  age = age, nx = rep(1, length(age)),
+  sex1 = "t", method = "sen_arriaga", opt = TRUE
+)
+## Check: row-summed cause contributions equal all-cause result
+res_all <- LEdecomp(
+  mx1 = mx1, mx2 = mx2,
+  age = age, nx = rep(1, length(age)),
+  sex1 = "t", method = "sen_arriaga", opt = TRUE
+)
+all.equal(rowSums(res_mat$LEdecomp), res_all$LEdecomp, tolerance = 1e-7)
+
+## 3) Data frame (wide): same as matrix but with an 'age' column
+df1 <- data.frame(age = age, mx1_mat, check.names = FALSE)
+df2 <- data.frame(age = age, mx2_mat, check.names = FALSE)
+res_df <- LEdecomp(
+  mx1 = df1, mx2 = df2,
+  age = NULL, nx = rep(1, length(age)),
+  sex1 = "t", method = "sen_arriaga", opt = TRUE
+)
+all.equal(res_df$LEdecomp, res_mat$LEdecomp, tolerance = 1e-8)
+
+## 4) Stacked vector (long/concatenated): all ages for cause 1, then cause 2, etc.
+##    If 'age' is repeated per cause, LEdecomp infers n_causes and collapses age.
+mx1_stack <- as.vector(mx1_mat)  # column-major flattening
+mx2_stack <- as.vector(mx2_mat)
+age_rep   <- rep(age, k)         # typical tidy pipeline: age repeated per cause
+
+res_stack <- LEdecomp(
+  mx1 = mx1_stack, mx2 = mx2_stack,
+  age = age_rep, nx = NULL,
+  sex1 = "t", method = "sen_arriaga", opt = TRUE
+)
+## Output is a stacked vector matching the matrix baseline when flattened
+all.equal(res_stack$LEdecomp, c(res_mat$LEdecomp), tolerance = 1e-8)
+
+## 5) Abridged ages (0,1,5,10,...,110): inference when labels are missing
+age_ab <- c(0L, 1L, seq.int(5L, 110L, by = 5L))
+nx_ab  <- c(diff(age_ab), tail(diff(age_ab), 1L))
+mx1_ab <- a * exp(age_ab * b)
+mx2_ab <- (a / 2) * exp(age_ab * b)
+
+## Explicit abridged example
+res_ab_explicit <- LEdecomp(
+  mx1 = mx1_ab, mx2 = mx2_ab,
+  age = age_ab, nx = nx_ab,
+  sex1 = "t", method = "sen_arriaga", opt = TRUE
+)
+
+## Unlabeled abridged vector of the same length: age and nx inferred
+res_ab_infer <- LEdecomp(
+  mx1 = mx1_ab, mx2 = mx2_ab,
+  age = NULL, nx = NULL,
+  sex1 = "t", method = "sen_arriaga", opt = TRUE
+)
+all.equal(res_ab_infer$age, as.numeric(age_ab))
+all.equal(res_ab_infer$LEdecomp, res_ab_explicit$LEdecomp, tolerance = 1e-8)
+
+## 6) Rownames override age when they look like ages
+##    Here we give the wrong 'age' but set rownames to "0","1",...,"50".
+wrong_age <- age + 10
+mx1_rn <- mx1_mat; mx2_rn <- mx2_mat
+rownames(mx1_rn) <- rownames(mx2_rn) <- as.character(age)
+res_rn <- suppressWarnings(LEdecomp(
+  mx1 = mx1_rn, mx2 = mx2_rn,
+  age = wrong_age, nx = rep(1, length(age)),
+  sex1 = "t", method = "sen_arriaga", opt = TRUE
+))
+all.equal(res_rn$age, as.numeric(age))
+
+## 7) List available methods
+available_methods()
+}
 \references{
 \insertRef{arriaga1984measuring}{LEdecomp}
 \insertRef{Chandrasekaran1986}{LEdecomp}
