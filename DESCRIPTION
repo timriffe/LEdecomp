@@ -1,15 +1,15 @@
 Package: LEdecomp
 Type: Package
 Title: Decompose life expectancy into contributions from rates in different ages and potentially also causes of death
-Version: 00.00.019
-Date: 2025-10-24
+Version: 1.0.0
+Date: 2025-10-27
 Authors@R: c(
    person("Tim", "Riffe", role = c("aut", "cre"), 
-          email = "tim.riffe@gmail.com", comment = c(ORCID = "0000-0002-2673-4622")),
+          email = "tim.riffe@gmail.com", comment = c("0000-0002-2673-4622")),
    person("David", "Atance", role = c("aut"), 
-          email = "david.atance@uah.es"),
+          email = "david.atance@uah.es", comment = c("0000-0001-5860-0584")),
    person("Josep", "Lledo", role = c("aut"), 
-          email = "josep.lledo@uv.es")
+          email = "josep.lledo@uv.es", comment = c("0000-0002-7475-8549"))
    )
 Description: A set of all-cause and cause-specific life expectancy sensitivity and decomposition methods.
 License: GPL-3
@@ -28,8 +28,6 @@ Depends:
 RdMacros: Rdpack
 BugReports: https://github.com/timriffe/LEdecomp/issues
 Encoding: UTF-8
-Remotes: 
-    github::timriffe/DemoTools
 URL: https://github.com/timriffe/LEdecomp
 Suggests: 
     testthat (>= 3.0.0)

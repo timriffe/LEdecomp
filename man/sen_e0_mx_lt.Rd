@@ -30,7 +30,7 @@ In continuous notation, we know that the sensitivity \eqn{s(x)}
 \deqn{s(x) = -l(x)e(x)}
 but it is not obvious what to use from a discrete lifetable. In this implementation, we use \eqn{L(x)} and an \eqn{a(x)}-weighted average of successive \eqn{e(x)} values, specifically, we calculate:
 \deqn{
-s_x = -L_x \cdot \left e_x \cdot \left( 1 - a_x \right) + e_{x+1} \cdot a_x\right)
+s_x = -L_x \cdot \left( e_x \cdot \left( 1 - a_x \right) + e_{x+1} \cdot a_x\right)
 }
 This seems to be a very good approximation for ages >0, but we still have a small, but unaccounted-for discrepancy in age 0, at least when comparing with also-imperfect numerical derivatives.
 }
