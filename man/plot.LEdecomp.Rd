@@ -2,27 +2,119 @@
 % Please edit documentation in R/plot.LEdecomp.R
 \name{plot.LEdecomp}
 \alias{plot.LEdecomp}
-\title{Function to plot the results from the LEdecomp}
+\title{Plot Life-Expectancy Decomposition Results (ggplot2)}
 \usage{
-\method{plot}{LEdecomp}(x, ...)
+\method{plot}{LEdecomp}(
+  x,
+  what = c("LEdecomp", "sens"),
+  col = NULL,
+  lwd = 1.2,
+  xlab = "Age",
+  ylab = NULL,
+  main = NULL,
+  legend = TRUE,
+  legend_pos = "topright",
+  abridged_midpoints = FALSE,
+  layout = c("overlay", "facet"),
+  ncol = NULL,
+  ...
+)
 }
 \arguments{
-\item{x}{\code{x} developed using function \code{LEdecomp()} which are objects of the \code{LEdecomp} class.}
+\item{x}{An object of class \code{"LEdecomp"}.}
 
-\item{...}{additional arguments to show in the plot appearance.}
+\item{what}{Which series to plot: \code{"LEdecomp"} (default) or \code{"sens"}.}
+
+\item{col}{Optional vector of colors for causes. If \code{NULL}, a fixed palette
+is used and recycled as needed.}
+
+\item{lwd}{Line width for cause lines (default 1.2).}
+
+\item{xlab, ylab, main}{Axis labels and main title. If \code{ylab} is \code{NULL},
+the default is \code{"Difference explained (years)"} for \code{what = "LEdecomp"}
+and "\verb{Sensitivity d(e0)/d(mx)"} for \code{what = "sens"}.}
+
+\item{legend}{Logical. Show legend (primarily relevant for \code{layout = "overlay"}).}
+
+\item{legend_pos}{Legend position passed to \code{theme(legend.position = ...)}.
+Accepts \code{"none"}, \code{"left"}, \code{"right"}, \code{"bottom"}, \code{"top"},
+or numeric coordinates \code{c(x, y)} in [0,1] inside the panel.}
+
+\item{abridged_midpoints}{Logical. If \code{TRUE} and ages are abridged
+\verb{(0, 1, 5, 10, ...)}, plot against bin midpoints instead of lower bounds.}
+
+\item{layout}{Plot layout for cause-of-death results: \code{"overlay"} (all causes
+in one panel) or \code{"facet"} (one panel per cause).}
+
+\item{ncol}{Number of columns to use when \code{layout = "facet"}. If \code{NULL},
+a default is chosen based on the number of causes.}
+
+\item{...}{Reserved for future use.}
 }
 \value{
-plot the different age-specific decomposition values for the selected method. This function is valid for all the methods including the sensitivities ones.
+Invisibly returns the ggplot object (after printing).
 }
 \description{
-R function to plot the age-specific life-expectancy decomposition value using one of the different method from the \code{LEdecomp()} function.
+Plot contributions (or sensitivities) to a life expectancy difference by age or by age and cause using ggplot2. This is just for a quick default plot method.
 }
-\references{
-\insertRef{arriaga1984measuring}{LEdecomp}
-\insertRef{Chandrasekaran1986}{LEdecomp}
-\insertRef{preston2000demography}{LEdecomp}
-\insertRef{Ponnapalli2005}{LEdecomp}
+\examples{
+
+data("US_data_CoD", package = "LEdecomp")
+allc <- subset(US_data_CoD, Period == 2010 & cause == "All-causes") |>
+  as.data.frame()
+
+# Make Female vs Male all-cause schedules, Age 0:100
+ac_w <- reshape(allc[, c("Gender","Age","mxt")],
+                timevar = "Gender", idvar = "Age", direction = "wide")
+names(ac_w) <- sub("^mxt\\\\.", "", names(ac_w))
+ac_w <- ac_w[order(ac_w$Age), ]
+
+dec_ac <- LEdecomp(
+  mx1 = ac_w$Male,
+  mx2 = ac_w$Female,
+  age = 0:100,
+  method = "sen_arriaga"
+)
+
+# Simple single-line plot
+\dontrun{
+plot(dec_ac, main = "All-cause Arriaga, 2010 Female vs Male")
 }
-\seealso{
-\code{\link{LEdecomp}}
+## End(Not run)
+## Example 2: Cause of death, one year, Female vs Male
+cod <- subset(US_data_CoD, Period == 2010 & cause != "All-causes")
+cod_w <- reshape(cod[, c("Gender","Age","cause","mxt")],
+                 timevar = "Gender", idvar = c("cause","Age"),
+                 direction = "wide")|>
+  as.data.frame()
+names(cod_w) <- sub("^mxt\\\\.", "", names(cod_w))
+cod_w <- cod_w[order(cod_w$cause, cod_w$Age), ]
+
+dec_cod <- LEdecomp(
+  mx1 = cod_w$Male,
+  mx2 = cod_w$Female,
+  age = 0:100,
+  n_causes = length(unique(cod_w$cause)),
+  method = "sen_arriaga"
+)
+
+# Overlay of all causes
+\dontrun{
+plot(dec_cod, layout = "overlay", main = "Arriaga CoD, 2010 Female vs Male", legend.pos = "top")
+
+# Facet by cause (3 columns)
+plot(dec_cod, layout = "facet", ncol = 3, main = "Arriaga by cause (faceted)")
+}
+
+## Example 3: How to add an all-cause total line yourself (overlay)
+\dontrun{
+p <- plot(dec_cod, layout = "overlay", main = "Overlay with manual Total")
+y_mat <- if (is.matrix(dec_cod$LEdecomp)) dec_cod$LEdecomp else
+  matrix(dec_cod$LEdecomp, nrow = length(dec_cod$age))
+total <- rowSums(y_mat)
+p + ggplot2::geom_line(
+  data = data.frame(age = dec_cod$age, total = total),
+  mapping = ggplot2::aes(x = .data$age, y = .data$total),
+  inherit.aes = FALSE, color = "black", linewidth = 1.1)
+}
 }

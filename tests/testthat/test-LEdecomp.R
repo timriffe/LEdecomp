@@ -9,7 +9,7 @@ test_that("LEdecomp returns expected structure", {
   expect_named(result, c("mx1", "mx2", "age", "sex1", "sex2", "method",
                          "func", "closeout", "opt", "tol", "Num_Intervals",
                          "symmetrical", "direction", "perturb", "sens",
-                         "LE1", "LE2", "LEdecomp"))
+                         "LE1", "LE2", "LEdecomp","cause_names"))
   expect_type(result$LEdecomp, "double")
   expect_length(result$LEdecomp, length(mx1))
 })

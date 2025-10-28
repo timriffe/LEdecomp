@@ -374,3 +374,77 @@ sum(step2$LEdecomp)
 
 plot(c(0:100), step1$LEdecomp, type = "l")
 lines(c(0:100), -step2$LEdecomp, col = "red")
+
+
+
+
+
+
+
+
+
+
+## Example 1: All-cause (use All-causes rows)
+## US_data_CoD has: Period, Gender, Age, cause, cause_id, mxt
+data("US_data_CoD", package = "LEdecomp")
+allc <- subset(US_data_CoD, Period == 2010 & cause == "All-causes") |>
+  as.data.frame()
+
+# Make Female vs Male all-cause schedules, Age 0:100
+ac_w <- reshape(allc[, c("Gender","Age","mxt")],
+                timevar = "Gender", idvar = "Age", direction = "wide")
+names(ac_w) <- sub("^mxt\\.", "", names(ac_w))
+ac_w <- ac_w[order(ac_w$Age), ]
+View(ac_w)
+dec_ac <- LEdecomp(
+  mx1 = ac_w$Male,
+  mx2 = ac_w$Female,
+  age = 0:100,
+  method = "sen_arriaga"
+)
+
+# Simple single-line plot
+## Not run:
+plot(dec_ac, main = "All-cause Arriaga, 2010 Female vs Male")
+
+## End(Not run)
+## Example 2: Cause of death, one year, Female vs Male
+cod <- subset(US_data_CoD, Period == 2010 & cause != "All-causes")
+cod_w <- reshape(cod[, c("Gender","Age","cause","mxt")],
+                 timevar = "Gender", idvar = c("cause","Age"),
+                 direction = "wide")|>
+  as.data.frame()
+names(cod_w) <- sub("^mxt\\.", "", names(cod_w))
+cod_w <- cod_w[order(cod_w$cause, cod_w$Age), ]
+
+dec_cod <- LEdecomp(
+  mx1 = cod_w$Male,
+  mx2 = cod_w$Female,
+  age = 0:100,
+  n_causes = length(unique(cod_w$cause)),
+  method = "sen_arriaga"
+)
+
+# Overlay of all causes
+## Not run:
+plot(dec_cod, layout = "overlay", main = "Arriaga CoD, 2010 Female vs Male", legend_pos = "top")
+
+# Facet by cause (3 columns)
+plot(dec_cod, layout = "facet", ncol = 3, main = "Arriaga by cause (faceted)")
+
+
+## Example 3: How to add an all-cause total line yourself (overlay)
+p <- plot(dec_cod, layout = "overlay", main = "Overlay with manual Total")
+y_mat <- if (is.matrix(dec_cod$LEdecomp)) dec_cod$LEdecomp else
+  matrix(dec_cod$LEdecomp, nrow = length(dec_cod$age))
+total <- rowSums(y_mat)
+p + ggplot2::geom_line(
+  data = data.frame(age = dec_cod$age, total = total),
+  mapping = ggplot2::aes(x = .data$age, y = .data$total),
+  inherit.aes = FALSE, color = "black", linewidth = 1.1
+)
+
+
+
+
+

@@ -10,6 +10,7 @@ LEdecomp(
   age = NULL,
   nx = NULL,
   n_causes = NULL,
+  cause_names = NULL,
   sex1 = "t",
   sex2 = sex1,
   method = c("lifetable", "arriaga", "arriaga_sym", "sen_arriaga", "sen_arriaga_sym",
@@ -41,6 +42,8 @@ LEdecomp(
 \item{nx}{integer vector of age intervals (defaults to 1 when missing).}
 
 \item{n_causes}{integer or \code{NULL}. If provided with stacked vectors, forces the number of causes (columns).}
+
+\item{cause_names}{optional character vector of length \code{n_causes} giving labels for causes. Alternatively detected from \code{colnames(mx1)} in case given as a \code{matrix} or \code{data.frame}}
 
 \item{sex1}{character. \code{"m"},\code{"f"}, or \code{"t"}, affects a0 treatment.}
 
