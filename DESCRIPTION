@@ -1,6 +1,6 @@
 Package: LEdecomp
 Type: Package
-Title: Decompose life expectancy into contributions from rates in different ages and potentially also causes of death
+Title: Decompose Life Expectancy into Contributions from Rates in Different Ages and Potentially also Causes of Death
 Version: 1.0.1
 Date: 2025-10-28
 Authors@R: c(
