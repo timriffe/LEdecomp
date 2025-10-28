@@ -24,7 +24,7 @@ sen_num(
 
 \item{closeout}{logical. Default \code{TRUE}.}
 
-\item{...}{optional args to pass to \code{mx_to_e0()}}
+\item{...}{optional arguments to pass to \code{mx_to_e0()}}
 }
 \description{
 Here we produce a numerical derivative based on the methods implemented in the \code{numDeriv::grad()} function. Tweaking the optional arguments of \code{numDeriv::grad()}, passed in via \code{...} might lead to greater precision, but this method actually performs usably well with its defaults.

@@ -8,22 +8,14 @@ devtools::check()
 check_win_devel()      #
 check_win_release()    #
 check_win_oldrelease() #
-
-
-rhub_check(platforms = c("linux", "macos", "macos-arm64", "windows"))
+rhub_platforms()
+rhub::rhub_check(platforms = c("linux","macos","macos-arm64","windows"))
 
 library(spelling)
 spell_check()
 
-library(revdepcheck)
-revdepcheck::revdep_check()
+# doesn't work until on CRAN?
+#library(revdepcheck)
+#revdepcheck::revdep_check(cran = FALSE)
 
 devtools::release()
-
-library(tidyverse)
-data("US_data")
-View(US_data)
-US_data |>
-  filter(Period == 2020) |>
-  select(Age, Gender, mx)
-  pivot_wider(names_from = Gender, )

@@ -24,7 +24,7 @@ sen_e0_mx_lt(
 \item{closeout}{logical. Default \code{TRUE}.}
 }
 \description{
-This function tries to get the direct discrete life expectancy sensitivity to \eqn{m(x)}, in continous math it's \eqn{-l(x)e(x)}, we just need to find the best approx with a discrete lifetable.
+This function tries to get the direct discrete life expectancy sensitivity to \eqn{m(x)}, in continuous math it's \eqn{-l(x)e(x)}, we just need to find the best approx with a discrete lifetable.
 This direct lifetable-based calculation requires a few approximations to get a usable value whenever we're working with discrete data.
 In continuous notation, we know that the sensitivity \eqn{s(x)}
 \deqn{s(x) = -l(x)e(x)}
