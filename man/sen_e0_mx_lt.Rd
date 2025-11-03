@@ -23,6 +23,9 @@ sen_e0_mx_lt(
 
 \item{closeout}{logical. Default \code{TRUE}.}
 }
+\value{
+numeric vector of sensitivity of life expectancy to perturbations in \code{mx}.
+}
 \description{
 This function tries to get the direct discrete life expectancy sensitivity to \eqn{m(x)}, in continuous math it's \eqn{-l(x)e(x)}, we just need to find the best approx with a discrete lifetable.
 This direct lifetable-based calculation requires a few approximations to get a usable value whenever we're working with discrete data.
@@ -39,14 +42,14 @@ x <- 0:100
 mx <- 0.001 * exp(x * 0.07)
 sl <-  sen_e0_mx_lt(mx,age=x,sex='t',closeout=TRUE)
 sn <- numDeriv::grad(mx_to_e0, mx, age=x, sex = 't', closeout=TRUE)
-\dontrun{
+\donttest{
 plot(x,sl)
 lines(x,sn)
 }
 # examine residuals:
 sl - sn
 # Note discrepancies in ages >0 are due to numerical precision only
-\dontrun{
+\donttest{
 plot(x, sl - sn, main = "still uncertain what accounts for the age 0 discrepancy")
 }
 }

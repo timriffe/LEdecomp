@@ -45,11 +45,11 @@ mx2 <- a/2 * exp(x * b)
 cc <- arriaga(mx1, mx2, age = x)
 # examples can come from above too
 s <- sen_arriaga(mx1, mx2, age = x)
-\dontrun{
+\donttest{
 plot(x, s)
 }
 cc_check <- s * (mx2 - mx1)
-\dontrun{
+\donttest{
 plot(x,cc)
 lines(x,cc_check)
 }

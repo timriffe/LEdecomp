@@ -26,6 +26,9 @@ sen_arriaga_sym_instantaneous(
 
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 }
+\value{
+numeric vector of life expectancy sensitivity to perturbations in \code{mx.}
+}
 \description{
 Estimates the sensitivity of life expectancy to small changes in age-specific mortality rates using the symmetrical Arriaga decomposition. This is done by applying a small multiplicative perturbation to the input mortality rates and using the symmetrical sensitivity function \code{sen_arriaga_sym()}.
 
@@ -43,7 +46,7 @@ b <- 0.07
 x <- 0:100
 mx <- a * exp(x * b)
 s <- sen_arriaga_sym_instantaneous(mx, age = x)
-\dontrun{
+\donttest{
 plot(x, s, type = "l")
 }
 }

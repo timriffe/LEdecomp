@@ -224,6 +224,8 @@ available_methods()
 \insertRef{Chandrasekaran1986}{LEdecomp}
 \insertRef{preston2000demography}{LEdecomp}
 \insertRef{Ponnapalli2005}{LEdecomp}
+\insertRef{horiuchi2008decomposition}{LEdecomp}
+\insertRef{andreev2002algorithm}{LEdecomp}
 }
 \seealso{
 \code{\link[=sen_e0_mx_lt]{sen_e0_mx_lt()}}, \code{\link[=arriaga]{arriaga()}}, \code{\link[=arriaga_sym]{arriaga_sym()}},

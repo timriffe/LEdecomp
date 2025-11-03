@@ -26,6 +26,9 @@ sen_lopez_ruzicka_sym_instantaneous(
 
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 }
+\value{
+numeric vector of sensitivity of life expectancy to perturbations in \code{mx}.
+}
 \description{
 Estimates the instantaneous sensitivity of life expectancy to small proportional changes in mortality rates, using the symmetrical Lopez-Ruzicka decomposition. This implementation perturbs the rates up and down around a central value and applies the symmetrical decomposition to the result.
 
@@ -43,7 +46,7 @@ b <- 0.07
 x <- 0:100
 mx <- a * exp(x * b)
 s <- sen_lopez_ruzicka_sym_instantaneous(mx, age = x)
-\dontrun{
+\donttest{
 plot(x, s, type = "l")
 }
 }

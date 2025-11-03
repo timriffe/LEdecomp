@@ -17,8 +17,8 @@
 
 #' @export
 print.LEdecompData <- function(x, ...){
-  cat("Mortality Data\n")
-  cat(attributes(x)$label, "including", attributes(x)$series ,"\n")
-  cat("Periods", c(min(x$Period),":", max(x$Period)),"\n")
-  cat("Complete Life Table with ages from", c(min(x$Age)," to ", max(x$Age)), "\n")
+  message("Mortality Data\n")
+  message(attributes(x)$label, "including", attributes(x)$series ,"\n")
+  message("Periods", c(min(x$Period),":", max(x$Period)),"\n")
+  message("Complete Life Table with ages from", c(min(x$Age)," to ", max(x$Age)), "\n")
 }

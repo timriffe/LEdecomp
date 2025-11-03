@@ -46,7 +46,7 @@
 #' )
 #'
 #' # Simple single-line plot
-#' \dontrun{
+#' \donttest{
 #' plot(dec_ac, main = "All-cause Arriaga, 2010 Female vs Male")
 #' }
 #' ## End(Not run)
@@ -68,7 +68,7 @@
 #' )
 #'
 #' # Overlay of all causes
-#' \dontrun{
+#' \donttest{
 #' plot(dec_cod, layout = "overlay", main = "Arriaga CoD, 2010 Female vs Male", legend.pos = "top")
 #'
 #' # Facet by cause (3 columns)
@@ -76,7 +76,7 @@
 #' }
 #'
 #' ## Example 3: How to add an all-cause total line yourself (overlay)
-#' \dontrun{
+#' \donttest{
 #' p <- plot(dec_cod, layout = "overlay", main = "Overlay with manual Total")
 #' y_mat <- if (is.matrix(dec_cod$LEdecomp)) dec_cod$LEdecomp else
 #'   matrix(dec_cod$LEdecomp, nrow = length(dec_cod$age))

@@ -1,8 +1,8 @@
 Package: LEdecomp
 Type: Package
-Title: Decompose Life Expectancy into Contributions from Rates in Different Ages and Potentially also Causes of Death
-Version: 1.0.1
-Date: 2025-10-28
+Title: Decompose Life Expectancy by Age (and Cause)
+Version: 1.0.2
+Date: 2025-11-03
 Authors@R: c(
    person("Tim", "Riffe", role = c("aut", "cre"), 
           email = "tim.riffe@gmail.com", comment = c("0000-0002-2673-4622")),
@@ -11,7 +11,7 @@ Authors@R: c(
    person("Josep", "Lledo", role = c("aut"), 
           email = "josep.lledo@uv.es", comment = c("0000-0002-7475-8549"))
    )
-Description: A set of all-cause and cause-specific life expectancy sensitivity and decomposition methods.
+Description: A set of all-cause and cause-specific life expectancy sensitivity and decomposition methods, including Arriaga (1984) <doi:10.2307/2061029>, others documented by Ponnapalli (2005) <doi:10.4054/DemRes.2005.12.7>, lifetable, numerical, and other algorithmic approaches such as Horiuchi et al (2008) <doi:10.1353/dem.0.0033>, or Andreev et al (2002) <doi:10.4054/DemRes.2002.7.14>. 
 License: GPL-3
 LazyLoad: yes
 LazyData: true

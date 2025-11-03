@@ -26,6 +26,9 @@ sen_chandrasekaran_II_instantaneous2(
 
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 }
+\value{
+numeric vector of sensitivity of life expectancy to perturbations in \code{mx}.
+}
 \description{
 Estimates the sensitivity of life expectancy to small changes in mortality rates using the Chandrasekaran II decomposition. This variant perturbs the mortality rates in \strong{log space}, creating two versions of \code{mx} by adding and subtracting a small constant to \code{log(mx)}, then exponentiating.
 
@@ -43,7 +46,7 @@ b <- 0.07
 x <- 0:100
 mx <- a * exp(x * b)
 s <- sen_chandrasekaran_II_instantaneous2(mx, age = x)
-\dontrun{
+\donttest{
 plot(x, s, type = "l")
 }
 }

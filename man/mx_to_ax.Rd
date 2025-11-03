@@ -23,9 +23,15 @@ mx_to_ax(
 
 \item{closeout}{logical. Default \code{TRUE}.}
 }
+\value{
+numeric vector of \code{ax} values, the same length as mx
+}
 \description{
 We assume mid-interval \code{ax} except for age 0 and potentially the open age group. \code{ax} is defined as the average years lived in each age interval by those that die within the interval, and it is used to increase the precision of lifetable estimates. We allow ourselves the midpoint rule for single ages because it has little leverage. If we were working with abridged ages then we would need to use a more sophisticated method.
 }
 \details{
 For the case of Total sex, we estimate the male and female \eqn{a(0)} using the Andreev-Kingkade rule of thumb, and then average them. We assume a value of 1/2 for all other ages, unless \code{closeout = TRUE}, in which case we close with \code{1/mx} for the final value.
+}
+\references{
+\insertRef{andreev2015average}{LEdecomp}
 }

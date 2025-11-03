@@ -32,7 +32,7 @@
 #' (delta <- e02 - e01)
 #' sum(cc)
 #'
-#'\dontrun{
+#'\donttest{
 #'  plot(x, cc)
 #'}
 #' # asymmetrical with a decomposition in the opposite direction
@@ -116,11 +116,11 @@ arriaga <- function(mx1,
 #' cc <- arriaga(mx1, mx2, age = x)
 #' # examples can come from above too
 #' s <- sen_arriaga(mx1, mx2, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s)
 #' }
 #' cc_check <- s * (mx2 - mx1)
-#' \dontrun{
+#' \donttest{
 #' plot(x,cc)
 #' lines(x,cc_check)
 #' }
@@ -160,6 +160,7 @@ sen_arriaga <- function(mx1,
 #' @param sex character Male (`"m"`), Female (`"f"`), or Total (`"t"`)
 #' @param perturb numeric constant, a very small number
 #' @importFrom data.table shift
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @export
 #' @examples
 #' a   <- .001
@@ -218,6 +219,7 @@ sen_arriaga_instantaneous <- function(mx,
 #' \deqn{m_{x}^{1} = e^{\ln\left(m_x\right) + h}}
 #' \deqn{m_{x}^{2} = e^{\ln\left(m_x\right) - h}}
 #' @export
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`
 #' @inheritParams sen_arriaga_instantaneous
 #' @seealso \code{\link{sen_arriaga_instantaneous}}
 #' @examples
@@ -263,7 +265,7 @@ sen_arriaga_instantaneous2 <- function(mx,
 #' @title Estimate sensitivity of life expectancy using a symmetrical Arriaga approach.
 #' @description This approach conducts a classic Arriaga decomposition in both directions, averaging the (sign-adjusted) result, i.e. `a_avg = (arriaga(mx1,mx2, ...) - arriaga(mx2, mx1, ...)) / 2`.
 #' #@note The final age group's contribution from the reversed decomposition is halved before averaging. This empirical adjustment ensures symmetry and numeric stability, though the theoretical basis requires further exploration.
-
+#' @return numeric vector of contributions summing to the gap in life expectancy implied by `mx1` and `mx2`.
 #' @export
 #' @inheritParams arriaga
 #' @seealso \code{\link{arriaga}}
@@ -282,7 +284,7 @@ sen_arriaga_instantaneous2 <- function(mx,
 #'
 #' d12 <- arriaga(mx1, mx2, age = x)
 #' d21 <- arriaga(mx2, mx1, age = x) # direction opposite
-#' \dontrun{
+#' \donttest{
 #' plot(x, d, type= 'l')
 #'   lines(x, d12, col = "red")
 #'   lines(x, -d21, col = "blue")
@@ -317,6 +319,7 @@ arriaga_sym <- function(mx1,
 
 #' @title Estimate sensitivity of life expectancy using a symmetrical Arriaga approach.
 #' @description This approach conducts a classic Arriaga decomposition in both directions, averaging the (sign-adjusted) result, i.e. `a_avg = (arriaga(mx1,mx2, ...) - arriaga(mx2, mx1, ...)) / 2`, then approximates the sensitivity by dividing out the rate differences, i.e. `s = a_avg / (mx2 - mx1)`. A resulting decomposition will be exact because the two arriaga directions are exact, but this method might be vulnerable to 0s in the denominator.
+#' @return numeric vector of life expectancy sensitivity to perturbations in mx evaluated at the average of `mx1` and `mx2`.
 #' @export
 #' @inheritParams arriaga
 #' @seealso \code{\link{arriaga}}
@@ -333,10 +336,10 @@ arriaga_sym <- function(mx1,
 #' (Delta <- e02 - e01)
 #' deltas <- mx2- mx1
 #' sum(deltas * s)
-#'
-#' \dontrun{
+#' mx_avg <- (mx1+mx2) / 2
+#' \donttest{
 #' mx_avg <- (mx1 + mx2) / 2
-#' plot(x, s, type= 'l')
+#' plot(x, s, type = 'l')
 #' lines(x, sen_arriaga_instantaneous(mx_avg, age=x),col = "blue")
 #' }
 
@@ -375,7 +378,7 @@ sen_arriaga_sym <- function(mx1,
 #' @param perturb Numeric; a small constant determining the perturbation size (default 1e-6).
 #'
 #' @details This function yields an instantaneous approximation to the derivative of life expectancy with respect to mortality, evaluated at the input schedule. Because `sen_arriaga_sym()` is itself symmetrical, only the "forward" perturbation is required.
-#'
+#' @return numeric vector of life expectancy sensitivity to perturbations in `mx.`
 #' @seealso \code{\link{sen_arriaga_sym}}, \code{\link{sen_arriaga_sym_instantaneous2}}, \code{\link{sen_lopez_ruzicka_instantaneous}}
 #'
 #' @export
@@ -385,7 +388,7 @@ sen_arriaga_sym <- function(mx1,
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_arriaga_sym_instantaneous(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 
@@ -416,6 +419,7 @@ sen_arriaga_sym_instantaneous <- function(mx,
 #' @export
 #' @inheritParams sen_arriaga_instantaneous
 #' @seealso \code{\link{sen_arriaga_instantaneous}}
+#' @return numeric vector of life expectancy sensitivity to perturbations in `mx.`
 #' @examples
 #' a <- 0.001
 #' b <- 0.07

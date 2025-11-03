@@ -14,20 +14,21 @@
 #' @importFrom data.table shift
 #' @importFrom numDeriv grad
 #' @importFrom Rdpack reprompt
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @export
 #' @examples
 #' x <- 0:100
 #' mx <- 0.001 * exp(x * 0.07)
 #' sl <-  sen_e0_mx_lt(mx,age=x,sex='t',closeout=TRUE)
 #' sn <- numDeriv::grad(mx_to_e0, mx, age=x, sex = 't', closeout=TRUE)
-#' \dontrun{
+#' \donttest{
 #' plot(x,sl)
 #' lines(x,sn)
 #' }
 #' # examine residuals:
 #' sl - sn
 #' # Note discrepancies in ages >0 are due to numerical precision only
-#' \dontrun{
+#' \donttest{
 #' plot(x, sl - sn, main = "still uncertain what accounts for the age 0 discrepancy")
 #' }
 sen_e0_mx_lt <- function(mx,

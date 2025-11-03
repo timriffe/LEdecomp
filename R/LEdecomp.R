@@ -71,6 +71,8 @@
 #' \insertRef{Chandrasekaran1986}{LEdecomp}
 #' \insertRef{preston2000demography}{LEdecomp}
 #' \insertRef{Ponnapalli2005}{LEdecomp}
+#' \insertRef{horiuchi2008decomposition}{LEdecomp}
+#' \insertRef{andreev2002algorithm}{LEdecomp}
 #'
 #' @importFrom DemoDecomp horiuchi
 #' @importFrom DemoDecomp stepwise_replacement
@@ -535,19 +537,19 @@ print.LEdecomp <- function(x, ...) {
     if (m %in% c("arriaga", "arriaga_sym", "chandrasekaran_ii",
                  "chandrasekaran_iii", "lopez_ruzicka",
                  "lopez_ruzicka_sym", "horiuchi", "stepwise", "numerical")) {
-      cat(paste("Estimated the", m, "Life-Expectancy decomposition method."))
+      message(paste("Estimated the", m, "Life-Expectancy decomposition method."))
     } else {
-      cat("Estimated a sensitivity Life-Expectancy decomposition method.")
+      message("Estimated a sensitivity Life-Expectancy decomposition method.")
     }
   } else {
     if (m %in% c("arriaga", "arriaga_sym", "chandrasekaran_ii", "lopez_ruzicka",
                  "lopez_ruzicka_sym", "horiuchi", "stepwise")) {
-      cat(paste("Estimated the", m, "cause-of-death Life-Expectancy decomposition method."))
+      message(paste("Estimated the", m, "cause-of-death Life-Expectancy decomposition method."))
     } else {
-      cat("Estimated the cause-of-death sensitivity Life-Expectancy decomposition method.")
+      message("Estimated the cause-of-death sensitivity Life-Expectancy decomposition method.")
     }
   }
-  cat(paste("\nThe total difference explained is:", round(sum(x$LEdecomp), 4)))
+  message(paste("\nThe total difference explained is:", round(sum(x$LEdecomp), 4)))
 }
 
 # -----------------------------------------------------------------------------
