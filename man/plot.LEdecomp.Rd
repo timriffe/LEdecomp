@@ -7,13 +7,14 @@
 \method{plot}{LEdecomp}(
   x,
   what = c("LEdecomp", "sens"),
+  geom = c("auto", "line", "bar"),
   col = NULL,
   lwd = 1.2,
   xlab = "Age",
   ylab = NULL,
   main = NULL,
   legend = TRUE,
-  legend_pos = "topright",
+  legend_pos = "right",
   abridged_midpoints = FALSE,
   layout = c("overlay", "facet"),
   ncol = NULL,
@@ -24,6 +25,9 @@
 \item{x}{An object of class \code{"LEdecomp"}.}
 
 \item{what}{Which series to plot: \code{"LEdecomp"} (default) or \code{"sens"}.}
+
+\item{geom}{Plot geometry: "auto", "line", or "bar". If "auto", "bar" is used
+for what = "LEdecomp" and "line" for what = "sens".}
 
 \item{col}{Optional vector of colors for causes. If \code{NULL}, a fixed palette
 is used and recycled as needed.}
@@ -56,6 +60,9 @@ Invisibly returns the ggplot object (after printing).
 }
 \description{
 Plot contributions (or sensitivities) to a life expectancy difference by age or by age and cause using ggplot2. This is just for a quick default plot method.
+}
+\details{
+By default, if \code{what = "LEdecomp"} we plot using bars (\code{geom = "bar"}), but you can override this. For bar plots, recall it's the area, not the height that the eye reads; for this reason, if your data is in non-single ages, we divide out the interval width, so that the implied uniform graduation to single ages still sums to the gap.
 }
 \examples{
 
@@ -95,6 +102,7 @@ dec_cod <- LEdecomp(
   mx2 = cod_w$Female,
   age = 0:100,
   n_causes = length(unique(cod_w$cause)),
+  cause_names = unique(cod$cause_id),
   method = "sen_arriaga"
 )
 

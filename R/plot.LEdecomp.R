@@ -1,11 +1,14 @@
 #' Plot Life-Expectancy Decomposition Results (ggplot2)
 #'
 #' Plot contributions (or sensitivities) to a life expectancy difference by age or by age and cause using ggplot2. This is just for a quick default plot method.
+#' @details By default, if `what = "LEdecomp"` we plot using bars (`geom = "bar"`), but you can override this. For bar plots, recall it's the area, not the height that the eye reads; for this reason, if your data is in non-single ages, we divide out the interval width, so that the implied uniform graduation to single ages still sums to the gap.
 #'
 #' @param x An object of class `"LEdecomp"`.
 #' @param what Which series to plot: `"LEdecomp"` (default) or `"sens"`.
 #' @param col Optional vector of colors for causes. If `NULL`, a fixed palette
 #'   is used and recycled as needed.
+#' @param geom Plot geometry: "auto", "line", or "bar". If "auto", "bar" is used
+#'   for what = "LEdecomp" and "line" for what = "sens".
 #' @param lwd Line width for cause lines (default 1.2).
 #' @param xlab,ylab,main Axis labels and main title. If `ylab` is `NULL`,
 #'   the default is `"Difference explained (years)"` for `what = "LEdecomp"`
@@ -23,7 +26,8 @@
 #' @param ... Reserved for future use.
 #'
 #' @return Invisibly returns the ggplot object (after printing).
-#'
+#' @importFrom stats ave
+#' @importFrom utils head
 #' @examples
 #'
 ## Example 1: All-cause (use All-causes rows)
@@ -64,6 +68,7 @@
 #'   mx2 = cod_w$Female,
 #'   age = 0:100,
 #'   n_causes = length(unique(cod_w$cause)),
+#'   cause_names = unique(cod$cause_id),
 #'   method = "sen_arriaga"
 #' )
 #'
@@ -90,34 +95,36 @@
 #' @export
 plot.LEdecomp <- function(x,
                           what = c("LEdecomp", "sens"),
+                          geom = c("auto", "line", "bar"),
                           col = NULL,
                           lwd = 1.2,
                           xlab = "Age",
                           ylab = NULL,
                           main = NULL,
                           legend = TRUE,
-                          legend_pos = "topright",
+                          legend_pos = "right",
                           abridged_midpoints = FALSE,
                           layout = c("overlay", "facet"),
                           ncol = NULL,
                           ...) {
-
-  # basic checks
   if (is.null(x) || !"LEdecomp" %in% class(x)) {
     stop("Object is not of class 'LEdecomp'.")
   }
   what   <- match.arg(what)
   layout <- match.arg(layout)
+  geom   <- match.arg(geom)
+
+  if (geom == "auto") {
+    geom <- if (what == "LEdecomp") "bar" else "line"
+  }
 
   age <- x$age
   if (is.null(age)) stop("No 'age' vector found in object.")
   nages <- length(age)
 
-  # series to plot
   y_raw <- if (what == "LEdecomp") x$LEdecomp else x$sens
   if (is.null(y_raw)) stop("Requested series '", what, "' is not available in object.")
 
-  # reshape stacked vector -> matrix if possible (cause-major)
   as_matrix <- function(y, nages) {
     if (is.matrix(y)) return(y)
     ny <- length(y)
@@ -130,19 +137,28 @@ plot.LEdecomp <- function(x,
   }
   y <- as_matrix(y_raw, nages)
 
-  # x axis: abridged midpoints if requested
-  age_plot <- age
-  if (isTRUE(abridged_midpoints)) {
-    if (length(age) >= 3L && age[1] == 0 && age[2] == 1 && all(diff(age[-(1:2)]) %in% c(4, 5))) {
+  if (!is.null(x$nx)) {
+    nx <- x$nx
+  } else {
+    if (length(age) > 1L) {
       dx <- diff(age)
-      if (length(dx) > 0L) {
-        dx <- c(dx, dx[length(dx)])
-        age_plot <- age + dx / 2
-      }
+      nx <- c(dx, dx[length(dx)])
+    } else {
+      nx <- 1
     }
   }
 
-  # y label default
+  if (isTRUE(abridged_midpoints) && geom != "bar") {
+    age_plot <- age
+    if (length(age) >= 3L && age[1] == 0 && age[2] == 1 && all(diff(age[-(1:2)]) %in% c(4, 5))) {
+      dx <- diff(age)
+      dx <- c(dx, dx[length(dx)])
+      age_plot <- age + dx / 2
+    }
+  } else {
+    age_plot <- age
+  }
+
   if (is.null(ylab)) {
     ylab <- if (what == "LEdecomp") "Difference explained (years)" else "Sensitivity d(e0)/d(mx)"
   }
@@ -150,42 +166,23 @@ plot.LEdecomp <- function(x,
     main <- paste0("Method: ", x$method)
   }
 
-  # cause names
   cause_names <- NULL
-  if (is.matrix(y)) cause_names <- colnames(y)
-  if (is.null(cause_names)) {
-    mx1mat <- try(as.matrix(x$mx1), silent = TRUE)
-    if (!inherits(mx1mat, "try-error")) cause_names <- colnames(mx1mat)
+  if (!is.null(x$cause_names)) {
+    cause_names <- if (is.factor(x$cause_names)) as.character(x$cause_names) else x$cause_names
+  } else {
+    if (is.matrix(y)) cause_names <- colnames(y)
+    if (is.null(cause_names)) {
+      mx1mat <- try(as.matrix(x$mx1), silent = TRUE)
+      if (!inherits(mx1mat, "try-error")) {
+        cause_names <- colnames(mx1mat)
+      }
+    }
   }
   if (is.matrix(y) && is.null(cause_names)) {
     cause_names <- paste0("cause_", seq_len(ncol(y)))
   }
 
-  # to long data for ggplot
-  to_long <- function(mat_or_vec, age_plot, cause_names = NULL) {
-    if (is.matrix(mat_or_vec)) {
-      ncauses <- ncol(mat_or_vec)
-      if (is.null(cause_names)) cause_names <- colnames(mat_or_vec)
-      if (is.null(cause_names)) cause_names <- paste0("cause_", seq_len(ncauses))
-      data.frame(
-        age_plot = rep(age_plot, times = ncauses),
-        value    = as.vector(mat_or_vec),
-        cause    = rep(cause_names, each = length(age_plot)),
-        stringsAsFactors = FALSE
-      )
-    } else {
-      data.frame(
-        age_plot = age_plot,
-        value    = as.numeric(mat_or_vec),
-        cause    = "All-cause",
-        stringsAsFactors = FALSE
-      )
-    }
-  }
-  df_long <- to_long(y, age_plot, cause_names)
-  df_long <- df_long[is.finite(df_long$value), , drop = FALSE]
-
-  # color handling
+  # colors
   if (is.matrix(y)) {
     ncauses <- ncol(y)
     if (is.null(col)) {
@@ -195,43 +192,150 @@ plot.LEdecomp <- function(x,
     } else if (length(col) < ncauses) {
       col <- rep(col, length.out = ncauses)
     }
-    names(col) <- if (!is.null(cause_names)) cause_names else paste0("cause_", seq_len(ncauses))
+    names(col) <- cause_names
   } else {
     if (is.null(col)) col <- "steelblue"
-    names(col) <- unique(df_long$cause)
+    names(col) <- "All-cause"
   }
   lw_vals <- rep(lwd, length(col)); names(lw_vals) <- names(col)
 
-  # base plot
-  p <- ggplot(df_long, aes(x = .data$age_plot, y = .data$value,
-                           color = .data$cause, linewidth = .data$cause)) +
-    geom_line() +
-    scale_color_manual(values = col, guide = "legend") +
-    scale_linewidth_manual(values = lw_vals, guide = "legend") +
-    labs(x = xlab, y = ylab, title = main, color = NULL, linewidth = NULL) +
-    theme_minimal(base_size = 12) +
-    theme(panel.grid.minor = element_blank())
-
-  # legend control
-  if (!isTRUE(legend)) {
-    p <- p + theme(legend.position = "none")
-  } else {
-    p <- p + theme(legend.position = legend_pos)
-  }
-
-  # zero reference
-  p <- p + geom_hline(yintercept = 0, color = "grey80")
-
-  # layout for CoD
-  if (layout == "facet" && is.matrix(y)) {
-    if (is.null(ncol)) {
-      n_panels <- length(unique(df_long$cause))
-      ncol <- if (n_panels <= 3) n_panels else 3L
+  ## ------------------------ line branch ------------------------
+  if (geom == "line") {
+    if (is.matrix(y)) {
+      df_long <- data.frame(
+        age_plot = rep(age_plot, times = ncol(y)),
+        value    = as.vector(y),
+        cause    = rep(cause_names, each = length(age_plot)),
+        stringsAsFactors = FALSE
+      )
+    } else {
+      df_long <- data.frame(
+        age_plot = age_plot,
+        value    = as.numeric(y),
+        cause    = "All-cause",
+        stringsAsFactors = FALSE
+      )
     }
-    p <- p + facet_wrap(~ .data$cause, ncol = ncol, scales = "fixed",
-                        labeller = ggplot2::label_value)
+    df_long <- df_long[is.finite(df_long$value), , drop = FALSE]
+
+    p <- ggplot(df_long,
+                aes(x = .data$age_plot,
+                    y = .data$value,
+                    color = .data$cause,
+                    linewidth = .data$cause)) +
+      geom_line() +
+      scale_color_manual(values = col, guide = "legend") +
+      scale_linewidth_manual(values = lw_vals, guide = "legend") +
+      labs(x = xlab, y = ylab, title = main) +
+      theme_minimal(base_size = 12) +
+      theme(panel.grid.minor = element_blank()) +
+      geom_hline(yintercept = 0, color = "grey80")
+
+    if (!isTRUE(legend)) {
+      p <- p + theme(legend.position = "none")
+    } else {
+      p <- p + theme(legend.position = legend_pos)
+    }
+
+    if (layout == "facet" && is.matrix(y)) {
+      if (is.null(ncol)) {
+        n_panels <- length(unique(df_long$cause))
+        ncol <- if (n_panels <= 3) n_panels else 3L
+      }
+      p <- p + facet_wrap(~ .data$cause,
+                          ncol = ncol,
+                          scales = "fixed",
+                          labeller = ggplot2::label_value)
+    }
+
+    print(p)
+    return(invisible(p))
   }
 
-  print(p)
-  invisible(p)
+  ## ------------------------ bar branch ------------------------
+  if (is.matrix(y)) {
+    # build long in cause order
+    df_long <- data.frame(
+      age_lower = rep(age, times = ncol(y)),
+      nx        = rep(nx,  times = ncol(y)),
+      value_raw = as.vector(y),
+      cause     = factor(rep(cause_names, each = length(age)), levels = cause_names),
+      stringsAsFactors = FALSE
+    )
+    # height per unit age
+    df_long$height <- df_long$value_raw / df_long$nx
+
+    if (layout == "overlay") {
+      # stack within age
+      df_long <- df_long[order(df_long$age_lower, df_long$cause), ]
+      df_long$ymin <- ave(df_long$height, df_long$age_lower,
+                          FUN = function(z) c(0, head(cumsum(z), -1)))
+      df_long$ymax <- df_long$ymin + df_long$height
+    } else {
+      # facet: each cause starts at zero
+      df_long$ymin <- 0
+      df_long$ymax <- df_long$height
+    }
+
+    p <- ggplot(df_long,
+                aes(fill = .data$cause)) +
+      geom_rect(aes(xmin = .data$age_lower,
+                    xmax = .data$age_lower + .data$nx,
+                    ymin = .data$ymin,
+                    ymax = .data$ymax),
+                color = NA) +
+      scale_fill_manual(values = col, guide = "legend") +
+      labs(x = xlab, y = ylab, title = main) +
+      theme_minimal(base_size = 12) +
+      theme(panel.grid.minor = element_blank()) +
+      geom_hline(yintercept = 0, color = "grey80")
+
+    if (!isTRUE(legend)) {
+      p <- p + theme(legend.position = "none")
+    } else {
+      p <- p + theme(legend.position = legend_pos)
+    }
+
+    if (layout == "facet") {
+      if (is.null(ncol)) {
+        n_panels <- length(unique(df_long$cause))
+        ncol <- if (n_panels <= 3) n_panels else 3L
+      }
+      p <- p +
+        facet_wrap(~ .data$cause,
+                   ncol = ncol,
+                   scales = "fixed",
+                   labeller = ggplot2::label_value)
+    }
+
+    print(p)
+    return(invisible(p))
+
+  } else {
+    # single series
+    df_long <- data.frame(
+      age_lower = age,
+      nx        = nx,
+      height    = as.numeric(y) / nx,
+      stringsAsFactors = FALSE
+    )
+
+    p <- ggplot(df_long, aes()) +
+      geom_rect(aes(xmin = .data$age_lower,
+                    xmax = .data$age_lower + .data$nx,
+                    ymin = 0,
+                    ymax = .data$height),
+                fill = col %||% "steelblue", color = NA) +
+      labs(x = xlab, y = ylab, title = main) +
+      theme_minimal(base_size = 12) +
+      theme(panel.grid.minor = element_blank()) +
+      geom_hline(yintercept = 0, color = "grey80")
+
+    if (!isTRUE(legend)) {
+      p <- p + theme(legend.position = "none")
+    }
+
+    print(p)
+    return(invisible(p))
+  }
 }

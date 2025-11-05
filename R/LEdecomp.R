@@ -184,7 +184,7 @@ LEdecomp <- function(mx1,
                      age = NULL,
                      nx = NULL,
                      n_causes = NULL,
-                     cause_names = NULL,          # NEW ARG
+                     cause_names = NULL,
                      sex1 = "t",
                      sex2 = sex1,
                      method = c("lifetable",
@@ -218,38 +218,31 @@ LEdecomp <- function(mx1,
     stop("Arguments 'mx1' and 'mx2' must have the same length (prior to shaping).")
   }
 
+  # track if sensitivity is truly all-cause (vector) even though input had causes
+  sen_all_cause <- FALSE
+
   # ---------------------------------------------------------------------------
   # TOP: cause_names pre-processing (non-intrusive)
   # ---------------------------------------------------------------------------
-  # We will collect an optional 'cn_levels_pref' to carry the intended cause order.
   cn_levels_pref <- NULL
-
   if (!is.null(cause_names)) {
-    # If cause_names length equals length(mx1), treat as stacked labels.
     if (length(cause_names) == length(mx1)) {
       if (is.factor(cause_names)) {
-        # Respect factor order
         cn_levels_pref <- levels(cause_names)
       } else {
-        # Preserve first-appearance order
         cn_levels_pref <- unique(as.character(cause_names))
       }
-      # If n_causes not given, infer it from label levels
       if (is.null(n_causes)) n_causes <- length(cn_levels_pref)
     } else {
-      # Else, could be length n_causes; we do not yet know n_causes. Will handle later.
-      # If it is a factor, remember its levels order, otherwise the given order.
       if (is.factor(cause_names)) {
         cn_levels_pref <- levels(cause_names)
       } else {
-        # Keep as-given; will validate length after normalization.
         cn_levels_pref <- as.character(cause_names)
       }
-      # do not set n_causes here; we may not know it yet
     }
   }
 
-  # --- Normalize all inputs (shape + ages) in one place ---------------------
+  # normalize shapes and ages
   norm <- normalize_inputs(mx1 = mx1, mx2 = mx2, age = age, n_causes = n_causes)
   mx1        <- norm$mx1
   mx2        <- norm$mx2
@@ -258,12 +251,10 @@ LEdecomp <- function(mx1,
   n_causes   <- norm$n_causes
   deez_dims  <- norm$deez_dims
 
-  # Apply preferred cause names to shaped matrices when possible
-  # (matrix case or stacked-reshaped inside normalize_inputs)
+  # apply cause names if we now know n_causes
   if (!is.null(n_causes) && n_causes >= 1L) {
     final_cols <- NULL
 
-    # 1) If user supplied a vector of length n_causes, take it as-is (respect factor order)
     if (!is.null(cause_names) && length(cause_names) == n_causes) {
       if (is.factor(cause_names)) {
         final_cols <- levels(cause_names)
@@ -271,13 +262,11 @@ LEdecomp <- function(mx1,
         final_cols <- as.character(cause_names)
       }
     }
-    # 2) Else, if we had levels from a long vector or a factor, prefer those
     if (is.null(final_cols) && !is.null(cn_levels_pref)) {
       if (length(cn_levels_pref) == n_causes) {
         final_cols <- as.character(cn_levels_pref)
       }
     }
-    # 3) Else, try to recover from existing colnames
     if (is.null(final_cols)) {
       if (is.matrix(mx1) && !is.null(colnames(mx1))) {
         final_cols <- colnames(mx1)
@@ -285,16 +274,12 @@ LEdecomp <- function(mx1,
         final_cols <- colnames(mx2)
       }
     }
-    # 4) Else, synthesize
     if (is.null(final_cols)) {
       final_cols <- paste("cause", seq_len(n_causes), sep = "_")
     }
 
-    # Set on matrices if present
     if (is.matrix(mx1)) colnames(mx1) <- final_cols
     if (is.matrix(mx2)) colnames(mx2) <- final_cols
-
-    # Keep for output regardless of shape
     cause_names_out <- final_cols
   } else {
     cause_names_out <- NULL
@@ -305,7 +290,7 @@ LEdecomp <- function(mx1,
   }
   stopifnot(length(nx) == nages)
 
-  # If different sexes requested, do two runs (male vs male; female vs female), then average
+  # if sex1 != sex2, do two runs
   if (sex1 != sex2) {
     d1 <- LEdecomp(mx1 = mx1, mx2 = mx2, age = age, nx = nx,
                    sex1 = sex1, sex2 = sex1,
@@ -330,19 +315,19 @@ LEdecomp <- function(mx1,
                 Num_Intervals = Num_Intervals, symmetrical = symmetrical,
                 direction = direction, perturb = perturb,
                 sens = sen, LE1 = LE1, LE2 = LE2, LEdecomp = decomp,
-                cause_names = cause_names_out)  # NEW
+                cause_names = cause_names_out)
     class(out) <- "LEdecomp"
     return(out)
   }
 
-  # --- Method selection ------------------------------------------------------
+  # method selection
   method <- tolower(match_method(method))
   if (!(method %in% .get_registry()$method)) {
     stop("Method '", method, "' not found in method_registry.")
   }
   dec_fun <- get_dec_fun(method)
 
-  # --- General methods (horiuchi, stepwise, numerical) ----------------------
+  # GENERAL METHODS -----------------------------------------------------------
   gen_methods <- .get_registry()$method[.get_registry()$category == "general"]
   if (method %in% gen_methods) {
 
@@ -385,7 +370,7 @@ LEdecomp <- function(mx1,
     sen   <- rowSums(as.matrix(decomp)) / delta
   }
 
-  # --- Direct methods --------------------------------------------------------
+  # DIRECT METHODS ------------------------------------------------------------
   dir_methods <- .get_registry()$method[.get_registry()$category == "direct"]
   if (method %in% dir_methods) {
     if (!is.null(n_causes)) {
@@ -414,13 +399,14 @@ LEdecomp <- function(mx1,
     }
   }
 
-  # --- Sensitivity methods (opt_ok) -----------------------------------------
+  # SENSITIVITY METHODS WITH A SINGLE SCHEDULE (opt_ok) -----------------------
   opt_methods <- .get_registry()$method[.get_registry()$category == "opt_ok"]
   if (method %in% opt_methods) {
     if (!is.null(n_causes)) {
+      # compute sensitivity on all-cause, but store vector
       mx1_all <- rowSums(mx1)
       mx2_all <- rowSums(mx2)
-      delta   <- mx2 - mx1
+      delta   <- mx2 - mx1  # matrix, cause-wise
 
       if (opt) {
         sen_all <- sen_min(mx1 = mx1_all, mx2 = mx2_all,
@@ -428,11 +414,17 @@ LEdecomp <- function(mx1,
                            closeout = closeout, sen_fun = dec_fun, tol = tol)
       } else {
         mx_avg  <- (mx1_all + mx2_all) / 2
-        sen_all <- dec_fun(mx = mx_avg, age = age, nx = nx, sex = sex1, closeout = closeout)
+        sen_all <- dec_fun(mx = mx_avg,
+                           age = age, nx = nx, sex = sex1, closeout = closeout)
       }
 
-      sen    <- matrix(sen_all, nrow = nages, ncol = n_causes)
-      decomp <- sen * delta
+      # expand only for the decomposition
+      sen_mat <- matrix(sen_all, nrow = nages, ncol = n_causes)
+      decomp  <- sen_mat * delta
+
+      # store vector
+      sen <- sen_all
+      sen_all_cause <- TRUE
     } else {
       delta <- mx2 - mx1
       if (opt) {
@@ -441,7 +433,8 @@ LEdecomp <- function(mx1,
                        closeout = closeout, sen_fun = dec_fun, tol = tol)
       } else {
         mx_avg <- (mx1 + mx2) / 2
-        sen    <- dec_fun(mx = mx_avg, age = age, nx = nx, sex = sex1, closeout = closeout)
+        sen    <- dec_fun(mx = mx_avg,
+                          age = age, nx = nx, sex = sex1, closeout = closeout)
       }
       decomp <- sen * delta
     }
@@ -458,29 +451,37 @@ LEdecomp <- function(mx1,
     }
   }
 
-  # --- Direct_sen methods ----------------------------------------------------
+  # DIRECT-LIKE SENSITIVITY METHODS (direct_sen) ------------------------------
   ds_methods <- .get_registry()$method[.get_registry()$category == "direct_sen"]
   if (method %in% ds_methods) {
     delta <- mx2 - mx1
     if (!is.null(n_causes)) {
       mx1_all <- rowSums(mx1)
       mx2_all <- rowSums(mx2)
-      sen_all <- dec_fun(mx1 = mx1_all, mx2 = mx2_all,
-                         age = age, nx = nx, sex1 = sex1, sex2 = sex1, closeout = closeout)
-      sen     <- matrix(sen_all, nrow = nages, ncol = n_causes)
+      sen_all <- dec_fun(mx1 = mx1_all,
+                         mx2 = mx2_all,
+                         age = age,
+                         nx = nx,
+                         sex1 = sex1,
+                         sex2 = sex1,
+                         closeout = closeout)
+      sen_mat <- matrix(sen_all, nrow = nages, ncol = n_causes)
+      decomp  <- sen_mat * delta
+
+      sen <- sen_all
+      sen_all_cause <- TRUE
     } else {
-      sen <- dec_fun(mx1 = mx1, mx2 = mx2,
-                     age = age, nx = nx, sex1 = sex1, sex2 = sex1, closeout = closeout)
+      sen    <- dec_fun(mx1 = mx1, mx2 = mx2,
+                        age = age, nx = nx, sex1 = sex1, sex2 = sex1, closeout = closeout)
+      decomp <- sen * delta
     }
-    decomp <- sen * delta
   }
 
+  # FINAL e0s -----------------------------------------------------------------
   LE2 <- mx_to_e0(rowSums(as.matrix(mx2)), age = age, nx = nx, sex = sex1, closeout = closeout)
   LE1 <- mx_to_e0(rowSums(as.matrix(mx1)), age = age, nx = nx, sex = sex1, closeout = closeout)
 
-  # ---------------------------------------------------------------------------
-  # BOTTOM: echo input shapes and attach cause_names to output
-  # ---------------------------------------------------------------------------
+  # echo input shapes ---------------------------------------------------------
   shape_policy <- norm$return_as %||% {
     if (is.matrix(mx1)) "matrix" else if (!is.null(n_causes) && n_causes > 1L) "stacked_vector" else "vector"
   }
@@ -493,7 +494,14 @@ LEdecomp <- function(mx1,
   } else if (identical(shape_policy, "matrix")) {
     if (!is.null(norm$deez_dims)) {
       if (!is.null(dim(decomp))) dim(decomp) <- norm$deez_dims
-      if (!is.null(dim(sen)))    dim(sen)    <- norm$deez_dims
+      # only reshape sensitivity if it is not an all-cause vector
+      if (!sen_all_cause) {
+        if (!is.null(dim(sen))) {
+          dim(sen) <- norm$deez_dims
+        } else if (length(sen) == prod(norm$deez_dims)) {
+          dim(sen) <- norm$deez_dims
+        }
+      }
     }
   } else {
     decomp <- c(decomp)
@@ -522,6 +530,7 @@ LEdecomp <- function(mx1,
   class(out) <- "LEdecomp"
   out
 }
+
 
 #' @export
 print.LEdecomp <- function(x, ...) {
