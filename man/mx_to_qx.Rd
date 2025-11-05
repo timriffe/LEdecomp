@@ -15,6 +15,9 @@ mx_to_qx(mx, ax, nx = rep(1, length(mx)), closeout = TRUE)
 
 \item{closeout}{logical. Default \code{TRUE}.}
 }
+\value{
+numeric vector of \code{qx}, the same length as \code{mx}
+}
 \description{
 \code{qx} gives conditional death probabilities, in this case forced to be consistent with a set of \code{mx} and \code{ax} values per HMD Method Protocol eq 71.
 }

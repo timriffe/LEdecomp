@@ -2,23 +2,24 @@
 #' @title A numerical approximation of the sensitivity of life expectancy at birth to changes in mortality.
 #' @description Here we produce a numerical derivative based on the methods implemented in the `numDeriv::grad()` function. Tweaking the optional arguments of `numDeriv::grad()`, passed in via `...` might lead to greater precision, but this method actually performs usably well with its defaults.
 #' @inheritParams mx_to_e0
-#' @param ... optional args to pass to `mx_to_e0()`
+#' @param ... optional arguments to pass to `mx_to_e0()`
 #' @importFrom numDeriv grad
 #' @importFrom Rdpack reprompt
 #' @export
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @examples
 #' x <- 0:100
 #' mx <- 0.001 * exp(x * 0.07)
 #' sn <- sen_num(mx,age=x,sex='t',closeout=TRUE)
 #' sa <- sen_arriaga_instantaneous2(mx, age=x,sex='t',perturb = 1e-4)
-#' \dontrun{
+#' \donttest{
 #' plot(x,sa)
 #' lines(x,sn)
 #' }
 #' # examine residuals:
 #' sn - sa
 #' # Note discrepancies in ages >0 are due to numerical precision only
-#' \dontrun{
+#' \donttest{
 #' plot(x, sn - sa, main = "still uncertain what accounts for the age 0 discrepancy")
 #' }
 sen_num <- function(mx,

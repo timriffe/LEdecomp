@@ -61,7 +61,7 @@ e02 <- mx_to_e0(mx2, age = x)
 (delta <- e02 - e01)
 sum(cc)
 
-\dontrun{
+\donttest{
  plot(x, cc)
 }
 }

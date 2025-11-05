@@ -192,7 +192,7 @@ lopez_ruzicka_sym <- function(mx1,
 #' # Check that multiplying sensitivity by rate difference reproduces the decomposition
 #' cc_check <- s * (mx2 - mx1)
 #' cc <- lopez_ruzicka(mx1, mx2, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, cc, type = "l")
 #' lines(x, cc_check, col = "red", lty = 2)
 #' }
@@ -295,14 +295,14 @@ sen_lopez_ruzicka_sym <- function(mx1, mx2,
 #' \code{\link{sen_lopez_ruzicka}}, \code{\link{sen_lopez_ruzicka_instantaneous2}}, \code{\link{sen_arriaga_sym_instantaneous}}, \code{\link{sen_chandrasekaran_II_instantaneous}}
 #'
 #' @export
-#'
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @examples
 #' a <- 0.001
 #' b <- 0.07
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_lopez_ruzicka_instantaneous(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 
@@ -345,7 +345,7 @@ sen_lopez_ruzicka_instantaneous <- function(mx,
 #' returning their average.
 #'
 #' @inheritParams sen_lopez_ruzicka_instantaneous
-#'
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @details
 #' This approach gives numerically identical results to
 #' `sen_arriaga_sym_instantaneous2()`,
@@ -365,7 +365,7 @@ sen_lopez_ruzicka_instantaneous <- function(mx,
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_lopez_ruzicka_instantaneous2(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 
@@ -410,7 +410,7 @@ sen_lopez_ruzicka_instantaneous2 <- function(mx,
 #' @param mx Numeric vector of mortality rates (central death rates).
 #' @param sex Character; `"m"` for male, `"f"` for female, or `"t"` for total.
 #' @param perturb Numeric; a small constant determining the perturbation size (default 1e-6).
-#'
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @details
 #' This gives a pointwise estimate of the derivative of life expectancy with respect to each age-specific mortality rate, evaluated symmetrically around the given mortality schedule. It gives numerically identical results to e.g. `sen_arriaga_sym_instantaneous()` and `sen_chandrasekaran_II_instantaneous()`.
 #'
@@ -425,7 +425,7 @@ sen_lopez_ruzicka_instantaneous2 <- function(mx,
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_lopez_ruzicka_sym_instantaneous(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 sen_lopez_ruzicka_sym_instantaneous <- function(mx,
@@ -464,7 +464,7 @@ sen_lopez_ruzicka_sym_instantaneous <- function(mx,
 #'
 #' @seealso
 #' \code{\link{sen_lopez_ruzicka_sym}}, \code{\link{sen_lopez_ruzicka_sym_instantaneous}}, \code{\link{sen_arriaga_sym_instantaneous2}}
-#'
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @export
 #'
 #' @examples
@@ -473,7 +473,7 @@ sen_lopez_ruzicka_sym_instantaneous <- function(mx,
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_lopez_ruzicka_sym_instantaneous2(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 sen_lopez_ruzicka_sym_instantaneous2 <- function(mx,

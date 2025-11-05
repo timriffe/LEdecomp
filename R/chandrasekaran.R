@@ -48,7 +48,7 @@
 #' (delta <- e02 - e01)
 #' sum(cc)
 #'
-#'\dontrun{
+#'\donttest{
 #'  plot(x, cc)
 #'}
 
@@ -129,7 +129,7 @@ chandrasekaran_II <- function(mx1, mx2,
 #'
 #' @seealso
 #' \code{\link{chandrasekaran_II}}, \code{\link{sen_arriaga}}, \code{\link{sen_arriaga_sym}}
-#'
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx` between `mx1` and `mx2`.
 #' @references
 #' \insertRef{Ponnapalli2005}{LEdecomp}
 #'
@@ -146,7 +146,7 @@ chandrasekaran_II <- function(mx1, mx2,
 #' # Check that multiplying sensitivity by rate difference approximates the decomposition
 #' cc_check <- s * (mx2 - mx1)
 #' cc <- chandrasekaran_II(mx1, mx2, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, cc, type = "l")
 #' lines(x, cc_check, col = "red", lty = 2)
 #' }
@@ -186,7 +186,7 @@ sen_chandrasekaran_II <- function(mx1,
 #' @param mx Numeric vector of mortality rates (central death rates).
 #' @param sex Character; "m" for male, "f" for female, or "t" for total.
 #' @param perturb Numeric; a small constant determining the perturbation size (default 1e-6).
-#'
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`
 #' @details This approach gives a reasonable approximation of the derivative of life expectancy with respect to each age-specific mortality rate. It gives numerically identical results to `sen_arriaga_sym_instantaneous()`, `sen_lopez_ruzicka_instantaneous()`, and `sen_chandrasekaran_III_instantaneous()`.
 #'
 #' @seealso
@@ -200,7 +200,7 @@ sen_chandrasekaran_II <- function(mx1,
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_chandrasekaran_II_instantaneous(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 
@@ -233,7 +233,7 @@ sen_chandrasekaran_II_instantaneous <- function(mx,
 #' @inheritParams sen_chandrasekaran_II_instantaneous
 #'
 #' @details This approach provides a log-linear perturbation of the mortality schedule and can be used to estimate the derivative of life expectancy with respect to logged mortality rates. It gives numerically identical results to `sen_arriaga_sym_instantaneous2()`, `sen_lopez_ruzicka_instantaneous2()`, and `sen_chandrasekaran_III_instantaneous2()`.
-#'
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @seealso
 #' \code{\link{sen_chandrasekaran_II_instantaneous}},
 #' \code{\link{sen_arriaga_sym_instantaneous2}},
@@ -247,7 +247,7 @@ sen_chandrasekaran_II_instantaneous <- function(mx,
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_chandrasekaran_II_instantaneous2(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 
@@ -327,7 +327,7 @@ sen_chandrasekaran_II_instantaneous2 <- function(mx,
 #' e02 <- mx_to_e0(mx2, age = x)
 #' (delta <- e02 - e01)
 #' sum(cc)
-#' \dontrun{
+#' \donttest{
 #' plot(x, cc, type = "l")
 #' }
 
@@ -430,7 +430,7 @@ chandrasekaran_III <- function(mx1, mx2,
 #' # Check that multiplying sensitivity by rate difference approximates the decomposition
 #' cc_check <- s * (mx2 - mx1)
 #' cc <- chandrasekaran_III(mx1, mx2, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, cc, type = "l")
 #' lines(x, cc_check, col = "red", lty = 2)
 #' }
@@ -474,7 +474,7 @@ sen_chandrasekaran_III <- function(mx1, mx2,
 #' respect to each age-specific mortality rate, evaluated near the input `mx`.
 #' It gives numerically identical results to `sen_arriaga_sym_instantaneous()`,
 #' `sen_lopez_ruzicka_instantaneous()`, and `sen_chandrasekaran_II_instantaneous()`.
-#'
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @seealso
 #' \code{\link{sen_chandrasekaran_III}},
 #' \code{\link{sen_chandrasekaran_III_instantaneous2}},
@@ -489,7 +489,7 @@ sen_chandrasekaran_III <- function(mx1, mx2,
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_chandrasekaran_III_instantaneous(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 
@@ -525,7 +525,7 @@ sen_chandrasekaran_III_instantaneous <- function(mx,
 #' @inheritParams sen_chandrasekaran_III_instantaneous
 #'
 #' @details This version uses symmetric log-space perturbations. It gives numerically identical results to `sen_arriaga_sym_instantaneous2()`, `sen_lopez_ruzicka_instantaneous2()`, and `sen_chandrasekaran_II_instantaneous2()`.
-#'
+#' @return numeric vector of sensitivity of life expectancy to perturbations in `mx`.
 #' @seealso
 #' \code{\link{sen_chandrasekaran_III_instantaneous}},
 #' \code{\link{sen_arriaga_sym_instantaneous2}},
@@ -540,7 +540,7 @@ sen_chandrasekaran_III_instantaneous <- function(mx,
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_chandrasekaran_III_instantaneous2(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 

@@ -29,6 +29,9 @@ arriaga_sym(
 
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 }
+\value{
+numeric vector of contributions summing to the gap in life expectancy implied by \code{mx1} and \code{mx2}.
+}
 \description{
 This approach conducts a classic Arriaga decomposition in both directions, averaging the (sign-adjusted) result, i.e. \code{a_avg = (arriaga(mx1,mx2, ...) - arriaga(mx2, mx1, ...)) / 2}.
 #@note The final age group's contribution from the reversed decomposition is halved before averaging. This empirical adjustment ensures symmetry and numeric stability, though the theoretical basis requires further exploration.
@@ -48,7 +51,7 @@ sum(d)
 
 d12 <- arriaga(mx1, mx2, age = x)
 d21 <- arriaga(mx2, mx1, age = x) # direction opposite
-\dontrun{
+\donttest{
 plot(x, d, type= 'l')
   lines(x, d12, col = "red")
   lines(x, -d21, col = "blue")

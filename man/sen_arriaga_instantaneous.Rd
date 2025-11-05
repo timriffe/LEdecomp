@@ -26,6 +26,9 @@ sen_arriaga_instantaneous(
 
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 }
+\value{
+numeric vector of sensitivity of life expectancy to perturbations in \code{mx}.
+}
 \description{
 This implementation gives a good approximation of the sensitivity of life expectancy to perturbations in mortality rates (central death rates). Since the Arriaga approach requires two versions of mortality rates \code{mx1}, \code{mx2}, we create these by slightly perturbing \code{mx} up and down. Then we calculate the Arriaga sensitivity in each direction and take the average. Specifically, we create \code{mx1} and \code{mx2} as
 \deqn{m_{x}^{1} = m_x \cdot \left(\frac{1}{1 - h}\right)}

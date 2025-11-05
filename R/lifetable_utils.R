@@ -16,7 +16,11 @@ rcumsum <- function(x){
 #' @param age integer vector of the lower bound of each age group (currently only single ages supported)
 #' @param sex character: Male (`"m"`), Female (`"f"`), or Total (`"t"`)
 #' @param closeout logical. Default `TRUE`.
+#' @return numeric vector of `ax` values, the same length as mx
 #' @export
+#' @references
+#' \insertRef{andreev2015average}{LEdecomp}
+
 mx_to_ax <- function(mx,
                      nx = rep(1,length(mx)),
                      age = 0:(length(mx)-1),
@@ -61,6 +65,8 @@ mx_to_ax <- function(mx,
 #' @inheritParams mx_to_ax
 #' @param ax numeric vector of `ax` values
 #' @export
+#' @return numeric vector of `qx`, the same length as `mx`
+#'
 mx_to_qx <- function(mx, ax, nx = rep(1,length(mx)), closeout = TRUE){
   n <- length(mx)
   stopifnot(n == length(ax))

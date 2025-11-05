@@ -26,6 +26,9 @@ sen_arriaga_instantaneous2(
 
 \item{closeout}{logical. Default \code{TRUE}. Shall we use the HMD Method Protocol to close out the \code{ax} and \code{qx} values? See details.}
 }
+\value{
+numeric vector of sensitivity of life expectancy to perturbations in \code{mx}
+}
 \description{
 This is a second approach for estimating the sensitivity for a single set of rates. Here, rather than directly expanding and contracting rates to convert \code{mx} into \code{mx1} and \code{mx2} we instead shift the logged mortality rates up and down by the factor \code{perturb = h}. Specifically:
 \deqn{m_{x}^{1} = e^{\ln\left(m_x\right) + h}}

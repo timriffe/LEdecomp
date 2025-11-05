@@ -1,25 +1,21 @@
 
 library(devtools)
 library(usethis)
-
+library(rhub)
 document()
 
-check()
+devtools::check()
+check_win_devel()      #
+check_win_release()    #
+check_win_oldrelease() #
+rhub_platforms()
+rhub::rhub_check(platforms = c("linux","macos","macos-arm64","windows"))
 
-# 1. Get sensitivity for avg all-cause rates,
-# e.g. using sen_arriaga_instantaneous(), this returns a vector.
-# let's call this 'sen'
+library(spelling)
+spell_check()
 
-# 2. get COD rate matrix, with causes in columns and ages in rows for men and women, take the element-wise difference. let's call this 'delta'
+# doesn't work until on CRAN?
+#library(revdepcheck)
+#revdepcheck::revdep_check(cran = FALSE)
 
-# 3. then the decomposition becomes sen * delta, here exploiting the R artifact that a vector times a matrix is interpreted as a column vector being element-wise multiplied into the rows of the matrix, like so:
-
-# sen <- runif(10)
-# delta <- matrix(runif(80), ncol = 8)
-# 
-# cc <- sen * delta
-# cc
-
-
-
-
+devtools::release()

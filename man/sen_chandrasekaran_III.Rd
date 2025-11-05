@@ -49,7 +49,7 @@ s <- sen_chandrasekaran_III(mx1, mx2, age = x)
 # Check that multiplying sensitivity by rate difference approximates the decomposition
 cc_check <- s * (mx2 - mx1)
 cc <- chandrasekaran_III(mx1, mx2, age = x)
-\dontrun{
+\donttest{
 plot(x, cc, type = "l")
 lines(x, cc_check, col = "red", lty = 2)
 }

@@ -31,6 +31,8 @@ sen_chandrasekaran_II(
 }
 \value{
 A numeric vector of sensitivity values by age group.
+
+numeric vector of sensitivity of life expectancy to perturbations in \code{mx} between \code{mx1} and \code{mx2}.
 }
 \description{
 Computes the sensitivity of life expectancy to changes in age-specific mortality rates using the Chandrasekaran II decomposition approach described by Ponnapalli (2005). The sensitivity is obtained by dividing the age-specific contributions (from \code{chandrasekaran_II()}) by the differences in mortality rates (\code{mx2 - mx1}). This yields a pointwise estimate of the derivative of life expectancy with respect to each age-specific mortality rate evaluated at an imagined midpoint between the first a second set of mortality rates.
@@ -49,7 +51,7 @@ s <- sen_chandrasekaran_II(mx1, mx2, age = x)
 # Check that multiplying sensitivity by rate difference approximates the decomposition
 cc_check <- s * (mx2 - mx1)
 cc <- chandrasekaran_II(mx1, mx2, age = x)
-\dontrun{
+\donttest{
 plot(x, cc, type = "l")
 lines(x, cc_check, col = "red", lty = 2)
 }
