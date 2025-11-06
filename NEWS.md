@@ -1,9 +1,8 @@
 # LEdecomp 1.0.4
 
 * third CRAN submission attempt, minor edits per requests from CRAN
-* plot method improved
-* sensitivity handling better
-
+* plot method improved to handle more cases and options
+* sensitivity handling more consistent
 
 # LEdecomp 1.0.2
 
