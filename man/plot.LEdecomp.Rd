@@ -62,7 +62,7 @@ Invisibly returns the ggplot object (after printing).
 Plot contributions (or sensitivities) to a life expectancy difference by age or by age and cause using ggplot2. This is just for a quick default plot method.
 }
 \details{
-By default, if \code{what = "LEdecomp"} we plot using bars (\code{geom = "bar"}), but you can override this. For bar plots, recall it's the area, not the height that the eye reads; for this reason, if your data is in non-single ages, we divide out the interval width, so that the implied uniform graduation to single ages still sums to the gap.
+By default, if \code{what = "LEdecomp"} we plot using bars (\code{geom = "bar"}), but you can override this. For bar plots, recall it's the area, not the height that the eye reads; for this reason, if your data is in non-single ages, we divide out the interval width, so that the implied uniform graduation to single ages still sums to the gap. If \code{what = "sens"} note we plot on a single-age scale even if the data are in abridged ages.
 }
 \examples{
 

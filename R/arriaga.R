@@ -426,7 +426,7 @@ sen_arriaga_sym_instantaneous <- function(mx,
 #' x <- 0:100
 #' mx <- a * exp(x * b)
 #' s <- sen_arriaga_sym_instantaneous2(mx, age = x)
-#' \dontrun{
+#' \donttest{
 #' plot(x, s, type = "l")
 #' }
 

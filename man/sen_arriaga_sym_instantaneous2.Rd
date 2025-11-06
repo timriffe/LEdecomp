@@ -40,7 +40,7 @@ b <- 0.07
 x <- 0:100
 mx <- a * exp(x * b)
 s <- sen_arriaga_sym_instantaneous2(mx, age = x)
-\dontrun{
+\donttest{
 plot(x, s, type = "l")
 }
 }

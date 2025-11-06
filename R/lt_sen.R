@@ -62,7 +62,7 @@ sen_e0_mx_lt <- function(mx,
 
   ex2[N] <- ex[N]
 
-  sen <- -Lx * ex2
+  sen <- -Lx/nx * ex2
 
   sen
 }

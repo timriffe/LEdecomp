@@ -184,3 +184,38 @@ mx_to_e0 <- function(mx,
                  closeout = closeout)
   ex[1]
 }
+
+
+#' Abridge a single-year mx schedule to 0,1,5,... using lifetable quantities
+#'
+#' @param mx numeric vector of single-year mortality rates (ages 0,1,2,...)
+#' @param age numeric vector of the same length as mx, usually 0:(n-1)
+#' @param sex character, passed to mx_to_ax(), default "t"
+#' @param closeout logical, passed to lifetable helpers, default TRUE
+#' @return numeric vector of abridged mx at ages c(0, 1, 5, 10, ...)
+#' @export
+abridge_mx <- function(mx,
+                       age,
+                       sex = "t",
+                       closeout = TRUE) {
+
+  if (length(mx) != length(age)) {
+    stop("mx and age must have the same length.")
+  }
+
+  # 1) get single-year life table pieces
+  ax <- mx_to_ax(mx = mx, age = age, sex = sex, closeout = closeout)
+  qx <- mx_to_qx(mx = mx, ax = ax, nx = rep(1, length(mx)), closeout = closeout)
+  lx <- qx_to_lx(qx)
+  dx <- lx_to_dx(lx)
+  Lx <- ald_to_Lx(lx = lx, ax = ax, dx = dx, nx = rep(1, length(mx)))
+
+  ab_age <- c(0L, 1L, seq.int(5L,  max(age), by = 5L))
+  ab_groups <- rep(ab_age, times = c(1,4,rep(5,length(ab_age)-3),1))
+
+  ndx <- tapply(dx,ab_groups,sum)
+  nLx <- tapply(Lx,ab_groups,sum)
+
+  nmx <- ndx / nLx
+  nmx
+}

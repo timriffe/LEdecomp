@@ -6,7 +6,7 @@ test_that("LEdecomp returns expected structure", {
   result <- LEdecomp(mx1, mx2, age = x, method = "arriaga")
 
   expect_s3_class(result, "LEdecomp")
-  expect_named(result, c("mx1", "mx2", "age", "sex1", "sex2", "method",
+  expect_named(result, c("mx1", "mx2", "age", "nx", "sex1", "sex2", "method",
                          "func", "closeout", "opt", "tol", "Num_Intervals",
                          "symmetrical", "direction", "perturb", "sens",
                          "LE1", "LE2", "LEdecomp","cause_names"))
