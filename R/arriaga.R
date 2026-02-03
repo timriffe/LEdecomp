@@ -262,7 +262,7 @@ sen_arriaga_instantaneous2 <- function(mx,
   (s1 + s2) / 2
 }
 
-#' @title Estimate sensitivity of life expectancy using a symmetrical Arriaga approach.
+#' @title Decompose using a symmetrical variant of the Arriaga approach.
 #' @description This approach conducts a classic Arriaga decomposition in both directions, averaging the (sign-adjusted) result, i.e. `a_avg = (arriaga(mx1,mx2, ...) - arriaga(mx2, mx1, ...)) / 2`.
 #' #@note The final age group's contribution from the reversed decomposition is halved before averaging. This empirical adjustment ensures symmetry and numeric stability, though the theoretical basis requires further exploration.
 #' @return numeric vector of contributions summing to the gap in life expectancy implied by `mx1` and `mx2`.

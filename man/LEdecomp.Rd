@@ -225,6 +225,7 @@ available_methods()
 \insertRef{preston2000demography}{LEdecomp}
 \insertRef{Ponnapalli2005}{LEdecomp}
 \insertRef{horiuchi2008decomposition}{LEdecomp}
+\insertRef{andreev1982}{LEdecomp}
 \insertRef{andreev2002algorithm}{LEdecomp}
 }
 \seealso{
