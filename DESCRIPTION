@@ -1,8 +1,8 @@
 Package: LEdecomp
 Type: Package
 Title: Decompose Life Expectancy by Age (and Cause)
-Version: 1.0.6
-Date: 2026-02-03
+Version: 1.0.7
+Date: 2026-02-04
 Authors@R: c(
    person("Tim", "Riffe", role = c("aut", "cre"), 
           email = "tim.riffe@gmail.com", comment = c("0000-0002-2673-4622")),

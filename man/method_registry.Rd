@@ -5,7 +5,7 @@
 \alias{method_registry}
 \title{Registry of Available Life Expectancy Decomposition Methods}
 \format{
-A data frame with 28 rows and 3 variables:
+A data frame with 36 rows and 3 variables:
 \describe{
 \item{method}{Character. The method name used in the \code{method} argument of \code{LEdecomp()}.}
 \item{fun_name}{Character. The actual function name (as a string) used to compute the decomposition.}

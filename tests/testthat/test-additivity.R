@@ -11,10 +11,10 @@ test_that("Arriaga and Lopez-Ruzicka decompositions are additive", {
 
   cc_arriaga <- arriaga(mx1, mx2, age = x, sex1 = "t", sex2 = "t")
   cc_lopez <- lopez_ruzicka(mx1, mx2, age = x, sex1 = "t", sex2 = "t")
-
+  cc_andreev <- andreev(mx1, mx2, age = x, sex1 = "t", sex2 = "t")
   total_arriaga <- sum(cc_arriaga)
   total_lopez <- sum(cc_lopez)
-
+  total_andreev <- sum(cc_andreev)
   expect_equal(total_arriaga, delta_e0, tolerance = 1e-8,
                info = paste0("Arriaga method not additive: ",
                              total_arriaga, " vs ", delta_e0))
@@ -22,6 +22,10 @@ test_that("Arriaga and Lopez-Ruzicka decompositions are additive", {
   expect_equal(total_lopez, delta_e0, tolerance = 1e-8,
                info = paste0("Lopez-Ruzicka method not additive: ",
                              total_lopez, " vs ", delta_e0))
+
+  expect_equal(total_andreev, delta_e0, tolerance = 1e-8,
+               info = paste0("Andreev method not additive: ",
+                             total_andreev, " vs ", delta_e0))
 })
 
 test_that("All instantaneous methods (with opt = TRUE) give equal total effects", {

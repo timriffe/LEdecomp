@@ -11,8 +11,7 @@
 #' @param sex2 character. `"m"`,`"f"`, or `"t"`, affects a0 treatment.
 #' @param method character. One of the methods in `method_registry$method`.
 #' @param closeout logical. Close out at top age (`TRUE`) or assume closed final age group (`FALSE`).
-#' @param opt logical. For lifetable, numerical, and instantaneous sensitivity-based methods, optimize rate averaging
-#'   to eliminate the decomposition residual?
+#' @param opt logical. For lifetable, numerical, and instantaneous sensitivity-based methods, optimize rate averaging to eliminate the decomposition residual?
 #' @param tol numeric. Tolerance for rate-averaging optimization.
 #' @param Num_Intervals integer. For methods that discretize an integral (e.g., Horiuchi).
 #' @param symmetrical logical. For stepwise replacement only: average 1 to 2 and 2 to 1?
@@ -72,6 +71,7 @@
 #' \insertRef{preston2000demography}{LEdecomp}
 #' \insertRef{Ponnapalli2005}{LEdecomp}
 #' \insertRef{horiuchi2008decomposition}{LEdecomp}
+#' \insertRef{andreev1982}{LEdecomp}
 #' \insertRef{andreev2002algorithm}{LEdecomp}
 #'
 #' @importFrom DemoDecomp horiuchi
@@ -192,6 +192,10 @@ LEdecomp <- function(mx1,
                                 "sen_arriaga", "sen_arriaga_sym",
                                 "sen_arriaga_inst", "sen_arriaga_inst2",
                                 "sen_arriaga_sym_inst", "sen_arriaga_sym_inst2",
+                                "andreev", "andreev_sym",
+                                "sen_andreev", "sen_andreev_sym",
+                                "sen_andreev_inst", "sen_andreev_inst2",
+                                "sen_andreev_sym_inst", "sen_andreev_sym_inst2",
                                 "chandrasekaran_ii",
                                 "sen_chandrasekaran_ii", "sen_chandrasekaran_ii_inst",
                                 "sen_chandrasekaran_ii_inst2",

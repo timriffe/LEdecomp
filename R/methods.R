@@ -2,41 +2,42 @@ do_this <- FALSE
 if (do_this){
   method_registry <- tibble::tribble(
     ~method,                        ~fun_name,                               ~category,    ~pkg,
-    "lifetable",                    "sen_e0_mx_lt",                          "opt_ok",     NA,
-    "arriaga",                      "arriaga",                               "direct",     NA,
-    "arriaga_sym",                  "arriaga_sym",                           "direct",     NA,
-    "sen_arriaga",                  "sen_arriaga",                           "direct_sen", NA,
-    "sen_arriaga_sym",             "sen_arriaga_sym",                        "direct_sen", NA,
+    "lifetable",                   "sen_e0_mx_lt",                          "opt_ok",     NA,
+    "arriaga",                     "arriaga",                               "direct",     NA,
+    "arriaga_sym",                 "arriaga_sym",                           "direct",     NA,
+    "sen_arriaga",                 "sen_arriaga",                           "direct_sen", NA,
+    "sen_arriaga_sym",             "sen_arriaga_sym",                       "direct_sen", NA,
     "sen_arriaga_inst",            "sen_arriaga_instantaneous",             "opt_ok",     NA,
     "sen_arriaga_inst2",           "sen_arriaga_instantaneous2",            "opt_ok",     NA,
     "sen_arriaga_sym_inst",        "sen_arriaga_sym_instantaneous",         "opt_ok",     NA,
     "sen_arriaga_sym_inst2",       "sen_arriaga_sym_instantaneous2",        "opt_ok",     NA,
-    "andreev",                      "andreev",                               "direct",     NA,
-    "sen_andreev",                  "sen_andreev",                           "direct_sen", NA,
-    "sen_andreev_sym",             "sen_andreev_sym",                        "direct_sen", NA,
+    "andreev",                     "andreev",                               "direct",     NA,
+    "andreev_sym",                 "andreev_sym",                           "direct",     NA,
+    "sen_andreev",                 "sen_andreev",                           "direct_sen", NA,
+    "sen_andreev_sym",             "sen_andreev_sym",                       "direct_sen", NA,
     "sen_andreev_inst",            "sen_andreev_instantaneous",             "opt_ok",     NA,
     "sen_andreev_inst2",           "sen_andreev_instantaneous2",            "opt_ok",     NA,
     "sen_andreev_sym_inst",        "sen_andreev_sym_instantaneous",         "opt_ok",     NA,
     "sen_andreev_sym_inst2",       "sen_andreev_sym_instantaneous2",        "opt_ok",     NA,
-    "chandrasekaran_ii",           "chandrasekaran_II",                      "direct",     NA,
-    "sen_chandrasekaran_ii",       "sen_chandrasekaran_II",                  "direct_sen", NA,
+    "chandrasekaran_ii",           "chandrasekaran_II",                     "direct",     NA,
+    "sen_chandrasekaran_ii",       "sen_chandrasekaran_II",                 "direct_sen", NA,
     "sen_chandrasekaran_ii_inst",  "sen_chandrasekaran_II_instantaneous",   "opt_ok",     NA,
     "sen_chandrasekaran_ii_inst2", "sen_chandrasekaran_II_instantaneous2",  "opt_ok",     NA,
-    "chandrasekaran_iii",          "chandrasekaran_III",                     "direct",     NA,
-    "sen_chandrasekaran_iii",      "sen_chandrasekaran_III",                 "direct_sen", NA,
+    "chandrasekaran_iii",          "chandrasekaran_III",                    "direct",     NA,
+    "sen_chandrasekaran_iii",      "sen_chandrasekaran_III",                "direct_sen", NA,
     "sen_chandrasekaran_iii_inst", "sen_chandrasekaran_III_instantaneous",  "opt_ok",     NA,
     "sen_chandrasekaran_iii_inst2","sen_chandrasekaran_III_instantaneous2", "opt_ok",     NA,
-    "lopez_ruzicka",               "lopez_ruzicka",                          "direct",     NA,
-    "lopez_ruzicka_sym",           "lopez_ruzicka_sym",                      "direct",     NA,
-    "sen_lopez_ruzicka",           "sen_lopez_ruzicka",                      "direct_sen", NA,
-    "sen_lopez_ruzicka_sym",       "sen_lopez_ruzicka_sym",                  "direct_sen", NA,
+    "lopez_ruzicka",               "lopez_ruzicka",                         "direct",     NA,
+    "lopez_ruzicka_sym",           "lopez_ruzicka_sym",                     "direct",     NA,
+    "sen_lopez_ruzicka",           "sen_lopez_ruzicka",                     "direct_sen", NA,
+    "sen_lopez_ruzicka_sym",       "sen_lopez_ruzicka_sym",                 "direct_sen", NA,
     "sen_lopez_ruzicka_inst",      "sen_lopez_ruzicka_instantaneous",       "opt_ok",     NA,
     "sen_lopez_ruzicka_inst2",     "sen_lopez_ruzicka_instantaneous2",      "opt_ok",     NA,
     "sen_lopez_ruzicka_sym_inst",  "sen_lopez_ruzicka_sym_instantaneous",   "opt_ok",     NA,
     "sen_lopez_ruzicka_sym_inst2", "sen_lopez_ruzicka_sym_instantaneous2",  "opt_ok",     NA,
-    "numerical",                   "sen_num",                                "opt_ok",     NA,
-    "stepwise",                    "stepwise_replacement",                   "general",    "DemoDecomp",
-    "horiuchi",                    "horiuchi",                               "general",    "DemoDecomp"
+    "numerical",                   "sen_num",                               "opt_ok",     NA,
+    "stepwise",                    "stepwise_replacement",                  "general",    "DemoDecomp",
+    "horiuchi",                    "horiuchi",                              "general",    "DemoDecomp"
   ) |>
     dplyr::mutate(pkg = ifelse(is.na(pkg),"LEdecomp",pkg))
 
@@ -52,7 +53,7 @@ usethis::use_data(method_registry, internal = FALSE, overwrite = TRUE)
 #' This registry helps centralize method metadata and supports internal operations
 #' like method matching, class-based routing, and printing.
 #'
-#' @format A data frame with 28 rows and 3 variables:
+#' @format A data frame with 36 rows and 3 variables:
 #' \describe{
 #'   \item{method}{Character. The method name used in the `method` argument of `LEdecomp()`.}
 #'   \item{fun_name}{Character. The actual function name (as a string) used to compute the decomposition.}

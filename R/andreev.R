@@ -31,7 +31,7 @@
 #'sum(cc)
 andreev <- function(mx1,
                     mx2,
-                    age,
+                    age = 0:(length(mx1) - 1),
                     nx = rep(1,length(mx1)),
                     sex1 = "t",
                     sex2 = sex1,

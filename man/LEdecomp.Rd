@@ -15,13 +15,15 @@ LEdecomp(
   sex2 = sex1,
   method = c("lifetable", "arriaga", "arriaga_sym", "sen_arriaga", "sen_arriaga_sym",
     "sen_arriaga_inst", "sen_arriaga_inst2", "sen_arriaga_sym_inst",
-    "sen_arriaga_sym_inst2", "chandrasekaran_ii", "sen_chandrasekaran_ii",
+    "sen_arriaga_sym_inst2", "andreev", "andreev_sym", "sen_andreev", "sen_andreev_sym",
+    "sen_andreev_inst", "sen_andreev_inst2", "sen_andreev_sym_inst",
+    "sen_andreev_sym_inst2", "chandrasekaran_ii", "sen_chandrasekaran_ii",
     "sen_chandrasekaran_ii_inst", "sen_chandrasekaran_ii_inst2", "chandrasekaran_iii",
-    "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst",
+    "sen_chandrasekaran_iii", "sen_chandrasekaran_iii_inst", 
+    
     "sen_chandrasekaran_iii_inst2", "lopez_ruzicka", "lopez_ruzicka_sym",
     "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst",
-    "sen_lopez_ruzicka_inst2", 
-     "horiuchi", "stepwise", "numerical"),
+    "sen_lopez_ruzicka_inst2", "horiuchi", "stepwise", "numerical"),
   closeout = TRUE,
   opt = TRUE,
   tol = 1e-10,
@@ -53,8 +55,7 @@ LEdecomp(
 
 \item{closeout}{logical. Close out at top age (\code{TRUE}) or assume closed final age group (\code{FALSE}).}
 
-\item{opt}{logical. For lifetable, numerical, and instantaneous sensitivity-based methods, optimize rate averaging
-to eliminate the decomposition residual?}
+\item{opt}{logical. For lifetable, numerical, and instantaneous sensitivity-based methods, optimize rate averaging to eliminate the decomposition residual?}
 
 \item{tol}{numeric. Tolerance for rate-averaging optimization.}
 
