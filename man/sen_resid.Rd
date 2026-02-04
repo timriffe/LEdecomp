@@ -36,10 +36,11 @@ sen_resid(
 
 \item{sen_fun}{function name, current options include \code{sen_e0_mx_lt},
 \code{sen_arriaga_instantaneous}, \code{sen_arriaga_instantaneous2},
-\code{sen_arriaga_sym}, \code{sen_num},\code{sen_chandrasekaran_II_instantaneous}
+\code{sen_arriaga_sym}, \code{sen_arriaga_sym_instantaneous}, \code{sen_arriaga_sym_instantaneous2},\code{sen_num},\code{sen_chandrasekaran_II_instantaneous}
 ,\code{sen_chandrasekaran_ii_instantaneous2},\code{sen_chandrasekaran_iii_instantaneous},
 \code{sen_chandrasekaran_iii_instantaneous2},\code{sen_lopez_ruzicka_instantaneous},
-\code{sen_lopez_ruzicka_instantaneous2}}
+\code{sen_lopez_ruzicka_instantaneous2}, \code{sen_lopez_ruzicka_sym_instantaneous},
+\code{sen_lopez_ruzicka_sym_instantaneous2}, \code{sen_andreev_instantaneous}, \code{sen_andreev_instantaneous2} , \code{sen_andreev_sym_instantaneous}, \code{sen_andreev_sym_instantaneous2}}
 
 \item{...}{optional arguments passed to a given sensitivity function.}
 }

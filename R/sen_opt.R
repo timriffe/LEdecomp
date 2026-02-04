@@ -6,10 +6,11 @@
 #' @param w the parameter weight to optimize, default 0.5
 #' @param sen_fun function name, current options include `sen_e0_mx_lt`,
 #' `sen_arriaga_instantaneous`, `sen_arriaga_instantaneous2`,
-#' `sen_arriaga_sym`, `sen_num`,`sen_chandrasekaran_II_instantaneous`
+#' `sen_arriaga_sym`, `sen_arriaga_sym_instantaneous`, `sen_arriaga_sym_instantaneous2`,`sen_num`,`sen_chandrasekaran_II_instantaneous`
 #' ,`sen_chandrasekaran_ii_instantaneous2`,`sen_chandrasekaran_iii_instantaneous`,
 #'  `sen_chandrasekaran_iii_instantaneous2`,`sen_lopez_ruzicka_instantaneous`,
-#'  `sen_lopez_ruzicka_instantaneous2`
+#'  `sen_lopez_ruzicka_instantaneous2`, `sen_lopez_ruzicka_sym_instantaneous`,
+#'  `sen_lopez_ruzicka_sym_instantaneous2`, `sen_andreev_instantaneous`, `sen_andreev_instantaneous2` , `sen_andreev_sym_instantaneous`, `sen_andreev_sym_instantaneous2`
 #' @param ... optional arguments passed to a given sensitivity function.
 #' @return age-specific sensitivity of life expectancy to changes in mortality rates.
 #' @export

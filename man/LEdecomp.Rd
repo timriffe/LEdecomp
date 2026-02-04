@@ -23,7 +23,8 @@ LEdecomp(
     
     "sen_chandrasekaran_iii_inst2", "lopez_ruzicka", "lopez_ruzicka_sym",
     "sen_lopez_ruzicka", "sen_lopez_ruzicka_sym", "sen_lopez_ruzicka_inst",
-    "sen_lopez_ruzicka_inst2", "horiuchi", "stepwise", "numerical"),
+    "sen_lopez_ruzicka_inst2", "sen_lopez_ruzicka_sym_inst",
+    "sen_lopez_ruzicka_sym_inst2", "horiuchi", "stepwise", "numerical"),
   closeout = TRUE,
   opt = TRUE,
   tol = 1e-10,
