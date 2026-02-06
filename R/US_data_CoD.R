@@ -8,20 +8,47 @@
 #'
 #' @name US_data_CoD
 #'
-#' @format A data frame with 80598 rows and 8 columns with class \code{"LEdecompData"} and \code{"data.frame"} including the following information
-#' * `Age` a vector containing the ages considered in the dataset, 0, 1, ..., 99, and 100.
-#' * `Gender` a vector containing the information regarding the gender, \code{"Male"} or \code{"Female"}.
-#' * `Period` a vector containing the periods of the dataset from 2000 to 2020.
-#' * `Ext` a vector containing the size of the population at risk of death by age and period.
-#' * `Dxt` a vector containing the number of registered deaths by age and period.
-#' * `mxt` a vector mortality rates for the corresponding age and period.
+#' @format A data frame of of mortality rates by age, year, sex, and cause with 76356 rows and 6 columns, including the following columns. Cause of death fractions were derived from NCHS data, and constrained to HMD lifetable mx:
+#' * `year` a vector containing the periods of the dataset from 2000 to 2020.
+#' * `sex` a vector containing the information regarding the gender, `"Male"` or `"Female"`.
+#' * `age` a vector containing the ages considered in the dataset, 0, 1, ..., 99, and 100.
 #' * `cause` a vector containing a brief summary of the corresponding cause of death.
 #' * `cause_id` a vector containing the corresponding identification number for the cause of death.
+#' * `mxc` a vector mortality rates for the corresponding age and cause.
 #' @docType data
 #' @usage US_data_CoD
-#'
+#' @references
+#'   \insertRef{hmd2026}{LEdecomp}
+#'   \insertRef{cdcwonder2024}{LEdecomp}
 #' @examples
-#' #The dataset is executed with the following information
+#' #The dataset is loaded by simply executing:
 #' US_data_CoD
 #'
 "US_data_CoD"
+
+
+
+
+# library(HMDHFDplus)
+# mlt <- readHMDweb("USA","mltper_1x1", username = Sys.getenv("us"), password = Sys.getenv("pw"))|>
+#   select(year = Year, age = Age, mx) |>
+#   mutate(sex = "Male", .after = year)
+# flt <- readHMDweb("USA","mltper_1x1", username = Sys.getenv("us"), password = Sys.getenv("pw"))|>
+#   select(year = Year, age = Age, mx) |>
+#   mutate(sex = "Female", .after = year)
+#
+# hmd <- bind_rows(mlt,flt)
+# US_data_CoD <-
+# US_data_CoD |>
+#   rename(age = Age, sex = Gender, year = Period, mx = mxt) |>
+#   select(age, sex, year, mx, cause, cause_id) |>
+#   filter(cause != "All-causes") |>
+#   group_by(year, sex, age) |>
+#   mutate(frac = mx / sum(mx)) |>
+#   select(-mx) |>
+#   left_join(hmd, by = join_by(year,sex,age)) |>
+#   mutate(mxc = mx * frac) |>
+#   select(year, sex, age, cause, cause_id, mxc) |>
+#   ungroup()
+# US_data_CoD |> usethis::use_data()
+

@@ -5,24 +5,25 @@
 \alias{US_data}
 \title{US Mortality data}
 \format{
-A data frame with 4242 rows and 6 columns with class \code{"LEdecompData"} and \code{"data.frame"} including the following information
+A data frame with 4242 rows and 4 columns with class  \code{"data.frame"} and  including the following columns
 \itemize{
-\item \code{Age} a vector containing the ages considered in the dataset, 0, 1, ..., 99, and 100.
-\item \code{Gender} a vector containing the information regarding the gender, \code{"Male"} or \code{"Female"}.
-\item \code{Period} a vector containing the periods of the dataset from 2000 to 2020.
-\item \code{Ext} a vector containing the size of the population at risk of death by age and period.
-\item \code{Dxt} a vector containing the number of registered deaths by age and period.
-\item \code{mxt} a vector mortality rates for the corresponding age and period.
+\item \code{year} a vector containing the periods of the dataset from 2000 to 2020.
+\item \code{sex} a vector containing the information regarding the gender, \code{"Male"} or \code{"Female"}.
+\item \code{age} a vector containing the ages considered in the dataset, 0, 1, ..., 99, and 100.
+\item \code{mx} a vector mortality rates for the corresponding sex, age and year
 }
 }
 \usage{
 US_data
 }
 \description{
-Data from the US total population from the Human Mortality Dataset and from National Center for Health Statistics (NCHS). The use of two dataset is justified because NCHS does not contain information of exposures above age 85. The dataset contains information on mortality rates (mxt), registered deaths (Dxt) and the size of the population at risk of death (Ext) by period, from 2000 to 2020, and by age, from 0 to 100 years, for both males and females.
+All-cause mortality rate data from the Human Mortality Database lifetables. The dataset contains information on mortality rates (mx), by year (2000-2020), sex, and (truncated) ages 0 to 100.
 }
 \examples{
 #The dataset is executed with the following information
 US_data
+}
+\references{
+\insertRef{hmd2026}{LEdecomp}
 }
 \keyword{datasets}

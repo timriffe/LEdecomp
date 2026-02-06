@@ -5,16 +5,14 @@
 \alias{US_data_CoD}
 \title{US cause-of-death Mortality data}
 \format{
-A data frame with 80598 rows and 8 columns with class \code{"LEdecompData"} and \code{"data.frame"} including the following information
+A data frame of of mortality rates by age, year, sex, and cause with 76356 rows and 6 columns, including the following columns. Cause of death fractions were derived from NCHS data, and constrained to HMD lifetable mx:
 \itemize{
-\item \code{Age} a vector containing the ages considered in the dataset, 0, 1, ..., 99, and 100.
-\item \code{Gender} a vector containing the information regarding the gender, \code{"Male"} or \code{"Female"}.
-\item \code{Period} a vector containing the periods of the dataset from 2000 to 2020.
-\item \code{Ext} a vector containing the size of the population at risk of death by age and period.
-\item \code{Dxt} a vector containing the number of registered deaths by age and period.
-\item \code{mxt} a vector mortality rates for the corresponding age and period.
+\item \code{year} a vector containing the periods of the dataset from 2000 to 2020.
+\item \code{sex} a vector containing the information regarding the gender, \code{"Male"} or \code{"Female"}.
+\item \code{age} a vector containing the ages considered in the dataset, 0, 1, ..., 99, and 100.
 \item \code{cause} a vector containing a brief summary of the corresponding cause of death.
 \item \code{cause_id} a vector containing the corresponding identification number for the cause of death.
+\item \code{mxc} a vector mortality rates for the corresponding age and cause.
 }
 }
 \usage{
@@ -28,8 +26,12 @@ The dataset contains information on mortality rates (mxt), registered deaths (Dx
 In addition, we have the number of deaths by cause between 0 and 100 years of age and between 2000 and 2020.
 }
 \examples{
-#The dataset is executed with the following information
+#The dataset is loaded by simply executing:
 US_data_CoD
 
+}
+\references{
+\insertRef{hmd2026}{LEdecomp}
+\insertRef{cdcwonder2024}{LEdecomp}
 }
 \keyword{datasets}
