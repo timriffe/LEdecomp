@@ -15,10 +15,3 @@
 #' US_data
 "US_data"
 
-#' @export
-print.LEdecompData <- function(x, ...){
-  message("Mortality Data\n")
-  message(attributes(x)$label, "including", attributes(x)$series ,"\n")
-  message("Periods", c(min(x$Period),":", max(x$Period)),"\n")
-  message("Complete Life Table with ages from", c(min(x$Age)," to ", max(x$Age)), "\n")
-}
