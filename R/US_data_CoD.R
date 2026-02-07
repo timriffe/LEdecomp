@@ -29,26 +29,19 @@
 
 
 
-# library(HMDHFDplus)
-# mlt <- readHMDweb("USA","mltper_1x1", username = Sys.getenv("us"), password = Sys.getenv("pw"))|>
-#   select(year = Year, age = Age, mx) |>
-#   mutate(sex = "Male", .after = year)
-# flt <- readHMDweb("USA","mltper_1x1", username = Sys.getenv("us"), password = Sys.getenv("pw"))|>
-#   select(year = Year, age = Age, mx) |>
-#   mutate(sex = "Female", .after = year)
+#  library(HMDHFDplus)
+#  mlt <- readHMDweb("USA","mltper_1x1", username = Sys.getenv("us"), password = Sys.getenv("pw"))|>
+#    select(year = Year, age = Age, mx) |>
+#    mutate(sex = "Male", .after = year)
+#  flt <- readHMDweb("USA","fltper_1x1", username = Sys.getenv("us"), password = Sys.getenv("pw"))|>
+#    select(year = Year, age = Age, mx) |>
+#    mutate(sex = "Female", .after = year)
+# #
+#  hmd <- bind_rows(mlt,flt)
+#  US_data_CoD <- US_data_CoD |>
+#    left_join(hmd, by = join_by(year,sex,age)) |>
+#    group_by(year,sex,age) |>
+#    mutate(mxc = (mxc / sum(mxc)) * mx)
 #
-# hmd <- bind_rows(mlt,flt)
-# US_data_CoD <-
-# US_data_CoD |>
-#   rename(age = Age, sex = Gender, year = Period, mx = mxt) |>
-#   select(age, sex, year, mx, cause, cause_id) |>
-#   filter(cause != "All-causes") |>
-#   group_by(year, sex, age) |>
-#   mutate(frac = mx / sum(mx)) |>
-#   select(-mx) |>
-#   left_join(hmd, by = join_by(year,sex,age)) |>
-#   mutate(mxc = mx * frac) |>
-#   select(year, sex, age, cause, cause_id, mxc) |>
-#   ungroup()
-# US_data_CoD |> usethis::use_data()
+# US_data_CoD |> usethis::use_data(overwrite = TRUE)
 
