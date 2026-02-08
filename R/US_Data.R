@@ -15,4 +15,3 @@
 #' US_data
 "US_data"
 
-

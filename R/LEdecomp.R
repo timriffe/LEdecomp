@@ -493,7 +493,8 @@ LEdecomp <- function(mx1,
 }
 
 
-
+# TR this needs to be revised, using info from
+# method_registry; also print actual method used
 #' @export
 print.LEdecomp <- function(x, ...) {
   if (is.null(x) || !"LEdecomp" %in% class(x)) {
@@ -502,25 +503,15 @@ print.LEdecomp <- function(x, ...) {
   if (!is.list(x)) stop("The object is not a list. Use 'LEdecomp()' first.")
 
   is_mat <- is.matrix(x$LEdecomp)
-  m <- x$method
-
-  if (!is_mat) {
-    if (m %in% c("arriaga", "arriaga_sym", "chandrasekaran_ii",
-                 "chandrasekaran_iii", "lopez_ruzicka",
-                 "lopez_ruzicka_sym", "horiuchi", "stepwise", "numerical")) {
-      message(paste("Estimated the", m, "Life-Expectancy decomposition method."))
-    } else {
-      message("Estimated a sensitivity Life-Expectancy decomposition method.")
-    }
-  } else {
-    if (m %in% c("arriaga", "arriaga_sym", "chandrasekaran_ii", "lopez_ruzicka",
-                 "lopez_ruzicka_sym", "horiuchi", "stepwise")) {
-      message(paste("Estimated the", m, "cause-of-death Life-Expectancy decomposition method."))
-    } else {
-      message("Estimated the cause-of-death sensitivity Life-Expectancy decomposition method.")
-    }
+  m      <- x$method
+  cn     <- x$cause_names
+  LEdiff <- x$LE2 - x$LE1
+  message(paste("Executed the", m, "Life-Expectancy decomposition method."))
+  if (!is.null(cn)){
+    message(paste("Reults by age and cause of death."))
   }
-  message(paste("\nThe total difference explained is:", round(sum(x$LEdecomp), 4)))
+  message(paste("\nTotal LE differences:", round(LEdiff,4)))
+  message(paste("\nSum of decomposition:", round(sum(x$LEdecomp),4)))
 }
 
 # -----------------------------------------------------------------------------
