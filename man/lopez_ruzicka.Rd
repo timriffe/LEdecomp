@@ -34,7 +34,7 @@ Numeric vector of contributions by age group that sum to the total difference
 in life expectancy between the two mortality schedules.
 }
 \description{
-Implements the decomposition of life expectancy proposed by Lopez and Ruzicka, as described in Ponnapalli (2005). This method expresses the difference in life expectancy between two mortality schedules in terms of an exclusive effect and an interaction effect, using life table quantities.
+Implements the decomposition of life expectancy proposed by Lopez and Ruzicka, as described in Ponnapalli (2005) (there labelled Lopez-Ruzicka II). This method expresses the difference in life expectancy between two mortality schedules in terms of an exclusive effect and an interaction effect, using life table quantities.
 
 Let \eqn{e_x^i} denote remaining life expectancy at age \eqn{x} for population \eqn{i}, and \eqn{l_x^i} the number of survivors to age \eqn{x}. Then:
 \itemize{

@@ -38,7 +38,7 @@ Implements a symmetric version of the Lopez-Ruzicka decomposition by averaging t
 \deqn{
 \frac{1}{2} \left( \text{lopez\_ruzicka}(mx1, mx2) - \text{lopez\_ruzicka}(mx2, mx1) \right)
 }
-This symmetric adjustment ensures that the decomposition is directionally neutral.
+This symmetric adjustment ensures that the decomposition is directionally neutral. This procedure is equivalent to what Ponnapalli (2005) calls Lopez-Ruzicka III. It is also equivalent to the symmetrical variants of Andreev and Arriaga, as well as chandrasekaran.
 }
 \details{
 This symmetric version gives \strong{numerically identical results} to \code{arriaga_sym()}, \code{chandrasekaran_II()}, and \code{chandrasekaran_III()}.
@@ -57,6 +57,7 @@ all.equal(d, d2)
 }
 \references{
 \insertRef{Ponnapalli2005}{LEdecomp}
+\insertRef{Lopez1977}{LEdecomp}
 }
 \seealso{
 \code{\link{lopez_ruzicka}}, \code{\link{arriaga_sym}},

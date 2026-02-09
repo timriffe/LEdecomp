@@ -264,10 +264,13 @@ sen_arriaga_instantaneous2 <- function(mx,
 
 #' @title Decompose using a symmetrical variant of the Arriaga approach.
 #' @description This approach conducts a classic Arriaga decomposition in both directions, averaging the (sign-adjusted) result, i.e. `a_avg = (arriaga(mx1,mx2, ...) - arriaga(mx2, mx1, ...)) / 2`.
-#' #@note The final age group's contribution from the reversed decomposition is halved before averaging. This empirical adjustment ensures symmetry and numeric stability, though the theoretical basis requires further exploration.
+#' #@note The final age group's contribution from the reversed decomposition is halved before averaging. This empirical adjustment ensures symmetry and numeric stability, though the theoretical basis requires further exploration. Note this method is identical to Arriaga III as extended by Ponnapalli (2005). It is also equivalent to the symmetrical variants of Andreev and Lopez-Ruzicka, as well as chandrasekaran.
 #' @return numeric vector of contributions summing to the gap in life expectancy implied by `mx1` and `mx2`.
 #' @export
 #' @inheritParams arriaga
+#' @references
+#' \insertRef{arriaga1984measuring}{LEdecomp}
+#' \insertRef{Ponnapalli2005}{LEdecomp}
 #' @seealso \code{\link{arriaga}}
 #' @examples
 #' a <- .001

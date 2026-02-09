@@ -1,6 +1,6 @@
 #' @title Lopez-Ruzicka decomposition
 #'
-#' @description Implements the decomposition of life expectancy proposed by Lopez and Ruzicka, as described in Ponnapalli (2005). This method expresses the difference in life expectancy between two mortality schedules in terms of an exclusive effect and an interaction effect, using life table quantities.
+#' @description Implements the decomposition of life expectancy proposed by Lopez and Ruzicka, as described in Ponnapalli (2005) (there labelled Lopez-Ruzicka II). This method expresses the difference in life expectancy between two mortality schedules in terms of an exclusive effect and an interaction effect, using life table quantities.
 #'
 #' Let \eqn{e_x^i} denote remaining life expectancy at age \eqn{x} for population \eqn{i}, and \eqn{l_x^i} the number of survivors to age \eqn{x}. Then:
 #'
@@ -92,20 +92,137 @@ lopez_ruzicka <- function(mx1,
   lx2_next <- shift(lx2, n = -1, fill = 0)
 
   exclusive_effect <- (lx1/lx2)*(lx2*(ex2-ex1) - lx2_next*(ex2_next - ex1_next))
-
   interaction_effect <- (ex2_next - ex1_next)*(((lx1*lx2_next)/lx2) - lx1_next)
 
   decomp <- exclusive_effect + interaction_effect
   decomp
 
 }
+
+# lopez_ruzicka_i <- function(mx1,
+#                           mx2,
+#                           age = (1:length(mx1))-1,
+#                           nx = rep(1,length(mx1)),
+#                           sex1 = 't',
+#                           sex2 = sex1,
+#                           closeout = TRUE){
+#   ax1 <- mx_to_ax(mx = mx1,
+#                   age = age,
+#                   nx = nx,
+#                   sex = sex1,
+#                   closeout = closeout)
+#   ax2 <- mx_to_ax(mx = mx2,
+#                   age = age,
+#                   nx = nx,
+#                   sex = sex2,
+#                   closeout = closeout)
+#   qx1 <- mx_to_qx(mx = mx1,
+#                   ax = ax1,
+#                   nx = nx,
+#                   closeout = closeout)
+#   qx2 <- mx_to_qx(mx = mx2,
+#                   ax = ax2,
+#                   nx = nx,
+#                   closeout = closeout)
+#   lx1 <- qx_to_lx(qx1)
+#   lx2 <- qx_to_lx(qx2)
+#   dx1 <- lx_to_dx(lx1)
+#   dx2 <- lx_to_dx(lx2)
+#   Lx1 <- ald_to_Lx(ax = ax1,
+#                    lx = lx1,
+#                    dx = dx1,
+#                    nx = nx)
+#   Lx2 <- ald_to_Lx(ax = ax2,
+#                    lx = lx2,
+#                    dx = dx2,
+#                    nx = nx)
+#   Tx1 <- rcumsum(Lx1)
+#   Tx2 <- rcumsum(Lx2)
+#   ex1 <- Tx1 / lx1
+#   ex2 <- Tx2 / lx2
+#
+#   # from here on, everything uses lx and ex only;
+#   # we need to lag each of these, for easier code reading
+#   ex1_next <- shift(ex1, n = -1, fill = 0)
+#   ex2_next <- shift(ex2, n = -1, fill = 0)
+#   lx1_next <- shift(lx1, n = -1, fill = 0)
+#   lx2_next <- shift(lx2, n = -1, fill = 0)
+#
+#   exclusive_effect <- (lx2/lx1)*(lx1*(ex2-ex1) - lx1_next*(ex2_next - ex1_next))
+#   interaction_effect <- (ex2_next - ex1_next)*(((lx2*lx1_next)/lx1) - lx2_next)
+#
+#   decomp <- exclusive_effect + interaction_effect
+#   decomp
+#
+# }
+
+# lopez_ruzicka_iii <- function(mx1,
+#                             mx2,
+#                             age = (1:length(mx1))-1,
+#                             nx = rep(1,length(mx1)),
+#                             sex1 = 't',
+#                             sex2 = sex1,
+#                             closeout = TRUE){
+#   ax1 <- mx_to_ax(mx = mx1,
+#                   age = age,
+#                   nx = nx,
+#                   sex = sex1,
+#                   closeout = closeout)
+#   ax2 <- mx_to_ax(mx = mx2,
+#                   age = age,
+#                   nx = nx,
+#                   sex = sex2,
+#                   closeout = closeout)
+#   qx1 <- mx_to_qx(mx = mx1,
+#                   ax = ax1,
+#                   nx = nx,
+#                   closeout = closeout)
+#   qx2 <- mx_to_qx(mx = mx2,
+#                   ax = ax2,
+#                   nx = nx,
+#                   closeout = closeout)
+#   lx1 <- qx_to_lx(qx1)
+#   lx2 <- qx_to_lx(qx2)
+#   dx1 <- lx_to_dx(lx1)
+#   dx2 <- lx_to_dx(lx2)
+#   Lx1 <- ald_to_Lx(ax = ax1,
+#                    lx = lx1,
+#                    dx = dx1,
+#                    nx = nx)
+#   Lx2 <- ald_to_Lx(ax = ax2,
+#                    lx = lx2,
+#                    dx = dx2,
+#                    nx = nx)
+#   Tx1 <- rcumsum(Lx1)
+#   Tx2 <- rcumsum(Lx2)
+#   ex1 <- Tx1 / lx1
+#   ex2 <- Tx2 / lx2
+#
+#   # from here on, everything uses lx and ex only;
+#   # we need to lag each of these, for easier code reading
+#   ex1_next <- shift(ex1, n = -1, fill = 0)
+#   ex2_next <- shift(ex2, n = -1, fill = 0)
+#   lx1_next <- shift(lx1, n = -1, fill = 0)
+#   lx2_next <- shift(lx2, n = -1, fill = 0)
+#
+#   exclusive_effect   <- ((ex2 -  ex1)*(lx1+lx2)) / 2 - ((ex2_next - ex1_next) * ((lx1 * lx2_next) / lx2 + (lx2 * lx1_next) / lx1))/2
+#
+#
+#   interaction_effect <- (ex2_next - ex1_next) *
+#     (((lx1 * lx2_next) / lx2 + (lx2 * lx1_next) / lx1) / 2 - (lx2_next + lx1_next) / 2)
+#   decomp <- exclusive_effect + interaction_effect
+#   decomp
+#
+# }
+
+
 #' @title Symmetric Lopez-Ruzicka decomposition
 #'
 #' @description Implements a symmetric version of the Lopez-Ruzicka decomposition by averaging the results from the forward and reverse directions. That is, \code{lopez_ruzicka_sym(mx1, mx2)} returns
 #' \deqn{
 #' \frac{1}{2} \left( \text{lopez\_ruzicka}(mx1, mx2) - \text{lopez\_ruzicka}(mx2, mx1) \right)
 #' }
-#' This symmetric adjustment ensures that the decomposition is directionally neutral.
+#' This symmetric adjustment ensures that the decomposition is directionally neutral. This procedure is equivalent to what Ponnapalli (2005) calls Lopez-Ruzicka III. It is also equivalent to the symmetrical variants of Andreev and Arriaga, as well as chandrasekaran.
 #'
 #' @inheritParams lopez_ruzicka
 #'
@@ -120,7 +237,7 @@ lopez_ruzicka <- function(mx1,
 #'
 #' @references
 #' \insertRef{Ponnapalli2005}{LEdecomp}
-#'
+#' \insertRef{Lopez1977}{LEdecomp}
 #' @export
 #'
 #' @examples
