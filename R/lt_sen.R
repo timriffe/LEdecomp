@@ -60,7 +60,7 @@ sen_e0_mx_lt <- function(mx,
   exs <- shift(ex, n = -1, fill = ex[N])
   ex2 <- ex * (nx - ax) + exs * ax
 
-  ex2[N] <- ex[N]
+  #ex2[N] <- ex[N]
 
   sen <- -Lx/nx * ex2
 

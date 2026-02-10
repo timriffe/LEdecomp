@@ -402,13 +402,22 @@ LEdecomp <- function(mx1,
     } else {
       delta <- mx2 - mx1
       if (opt) {
-        sens <- sen_min(mx1 = mx1, mx2 = mx2,
-                        age = age, nx = nx, sex1 = sex1, sex2 = sex1,
-                        closeout = closeout, sen_fun = dec_fun, tol = tol)
+        sens <- sen_min(mx1 = mx1,
+                        mx2 = mx2,
+                        age = age,
+                        nx = nx,
+                        sex1 = sex1,
+                        sex2 = sex1,
+                        closeout = closeout,
+                        sen_fun = dec_fun,
+                        tol = tol)
       } else {
         mx_avg <- (mx1 + mx2) / 2
         sens   <- dec_fun(mx = mx_avg,
-                          age = age, nx = nx, sex = sex1, closeout = closeout)
+                          age = age,
+                          nx = nx,
+                          sex = sex1,
+                          closeout = closeout)
       }
       decomp <- sens * delta
     }

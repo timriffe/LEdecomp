@@ -96,7 +96,7 @@ test_that("sensitivity magnitudes are consistent within method blocks", {
   nx_ab  <- c(diff(age_ab), tail(diff(age_ab), 1L))
 
   out_list <- vector("list", length(methods))
-
+options(warn=2)
   for (i in seq_along(methods)) {
     m <- methods[i]
 
@@ -139,7 +139,8 @@ test_that("sensitivity magnitudes are consistent within method blocks", {
   block1 <- c("lopez_ruzicka",
               "sen_lopez_ruzicka",
               "arriaga",
-              "sen_arriaga")
+              "sen_arriaga",
+              "andreev","sen_andreev")
 
   # whatever else is in the registry but not in block1
   block2 <- setdiff(res_tbl$method, block1)
@@ -151,8 +152,8 @@ test_that("sensitivity magnitudes are consistent within method blocks", {
 
   # block 1
   df_b1 <- res_tbl[res_tbl$method %in% block1, , drop = FALSE]
-  expect_equal(df_b1$max_abs_sy, rep(89.45379,4), tolerance = 1e-5)
-  expect_equal(df_b1$max_abs_ab, rep(410.3238,4), tolerance = 1e-5)
+  expect_equal(df_b1$max_abs_sy, rep(89.45379,6), tolerance = 1e-5)
+  expect_equal(df_b1$max_abs_ab, rep(410.3238,6), tolerance = 1e-5)
 
    # block 2
   df_b2 <- res_tbl[res_tbl$method %in% block2, , drop = FALSE]
