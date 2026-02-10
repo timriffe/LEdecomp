@@ -27,8 +27,6 @@
 "US_data_CoD"
 
 
-
-
 #  library(HMDHFDplus)
 #  mlt <- readHMDweb("USA","mltper_1x1", username = Sys.getenv("us"), password = Sys.getenv("pw"))|>
 #    select(year = Year, age = Age, mx) |>

@@ -66,15 +66,14 @@ By default, if \code{what = "LEdecomp"} we plot using bars (\code{geom = "bar"})
 }
 \examples{
 
-data("US_data_CoD", package = "LEdecomp")
-allc <- subset(US_data_CoD, Period == 2010 & cause == "All-causes") |>
-  as.data.frame()
+data("US_data", package = "LEdecomp")
+allc <- subset(US_data, year == 2010)
 
 # Make Female vs Male all-cause schedules, Age 0:100
-ac_w <- reshape(allc[, c("Gender","Age","mxt")],
-                timevar = "Gender", idvar = "Age", direction = "wide")
-names(ac_w) <- sub("^mxt\\\\.", "", names(ac_w))
-ac_w <- ac_w[order(ac_w$Age), ]
+ac_w <- reshape(allc[, c("sex","age","mx")],
+                timevar = "sex", idvar = "age", direction = "wide")
+names(ac_w) <- sub("^mx\\\\.", "", names(ac_w))
+ac_w <- ac_w[order(ac_w$age), ]
 
 dec_ac <- LEdecomp(
   mx1 = ac_w$Male,
@@ -89,20 +88,17 @@ plot(dec_ac, main = "All-cause Arriaga, 2010 Female vs Male")
 }
 ## End(Not run)
 ## Example 2: Cause of death, one year, Female vs Male
-cod <- subset(US_data_CoD, Period == 2010 & cause != "All-causes")
-cod_w <- reshape(cod[, c("Gender","Age","cause","mxt")],
-                 timevar = "Gender", idvar = c("cause","Age"),
-                 direction = "wide")|>
-  as.data.frame()
-names(cod_w) <- sub("^mxt\\\\.", "", names(cod_w))
-cod_w <- cod_w[order(cod_w$cause, cod_w$Age), ]
+data("US_data_CoD", package = "LEdecomp")
+
+codf <- subset(US_data_CoD, year == 2010 & sex == "Female")
+codm <- subset(US_data_CoD, year == 2010 & sex == "Male")
 
 dec_cod <- LEdecomp(
-  mx1 = cod_w$Male,
-  mx2 = cod_w$Female,
+  mx1 = codf$mxc,
+  mx2 = codm$mxc,
   age = 0:100,
-  n_causes = length(unique(cod_w$cause)),
-  cause_names = unique(cod$cause_id),
+  n_causes = length(unique(codf$cause)),
+  cause_names = unique(codf$cause_id),
   method = "sen_arriaga"
 )
 

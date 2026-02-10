@@ -4,13 +4,7 @@
 #' from Andreev (1982): eps[x1,x2) = l_x1*(e2_x1 - e1_x1) - l_x2*(e2_x2 - e1_x2),
 #' where l_ and e_ without prime are from a chosen baseline life table.
 #'
-#' @param mx1 numeric vector of the mortality rates (central death rates) for population 1
-#' @param mx2 numeric vector of the mortality rates (central death rates) for population 2
-#' @param age integer vector of the lower bound of each age group (currently only single ages supported)
-#' @param nx integer vector of age intervals, default 1.
-#' @param sex1 character either the sex for population 1: Male (`"m"`), Female (`"f"`), or Total (`"t"`)
-#' @param sex2 character either the sex for population 2: Male (`"m"`), Female (`"f"`), or Total (`"t"`) assumed same as `sex1` unless otherwise specified.
-#' @param closeout logical. Default `TRUE`. Shall we use the HMD Method Protocol to close out the `ax` and `qx` values? See details.
+#' @inheritParams arriaga
 #' @details setting `closeout` to `TRUE` will result in value of `1/mx` for the final age group, of `ax` and a value of 1 for the closeout of `qx`.
 #' @return `cc` numeric vector with one element per age group, and which sums to the total difference in life expectancy between population 1 and 2.
 #' @return vector of age-specific contributions to e0 gap
@@ -35,8 +29,7 @@ andreev <- function(mx1,
                     nx = rep(1,length(mx1)),
                     sex1 = "t",
                     sex2 = sex1,
-                    closeout = TRUE,
-                    radix = 1) {
+                    closeout = TRUE) {
 
   stopifnot(is.numeric(mx1), is.numeric(mx2), is.numeric(age))
   stopifnot(length(mx1) == length(mx2), length(mx1) == length(age))

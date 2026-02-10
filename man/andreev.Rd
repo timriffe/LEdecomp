@@ -11,8 +11,7 @@ andreev(
   nx = rep(1, length(mx1)),
   sex1 = "t",
   sex2 = sex1,
-  closeout = TRUE,
-  radix = 1
+  closeout = TRUE
 )
 }
 \arguments{
