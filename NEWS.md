@@ -1,3 +1,8 @@
+# LEdecomp 1.0.11
+
+* adds andreev and its derived methods.
+* adds more literature references
+
 # LEdecomp 1.0.4
 
 * third CRAN submission attempt, minor edits per requests from CRAN
