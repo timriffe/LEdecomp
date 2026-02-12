@@ -3,8 +3,8 @@
 #'
 #' @param mx1 numeric. Age-structured mortality rates for population 1 (vector, matrix, or data.frame). See Details section for more info.
 #' @param mx2 numeric. Age-structured mortality rates for population 2 (same shape as `mx1`).
-#' @param age integer. Lower bound of each age group. If `NULL`, it will be inferred from data (see Details).
-#' @param nx integer vector of age intervals (defaults to 1 when missing).
+#' @param age numeric Lower bound of each age group. If `NULL`, it will be inferred from data (see Details).
+#' @param nx numeric vector of age intervals (defaults to 1 when missing).
 #' @param n_causes integer or `NULL`. If provided with stacked vectors, forces the number of causes (columns).
 #' @param cause_names optional character vector of length `n_causes` giving labels for causes. Alternatively detected from `colnames(mx1)` in case given as a `matrix` or `data.frame`
 #' @param sex1 character. `"m"`,`"f"`, or `"t"`, affects a0 treatment.
@@ -477,6 +477,8 @@ LEdecomp <- function(mx1,
     # sens stays vector
   }
 
+  dim(decomp) <- deez_dims
+
   out <- list("mx1" = mx1,
               "mx2" = mx2,
               "age" = age,
@@ -519,7 +521,7 @@ print.LEdecomp <- function(x, ...) {
   if (!is.null(cn)){
     message(paste("Reults by age and cause of death."))
   }
-  message(paste("\nTotal LE differences:", round(LEdiff,4)))
+  message(paste("\nTotal LE differences:", round(x$LE2,4),"-",round(x$LE1,4),"=",round(LEdiff,4)))
   message(paste("\nSum of decomposition:", round(sum(x$LEdecomp),4)))
 }
 
