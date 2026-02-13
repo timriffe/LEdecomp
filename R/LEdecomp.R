@@ -223,6 +223,9 @@ LEdecomp <- function(mx1,
     stop("Arguments 'mx1' and 'mx2' must have the same length (prior to shaping).")
   }
 
+  # vec-in?
+  vec_in <- is.null(dim(mx1))
+
   # normalize shapes and ages
   norm <- normalize_inputs(mx1 = mx1, mx2 = mx2, age = age, n_causes = n_causes)
   mx1        <- norm$mx1
@@ -478,6 +481,11 @@ LEdecomp <- function(mx1,
   }
 
   dim(decomp) <- deez_dims
+  # if we have vec-in, then we have vec-out too, in case we're
+  # in a tidy pipeline
+  if (vec_in){
+    decomp <- c(decomp)
+  }
 
   out <- list("mx1" = mx1,
               "mx2" = mx2,
