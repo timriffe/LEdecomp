@@ -223,9 +223,6 @@ LEdecomp <- function(mx1,
     stop("Arguments 'mx1' and 'mx2' must have the same length (prior to shaping).")
   }
 
-  # vec-in?
-  vec_in <- is.null(dim(mx1))
-
   # normalize shapes and ages
   norm <- normalize_inputs(mx1 = mx1, mx2 = mx2, age = age, n_causes = n_causes)
   mx1        <- norm$mx1
@@ -234,7 +231,7 @@ LEdecomp <- function(mx1,
   nages      <- norm$nages
   n_causes   <- norm$n_causes
   deez_dims  <- norm$deez_dims
-
+  return_as  <- norm$return_as
   # apply cause names if possible
   if (!is.null(n_causes) && n_causes >= 1L) {
     final_cols <- NULL
@@ -461,29 +458,7 @@ LEdecomp <- function(mx1,
   LE1 <- mx_to_e0(rowSums(as.matrix(mx1)), age = age, nx = nx, sex = sex1, closeout = closeout)
 
   # restore input-like shapes for decomp, but KEEP sens as vector
-  shape_policy <- norm$return_as %||% {
-    if (is.matrix(mx1)) "matrix" else if (!is.null(n_causes) && n_causes > 1L) "stacked_vector" else "vector"
-  }
-
-  if (identical(shape_policy, "stacked_vector")) {
-    if (is.matrix(decomp)) decomp <- c(decomp)
-    if (is.matrix(mx1))    mx1    <- c(mx1)
-    if (is.matrix(mx2))    mx2    <- c(mx2)
-    # sens stays vector
-  } else if (identical(shape_policy, "matrix")) {
-    if (!is.null(norm$deez_dims)) {
-      if (!is.null(dim(decomp))) dim(decomp) <- norm$deez_dims
-    }
-    # sens stays vector
-  } else {
-    decomp <- c(decomp)
-    # sens stays vector
-  }
-
-  dim(decomp) <- deez_dims
-  # if we have vec-in, then we have vec-out too, in case we're
-  # in a tidy pipeline
-  if (vec_in){
+  if (grepl("vector", return_as)){
     decomp <- c(decomp)
   }
 

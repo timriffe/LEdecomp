@@ -42,10 +42,10 @@
 #    mutate(mxc = (mxc / sum(mxc)) * mx)
 #
 # US_data_CoD |> usethis::use_data(overwrite = TRUE)
-US_data_CoD |>
-  group_by(year, age, sex) |>
-  summarize(mx = sum(mxc)) |>
-  ungroup() |>
-  ggplot(aes(x = age, y = mx, color = sex, group = interaction(year, sex))) +
-  geom_line() +
-  scale_y_log10()
+# US_data_CoD |>
+#   group_by(year, age, sex) |>
+#   summarize(mx = sum(mxc)) |>
+#   ungroup() |>
+#   ggplot(aes(x = age, y = mx, color = sex, group = interaction(year, sex))) +
+#   geom_line() +
+#   scale_y_log10()
