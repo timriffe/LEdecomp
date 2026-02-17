@@ -233,7 +233,7 @@ test_that("Data.frame with an age column is handled and matches matrix baseline"
   )
 
   expect_identical(res_df$age, as.numeric(age))
-  expect_equal(res_df$LEdecomp, res_mat$LEdecomp, tolerance = 1e-8)
+  expect_equal(as.matrix(res_df$LEdecomp), res_mat$LEdecomp, tolerance = 1e-8)
 })
 
 
@@ -285,9 +285,9 @@ test_that("Abridged: wide data.frame with age column matches matrix baseline", {
   )
 
   expect_identical(res_df$age, as.numeric(age_ab))
-  expect_true(is.matrix(res_df$LEdecomp))
+  expect_true(is.data.frame(res_df$LEdecomp))
   expect_identical(dim(res_df$LEdecomp), dim(res_mat$LEdecomp))
-  expect_equal(res_df$LEdecomp, res_mat$LEdecomp, tolerance = 1e-8)
+  expect_equal(as.matrix(res_df$LEdecomp), res_mat$LEdecomp, tolerance = 1e-8)
 })
 
 test_that("Abridged: tidy/long df (repeated age) works when passed as stacked vectors", {
