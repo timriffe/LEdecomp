@@ -26,26 +26,3 @@
 #'
 "US_data_CoD"
 
-
-#  library(HMDHFDplus)
-#  mlt <- readHMDweb("USA","mltper_1x1", username = Sys.getenv("us"), password = Sys.getenv("pw"))|>
-#    select(year = Year, age = Age, mx) |>
-#    mutate(sex = "Male", .after = year)
-#  flt <- readHMDweb("USA","fltper_1x1", username = Sys.getenv("us"), password = Sys.getenv("pw"))|>
-#    select(year = Year, age = Age, mx) |>
-#    mutate(sex = "Female", .after = year)
-# #
-#  hmd <- bind_rows(mlt,flt)
-#  US_data_CoD <- US_data_CoD |>
-#    left_join(hmd, by = join_by(year,sex,age)) |>
-#    group_by(year,sex,age) |>
-#    mutate(mxc = (mxc / sum(mxc)) * mx)
-#
-# US_data_CoD |> usethis::use_data(overwrite = TRUE)
-# US_data_CoD |>
-#   group_by(year, age, sex) |>
-#   summarize(mx = sum(mxc)) |>
-#   ungroup() |>
-#   ggplot(aes(x = age, y = mx, color = sex, group = interaction(year, sex))) +
-#   geom_line() +
-#   scale_y_log10()
