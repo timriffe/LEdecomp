@@ -40,9 +40,9 @@ LEdecomp(
 
 \item{mx2}{numeric. Age-structured mortality rates for population 2 (same shape as \code{mx1}).}
 
-\item{age}{integer. Lower bound of each age group. If \code{NULL}, it will be inferred from data (see Details).}
+\item{age}{numeric Lower bound of each age group. If \code{NULL}, it will be inferred from data (see Details).}
 
-\item{nx}{integer vector of age intervals (defaults to 1 when missing).}
+\item{nx}{numeric vector of age intervals (defaults to 1 when missing).}
 
 \item{n_causes}{integer or \code{NULL}. If provided with stacked vectors, forces the number of causes (columns).}
 

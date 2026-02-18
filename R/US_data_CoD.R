@@ -9,12 +9,13 @@
 #' @name US_data_CoD
 #'
 #' @format A data frame of of mortality rates by age, year, sex, and cause with 76356 rows and 6 columns, including the following columns. Cause of death fractions were derived from NCHS data, and constrained to HMD lifetable mx:
-#' * `year` a vector containing the periods of the dataset from 2000 to 2020.
-#' * `sex` a vector containing the information regarding the gender, `"Male"` or `"Female"`.
-#' * `age` a vector containing the ages considered in the dataset, 0, 1, ..., 99, and 100.
-#' * `cause` a vector containing a brief summary of the corresponding cause of death.
-#' * `cause_id` a vector containing the corresponding identification number for the cause of death.
-#' * `mxc` a vector mortality rates for the corresponding age and cause.
+#' * `year` numeric. Years 2000 to 2020.
+#' * `sex` character. Values `"Male"` or `"Female"`.
+#' * `age` integer. Values 0, 1, ..., 99, and 100.
+#' * `cause` character. A brief summary of the corresponding cause family.
+#' * `cause_id` character. The ICD10 code range covered by this cause of death.
+#' * `cause_short` character. A short name for each cause, useful for plotting. Includes codes in parentheses.
+#' * `mxc` numeric. Mortality rates for the corresponding age, year, sex, and cause.
 #' @docType data
 #' @usage US_data_CoD
 #' @references

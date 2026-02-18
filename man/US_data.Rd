@@ -7,10 +7,10 @@
 \format{
 A data frame with 4242 rows and 4 columns with class  \code{"data.frame"} and  including the following columns
 \itemize{
-\item \code{year} a vector containing the periods of the dataset from 2000 to 2020.
-\item \code{sex} a vector containing the information regarding the gender, \code{"Male"} or \code{"Female"}.
-\item \code{age} a vector containing the ages considered in the dataset, 0, 1, ..., 99, and 100.
-\item \code{mx} a vector mortality rates for the corresponding sex, age and year
+\item \code{year} integer. Years 2000 to 2020.
+\item \code{sex} character. \code{"Male"} or \code{"Female"}.
+\item \code{age} integer. Ages 0, 1, ..., 99, and 100.
+\item \code{mx} numeric. Mortality rates for the corresponding sex, age and year
 }
 }
 \usage{
