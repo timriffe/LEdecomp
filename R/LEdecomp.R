@@ -276,18 +276,20 @@ LEdecomp <- function(mx1,
 
   # handle sex1 != sex2 by recursion
   if (sex1 != sex2) {
-    d1 <- LEdecomp(mx1 = mx1, mx2 = mx2, age = age, nx = nx,
+    mx1_in <- norm$mx1_orig
+    mx2_in <- norm$mx2_orig
+    d1 <- LEdecomp(mx1 = mx1_in, mx2 = mx2_in, age = age, nx = nx,
                    sex1 = sex1, sex2 = sex1,
                    method = method, closeout = closeout, opt = opt, tol = tol,
                    Num_Intervals = Num_Intervals, symmetrical = symmetrical,
                    direction = direction, perturb = perturb, ...)
-    d2 <- LEdecomp(mx1 = mx1, mx2 = mx2, age = age, nx = nx,
+    d2 <- LEdecomp(mx1 = mx1_in, mx2 = mx2_in, age = age, nx = nx,
                    sex1 = sex2, sex2 = sex2,
                    method = method, closeout = closeout, opt = opt, tol = tol,
                    Num_Intervals = Num_Intervals, symmetrical = symmetrical,
                    direction = direction, perturb = perturb, ...)
     decomp <- (d1$LEdecomp + d2$LEdecomp) / 2
-    sens   <- (d1$sens      + d2$sens)      / 2
+    sens   <- (d1$sens     + d2$sens)     / 2
 
     LE2 <- mx_to_e0(rowSums(as.matrix(mx2)), age = age, nx = nx, sex = sex1, closeout = closeout)
     LE1 <- mx_to_e0(rowSums(as.matrix(mx1)), age = age, nx = nx, sex = sex1, closeout = closeout)

@@ -108,3 +108,26 @@ test_that("LEdecomp echoes input shape: tibble in -> tibble out (optional)", {
   expect_equal(dim(d), c(length(age), n_causes))
 })
 
+test_that("stacked vector + sex1 != sex2 returns stacked vector (no matrix leak)", {
+  age <- 0:100
+  n_causes <- 18L
+
+  set.seed(1)
+  mx1_mat <- matrix(rexp(length(age) * n_causes, rate = 20000), nrow = length(age))
+  mx2_mat <- mx1_mat * runif(1, 0.95, 1.05)
+
+  mx1 <- as.vector(mx1_mat)
+  mx2 <- as.vector(mx2_mat)
+
+  out <- LEdecomp(
+    mx1 = mx1, mx2 = mx2,
+    age = age,
+    n_causes = n_causes,
+    sex1 = "m", sex2 = "f",
+    method = "sen_arriaga_sym_inst",
+    opt = TRUE
+  )
+
+  expect_null(dim(out$LEdecomp))
+  expect_equal(length(out$LEdecomp), length(age) * n_causes)
+})
