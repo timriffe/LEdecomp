@@ -1,4 +1,4 @@
-This is a first push to CRAN, 3rd attempt after a missed instance of \dontrun{}. Other minor edits to methods were also made, and new tests added.
+This is a package update, allowing for more input data types, completing the set of methods available, and adding unit tests.
 
 ## Test environments
 * Ubuntu 20.04.6 LTS

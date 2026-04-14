@@ -8,5 +8,5 @@
 
 library(testthat)
 library(LEdecomp)
-
+library(tibble)
 test_check("LEdecomp")

@@ -30,5 +30,6 @@ BugReports: https://github.com/timriffe/LEdecomp/issues
 Encoding: UTF-8
 URL: https://github.com/timriffe/LEdecomp
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tibble
 Config/testthat/edition: 3
