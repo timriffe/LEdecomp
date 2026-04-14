@@ -1,7 +1,9 @@
-# LEdecomp 1.0.11
+# LEdecomp 1.0.14
 
 * adds andreev and its derived methods.
 * adds more literature references
+* completes methods set
+* allows more data input types
 
 # LEdecomp 1.0.4
 
