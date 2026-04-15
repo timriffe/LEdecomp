@@ -2,7 +2,7 @@ This is a package update, allowing for more input data types, completing the set
 
 ## Test environments
 * Ubuntu 20.04.6 LTS
-  * R version 4.5.1 (2025-06-13)
+  * R version 4.5.2 (2025-10-31)
 
 * rhub:
   * linux (R-devel)

@@ -1,14 +1,15 @@
-load_all()
+
 
 library(devtools)
+load_all()
 library(usethis)
 library(rhub)
 document()
 
 devtools::check()
-check_win_devel()      #
-check_win_release()    #
-check_win_oldrelease() #
+check_win_devel()      # sent 14-4-2026
+check_win_release()    # sent 14-4-2026
+check_win_oldrelease() # sent 14-4-2026
 rhub_platforms()
 rhub::rhub_check(platforms = c("linux","macos","macos-arm64","windows"))
 
