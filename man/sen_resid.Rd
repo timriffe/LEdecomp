@@ -48,7 +48,7 @@ sen_resid(
 age-specific sensitivity of life expectancy to changes in mortality rates.
 }
 \description{
-Most sensitivity methods in this packages (\code{sen_arriaga_sym()} excepted) are approximations; when used in decompositions they will tend to imply residuals. To acheive near-exact additivity for a decomposition using these sensitivity approaches, one can try to find a different weighting of rates from populations 1 and 2, rather than simply taking their arithmetic average. Here we turn this into an optimization problem, where we find the weighting \code{w} that implies an exactly additive decomposition to an arbitrary degree of tolerance. This function gives said residual, for purposes of optimizing using \code{sen_min()}. We export this auxiliary function because one might wish to know the value w that balances rates such that the decomposition is exact.
+Most sensitivity methods in this packages (\code{sen_arriaga_sym()} excepted) are approximations; when used in decompositions they will tend to imply residuals. To achieve near-exact additivity for a decomposition using these sensitivity approaches, one can try to find a different weighting of rates from populations 1 and 2, rather than simply taking their arithmetic average. Here we turn this into an optimization problem, where we find the weighting \code{w} that implies an exactly additive decomposition to an arbitrary degree of tolerance. This function gives said residual, for purposes of optimizing using \code{sen_min()}. We export this auxiliary function because one might wish to know the value w that balances rates such that the decomposition is exact.
 \deqn{m_{x} = m_{x}^{1} * w + m_{x}^{2} * (1-w)}
 }
 \examples{

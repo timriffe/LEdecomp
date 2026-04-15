@@ -7,9 +7,9 @@ library(rhub)
 document()
 
 devtools::check()
-check_win_devel()      # sent 14-4-2026
-check_win_release()    # sent 14-4-2026
-check_win_oldrelease() # sent 14-4-2026
+check_win_devel()      # sent 15-4-2026
+check_win_release()    # sent 15-4-2026
+check_win_oldrelease() # sent 15-4-2026
 rhub_platforms()
 rhub::rhub_check(platforms = c("linux","macos","macos-arm64","windows"))
 

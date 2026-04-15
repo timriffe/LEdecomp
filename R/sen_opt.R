@@ -1,6 +1,6 @@
 
 #' @title sen_resid
-#' @description Most sensitivity methods in this packages (`sen_arriaga_sym()` excepted) are approximations; when used in decompositions they will tend to imply residuals. To acheive near-exact additivity for a decomposition using these sensitivity approaches, one can try to find a different weighting of rates from populations 1 and 2, rather than simply taking their arithmetic average. Here we turn this into an optimization problem, where we find the weighting `w` that implies an exactly additive decomposition to an arbitrary degree of tolerance. This function gives said residual, for purposes of optimizing using `sen_min()`. We export this auxiliary function because one might wish to know the value w that balances rates such that the decomposition is exact.
+#' @description Most sensitivity methods in this packages (`sen_arriaga_sym()` excepted) are approximations; when used in decompositions they will tend to imply residuals. To achieve near-exact additivity for a decomposition using these sensitivity approaches, one can try to find a different weighting of rates from populations 1 and 2, rather than simply taking their arithmetic average. Here we turn this into an optimization problem, where we find the weighting `w` that implies an exactly additive decomposition to an arbitrary degree of tolerance. This function gives said residual, for purposes of optimizing using `sen_min()`. We export this auxiliary function because one might wish to know the value w that balances rates such that the decomposition is exact.
 #' \deqn{m_{x} = m_{x}^{1} * w + m_{x}^{2} * (1-w)}
 #' @inheritParams arriaga
 #' @param w the parameter weight to optimize, default 0.5
@@ -66,7 +66,7 @@ sen_resid <- function(w=.5,
 }
 
 #' @title sen_min
-#' @description Most sensitivity methods in this packages (`sen_arriaga_sym()` excepted) are approximations; when used in decompositions they will tend to imply residuals. To acheive near-exact additivity for a decomposition using these sensitivity approaches, one can try to find a different weighting of rates from populations 1 and 2, rather than simply taking their arithmetic average. Here we turn this into an optimization problem, where we find the weighting `w` that implies an exactly additive decomposition to an arbitrary degree of tolerance.
+#' @description Most sensitivity methods in this packages (`sen_arriaga_sym()` excepted) are approximations; when used in decompositions they will tend to imply residuals. To achieve near-exact additivity for a decomposition using these sensitivity approaches, one can try to find a different weighting of rates from populations 1 and 2, rather than simply taking their arithmetic average. Here we turn this into an optimization problem, where we find the weighting `w` that implies an exactly additive decomposition to an arbitrary degree of tolerance.
 #' \deqn{m_{x} = m_{x}^{1} * w + m_{x}^{2} * (1-w)}
 #' @details We expect the value `w` to be close to .5, and only search the interval `[.4,.6]`. This may need to be revisited in case that proves too narrow.
 #' @inheritParams arriaga
